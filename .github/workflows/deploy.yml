@@ -11,12 +11,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: '16' 
+          node-version: '16'
 
       - name: Install dependencies
         run: npm install
@@ -24,8 +24,10 @@ jobs:
       - name: Build the project
         run: npm run build
 
-      - name: Convert SSH Key
+      - name: Prepare SSH Key
+        # Ensure .ssh directory exists and set up the private key
         run: |
+          mkdir -p ~/.ssh
           echo "${{ secrets.EC2_KEY }}" | base64 -d > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
@@ -46,3 +48,4 @@ jobs:
             # Restart the application
             pm2 restart all || pm2 start npm --name "ClientUI" -- start
           EOF
+
