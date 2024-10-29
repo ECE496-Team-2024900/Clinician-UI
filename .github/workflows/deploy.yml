@@ -43,6 +43,9 @@ jobs:
             sudo yum install -y nodejs  # Install Node.js
             sudo npm install -g pm2  # Install PM2 globally for process management
 
+            # Grant Node.js permissions to use port 443
+            sudo setcap 'cap_net_bind_service=+ep' $(which node)
+
             # Navigate to application folder or clone repository if it doesn't exist
             cd /home/ec2-user/clientUI || git clone https://github.com/ECE496-Team-2024900/Clinician-UI /home/ec2-user/clientUI
             cd /home/ec2-user/clientUI  # Move to application directory
@@ -51,6 +54,6 @@ jobs:
             git pull origin main
             npm install
 
-            # Restart the application with PM2, or start it if not already running
-            pm2 restart all || pm2 start npm --name "ClientUI" -- start
+            # Restart the application with PM2 on port 443, or start it if not already running
+            PORT=443 pm2 restart all || PORT=443 pm2 start npm --name "ClientUI" -- start
           EOF
