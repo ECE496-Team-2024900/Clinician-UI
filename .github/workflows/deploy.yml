@@ -1,0 +1,48 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16' 
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build the project
+        run: npm run build
+
+      - name: Convert SSH Key
+        run: |
+          echo "${{ secrets.EC2_KEY }}" | base64 -d > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      - name: Deploy to EC2
+        env:
+          HOST: ${{ secrets.EC2_HOST }}
+          USER: ${{ secrets.EC2_USER }}
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST << 'EOF'
+            # Navigate to your application folder or clone it if not present
+            cd /home/ec2-user/clientUI || git clone https://github.com/ECE496-Team-2024900/Clinician-UI /home/ec2-user/clientUI
+            cd /home/ec2-user/clientUI
+
+            # Pull latest code and install dependencies
+            git pull origin main
+            npm install
+
+            # Restart the application
+            pm2 restart all || pm2 start npm --name "ClientUI" -- start
+          EOF
