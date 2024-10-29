@@ -25,7 +25,6 @@ jobs:
         run: npm run build
 
       - name: Prepare SSH Key
-        # Ensure .ssh directory exists and set up the private key
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.EC2_KEY }}" | base64 -d > ~/.ssh/id_rsa
@@ -37,6 +36,13 @@ jobs:
           USER: ${{ secrets.EC2_USER }}
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST << 'EOF'
+            # Install necessary tools
+            sudo yum update -y
+            sudo yum install -y git
+            curl -fsSL https://rpm.nodesource.com/setup_16.x | sudo bash -
+            sudo yum install -y nodejs
+            sudo npm install -g pm2
+
             # Navigate to your application folder or clone it if not present
             cd /home/ec2-user/clientUI || git clone https://github.com/ECE496-Team-2024900/Clinician-UI /home/ec2-user/clientUI
             cd /home/ec2-user/clientUI
@@ -48,4 +54,3 @@ jobs:
             # Restart the application
             pm2 restart all || pm2 start npm --name "ClientUI" -- start
           EOF
-
