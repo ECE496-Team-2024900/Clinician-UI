@@ -1,56 +1,56 @@
-name: Deploy to EC2
+name: Deploy to EC2  # Name of the GitHub Action workflow
 
 on:
   push:
     branches:
-      - main
+      - main  # Trigger workflow on push events to the main branch
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Use the latest Ubuntu runner for the job
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3  # Step to checkout code from the repository
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v3  # Set up Node.js environment
         with:
-          node-version: '16'
+          node-version: '16'  # Specify the Node.js version to use
 
       - name: Install dependencies
-        run: npm install
+        run: npm install  # Install all project dependencies
 
       - name: Build the project
-        run: npm run build
+        run: npm run build  # Build the project (e.g., create production-ready files)
 
       - name: Prepare SSH Key
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.EC2_KEY }}" | base64 -d > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          mkdir -p ~/.ssh  # Create SSH directory if it doesn't exist
+          echo "${{ secrets.EC2_KEY }}" | base64 -d > ~/.ssh/id_rsa  # Decode and save the EC2 SSH key from secrets
+          chmod 600 ~/.ssh/id_rsa  # Set permissions for the SSH key
 
       - name: Deploy to EC2
         env:
-          HOST: ${{ secrets.EC2_HOST }}
-          USER: ${{ secrets.EC2_USER }}
+          HOST: ${{ secrets.EC2_HOST }}  # EC2 instance host from GitHub Secrets
+          USER: ${{ secrets.EC2_USER }}  # EC2 username from GitHub Secrets
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST << 'EOF'
-            # Install necessary tools
+            # Update and install necessary packages
             sudo yum update -y
             sudo yum install -y git
-            curl -fsSL https://rpm.nodesource.com/setup_16.x | sudo bash -
-            sudo yum install -y nodejs
-            sudo npm install -g pm2
+            curl -fsSL https://rpm.nodesource.com/setup_16.x | sudo bash -  # Add Node.js setup script
+            sudo yum install -y nodejs  # Install Node.js
+            sudo npm install -g pm2  # Install PM2 globally for process management
 
-            # Navigate to your application folder or clone it if not present
+            # Navigate to application folder or clone repository if it doesn't exist
             cd /home/ec2-user/clientUI || git clone https://github.com/ECE496-Team-2024900/Clinician-UI /home/ec2-user/clientUI
-            cd /home/ec2-user/clientUI
+            cd /home/ec2-user/clientUI  # Move to application directory
 
-            # Pull latest code and install dependencies
+            # Pull the latest code and install dependencies
             git pull origin main
             npm install
 
-            # Restart the application
+            # Restart the application with PM2, or start it if not already running
             pm2 restart all || pm2 start npm --name "ClientUI" -- start
           EOF
