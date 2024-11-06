@@ -6,7 +6,7 @@ import {
     useMeeting,
     useParticipant,
 } from "@videosdk.live/react-sdk";
-import { authToken, createMeeting } from "./API";
+import { authToken } from "./API";
 import ReactPlayer from "react-player";
 
 function JoinScreen({ getMeetingAndToken }) {
@@ -16,16 +16,14 @@ function JoinScreen({ getMeetingAndToken }) {
     };
     return (
         <div>
-            <input
-                type="text"
-                placeholder="Enter Meeting Id"
-                onChange={(e) => {
-                    setMeetingId(e.target.value);
-                }}
-            />
+            {/*<input*/}
+            {/*    type="text"*/}
+            {/*    placeholder="Enter Meeting Id"*/}
+            {/*    onChange={(e) => {*/}
+            {/*        setMeetingId(e.target.value);*/}
+            {/*    }}*/}
+            {/*/>*/}
             <button onClick={onClick}>Join</button>
-            {" or "}
-            <button onClick={onClick}>Create Meeting</button>
         </div>
     );
 }
@@ -95,9 +93,9 @@ function Controls() {
     const { leave, toggleMic, toggleWebcam } = useMeeting();
     return (
         <div>
-            <button onClick={() => leave()}>Leave</button>
-            <button onClick={() => toggleMic()}>toggleMic</button>
-            <button onClick={() => toggleWebcam()}>toggleWebcam</button>
+            <button onClick={() => leave()}>End Meeting</button>
+            <button onClick={() => toggleMic()}>Toggle Mic</button>
+            <button onClick={() => toggleWebcam()}>Toggle Webcam</button>
         </div>
     );
 }
@@ -148,9 +146,7 @@ function App() {
 
     //Getting the meeting id by calling the api we just wrote
     const getMeetingAndToken = async (id) => {
-        const meetingId =
-            id == null ? await createMeeting({ token: authToken }) : id;
-        setMeetingId(meetingId);
+        setMeetingId(id);
     };
 
     //This will set Meeting Id to null when meeting is left or ended
