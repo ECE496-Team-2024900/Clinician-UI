@@ -16,13 +16,6 @@ function JoinScreen({ getMeetingAndToken }) {
     };
     return (
         <div>
-            {/*<input*/}
-            {/*    type="text"*/}
-            {/*    placeholder="Enter Meeting Id"*/}
-            {/*    onChange={(e) => {*/}
-            {/*        setMeetingId(e.target.value);*/}
-            {/*    }}*/}
-            {/*/>*/}
             <button onClick={onClick}>Join</button>
         </div>
     );
@@ -90,10 +83,10 @@ function ParticipantView(props) {
 }
 
 function Controls() {
-    const { leave, toggleMic, toggleWebcam } = useMeeting();
+    const { end, toggleMic, toggleWebcam } = useMeeting();
     return (
         <div>
-            <button onClick={() => leave()}>End Meeting</button>
+            <button onClick={() => end()}>End Meeting</button>
             <button onClick={() => toggleMic()}>Toggle Mic</button>
             <button onClick={() => toggleWebcam()}>Toggle Webcam</button>
         </div>
@@ -109,7 +102,7 @@ function MeetingView(props) {
         onMeetingJoined: () => {
             setJoined("JOINED");
         },
-        //callback for when meeting is left
+        //callback for when meeting is ended
         onMeetingLeft: () => {
             props.onMeetingLeave();
         },
@@ -146,7 +139,8 @@ function App() {
 
     //Getting the meeting id by calling the api we just wrote
     const getMeetingAndToken = async (id) => {
-        setMeetingId(id);
+        //TODO-Faatima: get this value from BE
+        setMeetingId("jo3l-4y9b-10bk");
     };
 
     //This will set Meeting Id to null when meeting is left or ended
