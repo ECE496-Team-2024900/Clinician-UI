@@ -4,19 +4,14 @@ import {
     MeetingProvider,
     MeetingConsumer,
     useMeeting,
-    useParticipant,
+    useParticipant, createCameraVideoTrack,
 } from "@videosdk.live/react-sdk";
 import { authToken } from "./API";
 import ReactPlayer from "react-player";
 
-function JoinScreen({ getMeetingAndToken }) {
-    const [meetingId, setMeetingId] = useState(null);
-    const onClick = async () => {
-        await getMeetingAndToken(meetingId);
-    };
+function HomeScreen() {
     return (
         <div>
-            <button onClick={onClick}>Join</button>
         </div>
     );
 }
@@ -83,12 +78,25 @@ function ParticipantView(props) {
 }
 
 function Controls() {
-    const { end, toggleMic, toggleWebcam } = useMeeting();
+    const { end, toggleMic, toggleWebcam, getWebcams, changeWebcam } = useMeeting();
+    const [frontFacing, setFrontFacing] = useState(false)
+    const flipCam = async () => {
+        const devices = await getWebcams()
+        const customTrack = await createCameraVideoTrack({
+            cameraId: devices[0].deviceId,
+            facingMode: frontFacing ? "BACK" : "FRONT",
+            optimizationMode: "motion",
+            multiStream: false,
+        });
+        setFrontFacing(!frontFacing)
+        changeWebcam(customTrack)
+    }
     return (
         <div>
             <button onClick={() => end()}>End Meeting</button>
             <button onClick={() => toggleMic()}>Toggle Mic</button>
-            <button onClick={() => toggleWebcam()}>Toggle Webcam</button>
+            <button onClick={() => toggleWebcam()}>Toggle Cam</button>
+            <button onClick={() => flipCam()}>Flip Cam</button>
         </div>
     );
 }
@@ -115,7 +123,7 @@ function MeetingView(props) {
     return (
         <div className="container">
             <h3>Meeting Id: {props.meetingId}</h3>
-            {joined && joined == "JOINED" ? (
+            {joined && joined === "JOINED" ? (
                 <div>
                     <Controls />
                     {[...participants.keys()].map((participantId) => (
@@ -125,7 +133,7 @@ function MeetingView(props) {
                         />
                     ))}
                 </div>
-            ) : joined && joined == "JOINING" ? (
+            ) : joined && joined === "JOINING" ? (
                 <p>Joining the meeting...</p>
             ) : (
                 <button onClick={joinMeeting}>Join</button>
@@ -135,12 +143,11 @@ function MeetingView(props) {
 }
 
 function App() {
-    const [meetingId, setMeetingId] = useState(null);
+    const [meetingId, setMeetingId] = useState("7iqc-s8zz-mwld");
 
     //Getting the meeting id by calling the api we just wrote
     const getMeetingAndToken = async (id) => {
         //TODO-Faatima: get this value from BE
-        setMeetingId("jo3l-4y9b-10bk");
     };
 
     //This will set Meeting Id to null when meeting is left or ended
@@ -161,7 +168,7 @@ function App() {
             <MeetingView meetingId={meetingId} onMeetingLeave={onMeetingLeave} />
         </MeetingProvider>
     ) : (
-        <JoinScreen getMeetingAndToken={getMeetingAndToken} />
+        <HomeScreen />
     );
 }
 
