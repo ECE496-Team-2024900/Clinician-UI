@@ -8,6 +8,8 @@ import {
 } from "@videosdk.live/react-sdk";
 import { authToken } from "./API";
 import ReactPlayer from "react-player";
+import axios from "axios";
+import {getAPIUrl} from "./getApiUrl";
 
 function HomeScreen() {
     return (
@@ -143,12 +145,20 @@ function MeetingView(props) {
 }
 
 function App() {
-    const [meetingId, setMeetingId] = useState("7iqc-s8zz-mwld");
+    const [meetingId, setMeetingId] = useState(null);
 
-    //Getting the meeting id by calling the api we just wrote
-    const getMeetingAndToken = async (id) => {
-        //TODO-Faatima: get this value from BE
-    };
+    useEffect(() => {
+        const interval = setInterval(() => {
+            axios.get(`${getAPIUrl()}/treatment/get_meeting_id`).then(res => {
+                if (res.status === 200) {
+                    setMeetingId(res.data)
+                }
+            })
+        }, 5000)
+        return () => {
+            clearInterval(interval)
+        }
+    }, [])
 
     //This will set Meeting Id to null when meeting is left or ended
     const onMeetingLeave = () => {
