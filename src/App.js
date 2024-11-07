@@ -154,7 +154,7 @@ function App() {
                 meetingId,
                 micEnabled: true,
                 webcamEnabled: true,
-                name: "C.V. Raman",
+                name: "clinician",
             }}
             token={authToken}
         >
