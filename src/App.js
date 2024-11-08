@@ -46,10 +46,6 @@ function ParticipantView(props) {
 
     return (
         <div>
-            <p>
-                Participant: {displayName} | Webcam: {webcamOn ? "ON" : "OFF"} | Mic:{" "}
-                {micOn ? "ON" : "OFF"}
-            </p>
             <audio ref={micRef} autoPlay playsInline muted={isLocal} />
             {webcamOn && (
                 <ReactPlayer
