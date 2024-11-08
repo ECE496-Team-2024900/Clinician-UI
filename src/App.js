@@ -10,13 +10,8 @@ import { authToken } from "./API";
 import ReactPlayer from "react-player";
 import axios from "axios";
 import {getAPIUrl} from "./getApiUrl";
-
-function HomeScreen() {
-    return (
-        <div>
-        </div>
-    );
-}
+import styles from "./App.module.css"
+import {Modal, Spin} from "antd";
 
 function ParticipantView(props) {
     const micRef = useRef(null);
@@ -124,7 +119,6 @@ function MeetingView(props) {
 
     return (
         <div className="container">
-            <h3>Meeting Id: {props.meetingId}</h3>
             {joined && joined === "JOINED" ? (
                 <div>
                     <Controls />
@@ -136,9 +130,19 @@ function MeetingView(props) {
                     ))}
                 </div>
             ) : joined && joined === "JOINING" ? (
-                <p>Joining the meeting...</p>
+                <Spin fullscreen={true} tip={"Joining the meeting..."} />
             ) : (
-                <button onClick={joinMeeting}>Join</button>
+                <Modal
+                    closable={false}
+                    styles={{content: { backgroundColor: '#004AAD', color: "white" }, header: { backgroundColor: '#004AAD', color: "white" }}}
+                    open={true}
+                    okButtonProps={{style: {backgroundColor: "white", color: "#004AAD" }}}
+                    cancelButtonProps={{ style: { display: 'none' } }}
+                    title={<span style={{color: "white"}}>{"Please join the video call"}</span>}
+                    onOk={joinMeeting}
+                    okText={"Join"}>
+                    {"The treatment for patient has begun. Please join the video call."}
+                </Modal>
             )}
         </div>
     );
@@ -150,7 +154,7 @@ function App() {
     useEffect(() => {
         const interval = setInterval(() => {
             axios.get(`${getAPIUrl()}/treatment/get_meeting_id`).then(res => {
-                if (res.status === 200) {
+                if (res.data !== "") {
                     setMeetingId(res.data)
                 }
             })
@@ -165,20 +169,20 @@ function App() {
         setMeetingId(null);
     };
 
-    return authToken && meetingId ? (
-        <MeetingProvider
-            config={{
-                meetingId,
-                micEnabled: true,
-                webcamEnabled: true,
-                name: "clinician",
-            }}
-            token={authToken}
-        >
-            <MeetingView meetingId={meetingId} onMeetingLeave={onMeetingLeave} />
-        </MeetingProvider>
-    ) : (
-        <HomeScreen />
+    return (
+        <div className={styles.homePage}>
+            {authToken && meetingId ? <MeetingProvider
+                config={{
+                    meetingId,
+                    micEnabled: true,
+                    webcamEnabled: true,
+                    name: "clinician",
+                }}
+                token={authToken}
+            >
+                <MeetingView meetingId={meetingId} onMeetingLeave={onMeetingLeave} />
+            </MeetingProvider> : <div></div>}
+        </div>
     );
 }
 
