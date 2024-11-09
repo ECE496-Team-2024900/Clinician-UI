@@ -1,0 +1,39 @@
+.container {
+    padding: 1vh 1vw 1vh 1vw
+}
+
+.inputField {
+    margin: 0.5vh 0.5vw 0.5vh 0.5vw;
+    text-align: left;
+}
+
+.pageTitle {
+    font-weight: normal;
+    font-size: 1.5vw;
+    text-align: left;
+    margin: 0.5vh 0 2vh 0.5vw;
+}
+
+.pageSubtitle {
+    font-weight: bold;
+    font-size: 1vw;
+    text-align: left;
+    margin: 1vh 0 0 0.5vw;
+}
+
+.acknowledgment {
+    margin: 5vh 0.5vw 1.5vh 0.5vw;
+    text-align: left;
+}
+
+.acknowledgmentText {
+    font-size: 0.9vw;
+}
+
+.startTreatmentBtn {
+    height: 6vh;
+    margin: 0.5vh 0.5vw 0.5vh 0.5vw;
+    text-align: center;
+    background-color: #035196;
+    font-size: 0.9vw;
+}
