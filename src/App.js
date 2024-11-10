@@ -149,7 +149,7 @@ function App() {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            axios.get(`${getAPIUrl()}/treatment/get_meeting_id`).then(res => {
+            axios.get(`${getAPIUrl()}/treatment/get_video_call_id`).then(res => {
                 if (res.data !== "") {
                     setMeetingId(res.data)
                 }
