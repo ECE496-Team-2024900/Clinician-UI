@@ -45,7 +45,7 @@ function ParticipantView(props) {
     }, [micStream, micOn]);
 
     return (
-        <div>
+        <span style={{width: "50vw", display: "flex"}}>
             <audio ref={micRef} autoPlay playsInline muted={isLocal} />
             {webcamOn && (
                 <ReactPlayer
@@ -58,15 +58,16 @@ function ParticipantView(props) {
                     playing={true}
                     //
                     url={videoStream}
+                    wrapper={"span"}
+                    style={{display: "flex"}}
                     //
-                    height={"300px"}
-                    width={"300px"}
+                    width={"50vw"}
                     onError={(err) => {
                         console.log(err, "participant video error");
                     }}
                 />
             )}
-        </div>
+        </span>
     );
 }
 
