@@ -11,7 +11,7 @@ import ReactPlayer from "react-player";
 import axios from "axios";
 import {getAPIUrl} from "./getApiUrl";
 import styles from "./App.module.css"
-import {Modal, Spin} from "antd";
+import {Button, Modal, Spin} from "antd";
 
 function ParticipantView(props) {
     const micRef = useRef(null);
@@ -86,11 +86,11 @@ function Controls() {
         changeWebcam(customTrack)
     }
     return (
-        <div>
-            <button onClick={() => end()}>End Meeting</button>
-            <button onClick={() => toggleMic()}>Toggle Mic</button>
-            <button onClick={() => toggleWebcam()}>Toggle Cam</button>
-            <button onClick={() => flipCam()}>Flip Cam</button>
+        <div className={styles.buttonContainer}>
+            <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => end()}>End Meeting</Button>
+            <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => toggleMic()}>Toggle Mic</Button>
+            <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => toggleWebcam()}>Toggle Cam</Button>
+            <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => flipCam()}>Flip Cam</Button>
         </div>
     );
 }
