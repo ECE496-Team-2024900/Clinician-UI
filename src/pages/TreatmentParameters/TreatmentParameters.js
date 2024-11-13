@@ -2,6 +2,7 @@ import styles from '../../css/TreatmentParameters.module.css'
 import { Form, Input, Row, Checkbox, Button, Col, message } from 'antd'
 import { useState, useEffect } from 'react'
 import { getTreatmentAPIUrl } from '../../getAPIUrls/getTreatmentAPIUrl'
+import { getHardwareAPIUrl } from '../../getAPIUrls/getHardwareAPIUrl'
 import axios from 'axios'
 
 
@@ -37,9 +38,17 @@ function TreatmentParameters() {
         await axios.post(url, fieldsToUpdate)
                 .then((response) => {
                     if(response.status == 200) {
-                        message.success("Treatment parameters set successfully.");
+                        message.success("Treatment parameters set successfully. Now sending treatment approval to start treatment...");
+                        axios.get(`${getHardwareAPIUrl()}/approval?id=${treatment?.id}`)
+                            .then((response) => {
+                                if(response.status == 200) {
+                                    message.success("Treatment approval sent successfully.")
+                                } else {
+                                    message.error("There was an error is sending your treatment approval.")
+                                }
+                            })
                     } else {
-                        message.error("There was an error in updating the parameters.");
+                        message.error("There was an error in updating the parameters. Treatment approval not sent.");
                     }
                     setDisableSubmit(false);
                 });
