@@ -75,7 +75,9 @@ function TreatmentParameters() {
             "first_wait": Number(fields.delayBetweenDrugAndLight),
             "second_wait": Number(fields.delayBetweenLightAndSolvent)
         };
-        const url = `${getTreatmentAPIUrl()}/parameters/set?id=${treatment?.id}`;
+
+        const today = new Date().toISOString().split('T')[0];
+        const url = `${getTreatmentAPIUrl()}/parameters/prev?id=${treatment?.id}&date=${today}`;
         await axios.post(url, fieldsToUpdate)
                 .then((response) => {
                     if(response.status === 200) {
@@ -196,7 +198,7 @@ function TreatmentParameters() {
         <br />
         <br />
 
-        <h2 className={styles.pageTitle}>{"Current Treatment Parameters"} <Tooltip title="Current treatment parameters have been filled with the parameters used in this patient's previous treatment.">
+        <h2 className={styles.pageTitle}>{"Current Treatment Parameters"} <Tooltip title="Current treatment parameters have been filled with the parameters used in this patient's previous treatment (if this patient had a previous treatment).">
             <InfoCircleOutlined />
         </Tooltip></h2>
   
