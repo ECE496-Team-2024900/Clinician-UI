@@ -1,5 +1,6 @@
 import styles from '../../css/TreatmentParameters.module.css'
-import { Form, Input, Row, Checkbox, Button, Col, message } from 'antd'
+import { Form, Input, Row, Checkbox, Button, Col, message, Tooltip } from 'antd'
+import { InfoCircleOutlined } from '@ant-design/icons'
 import { useState, useEffect } from 'react'
 import { getTreatmentAPIUrl } from '../../getAPIUrls/getTreatmentAPIUrl'
 import { getHardwareAPIUrl } from '../../getAPIUrls/getHardwareAPIUrl'
@@ -10,20 +11,60 @@ function TreatmentParameters() {
     const [treatment, setTreatment] = useState({'id': 1}) // set to random value for now
     const [disableSubmit, setDisableSubmit] = useState(true)
     const [errors, setErrors] = useState({
-        drugVolume: true,
-        solventVolume: true,
-        laserPowerLevel: true,
-        DelayBetweenDrugAndLight: true,
-        DelayBetweenLightAndSolvent: true,
+        drugVolume: false,
+        solventVolume: false,
+        laserPowerLevel: false,
+        delayBetweenDrugAndLight: false,
+        delayBetweenLightAndSolvent: false,
         acknowledgment: true
     });
     const [fields, setFields] = useState({
         drugVolume: null,
         solventVolume: null,
         laserPowerLevel: null,
-        DelayBetweenDrugAndLight: null,
-        DelayBetweenLightAndSolvent: null,
+        delayBetweenDrugAndLight: null,
+        delayBetweenLightAndSolvent: null,
     });
+    const [prevTreatmentParameters, setPrevTreatmentParameters] = useState({
+        drugVolume: null,
+        solventVolume: null,
+        laserPowerLevel: null,
+        delayBetweenDrugAndLight: null,
+        delayBetweenLightAndSolvent: null,
+    });
+    const [prevForm] = Form.useForm();
+    const [currForm] = Form.useForm();
+
+    useEffect(() => {
+        const getPrevTreatmentParameters = async () => {
+            const url = `${getTreatmentAPIUrl()}/parameters/set?id=${treatment?.id}`;
+
+            try {
+                axios.get(url)
+                .then((response) => {
+                    if(response.status === 200) {
+                        setPrevTreatmentParameters({
+                            drugVolume: response.data.drug_volume_required,
+                            solventVolume: response.data.wash_volume_required,
+                            laserPowerLevel: response.data.laser_power_required,
+                            delayBetweenDrugAndLight: response.data.first_wait,
+                            delayBetweenLightAndSolvent: response.data.second_wait,
+                        });
+                    }
+                });
+            } catch (error) {
+                message.error("There was an error in fetching previous parameters.")
+            }
+        }
+        if(treatment?.id) {
+            getPrevTreatmentParameters();
+        }
+      }, [])
+
+      useEffect(() => {
+        prevForm.setFieldsValue(prevTreatmentParameters);
+        currForm.setFieldsValue(prevTreatmentParameters);
+    }, [prevTreatmentParameters]);
 
     const submitForm = async () => {
         setDisableSubmit(true);
@@ -31,17 +72,17 @@ function TreatmentParameters() {
             "drug_volume_required": Number(fields.drugVolume),
             "wash_volume_required": Number(fields.solventVolume),
             "laser_power_required": Number(fields.laserPowerLevel),
-            "first_wait": Number(fields.DelayBetweenDrugAndLight),
-            "second_wait": Number(fields.DelayBetweenLightAndSolvent)
+            "first_wait": Number(fields.delayBetweenDrugAndLight),
+            "second_wait": Number(fields.delayBetweenLightAndSolvent)
         };
         const url = `${getTreatmentAPIUrl()}/parameters/set?id=${treatment?.id}`;
         await axios.post(url, fieldsToUpdate)
                 .then((response) => {
-                    if(response.status == 200) {
+                    if(response.status === 200) {
                         message.success("Treatment parameters set successfully. Now sending treatment approval to start treatment...");
                         axios.get(`${getHardwareAPIUrl()}/approval?id=${treatment?.id}`)
                             .then((response) => {
-                                if(response.status == 200) {
+                                if(response.status === 200) {
                                     message.success("Treatment approval sent successfully.")
                                 } else {
                                     message.error("There was an error is sending your treatment approval.")
@@ -51,11 +92,14 @@ function TreatmentParameters() {
                         message.error("There was an error in updating the parameters. Treatment approval not sent.");
                     }
                     setDisableSubmit(false);
+                })
+                .catch(() => {
+                    message.error("There was an error in updating the parameters. Treatment approval not sent.");
                 });
     }
 
     const inputNumberValidation = (_, value) => {
-        if (isNaN(value) == false) {
+        if (isNaN(value) === false) {
             setFields(fields => ({
                 ...fields,
                 [_.field]: value,
@@ -108,9 +152,55 @@ function TreatmentParameters() {
         }
     }, [errors])
 
-    return <div className = {styles.container}>
-        <h2 className={styles.pageTitle}>Current Treatment Parameters</h2>
-        <Form onFinish={submitForm}>
+    return <div className={styles.container}>
+        <h2 className={styles.pageTitle}>Previous Treatment Parameters</h2>
+        <Form form={prevForm}>
+            <h3 className={styles.pageSubtitle}>Dosages</h3>
+            <Row>
+                <Col span={12}>
+                    <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="drugVolume" label="Drug Volume (mL)">
+                        <Input readOnly/>
+                    </Form.Item>
+                </Col>
+                <Col span={12}>
+                    <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="solventVolume" label="Solvent Volume (mL)">
+                        <Input readOnly/>
+                    </Form.Item>
+                </Col>
+            </Row>
+            <Row>
+                <Col span={12}>
+                    <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="laserPowerLevel" label="Laser Power Level (W)">
+                        <Input readOnly/>
+                    </Form.Item>
+                </Col>
+            </Row>
+            <h3 className={styles.pageSubtitle}>Wait Times</h3>
+            <Row>
+                <Col span={12}>
+                    <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="delayBetweenDrugAndLight" label="Delay between Drug Administration and Light Irradiation (s)">
+                        <Input readOnly/>
+                    </Form.Item>
+                </Col>
+                <Col span={12}>
+                    <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="delayBetweenLightAndSolvent" label="Delay between Light Irradiation and Solvent Administration (s)">
+                        <Input readOnly/>
+                    </Form.Item>
+                </Col>
+            </Row>
+        </Form>
+
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+
+        <h2 className={styles.pageTitle}>{"Current Treatment Parameters"} <Tooltip title="Current treatment parameters have been filled with the parameters used in this patient's previous treatment.">
+            <InfoCircleOutlined />
+        </Tooltip></h2>
+  
+        <Form form={currForm} onFinish={submitForm}>
             <h3 className={styles.pageSubtitle}>Dosages</h3>
             <Row>
                 <Col span={12}>
@@ -124,7 +214,7 @@ function TreatmentParameters() {
                                 validator: (_, value) => inputNumberValidation(_, value)
                             }
                         ]}>
-                        <Input placeholder='Please enter the required drug volume'></Input>
+                        <Input placeholder='Please enter the required drug volume' />
                     </Form.Item>
                 </Col>
                 <Col span={12}>
@@ -138,7 +228,7 @@ function TreatmentParameters() {
                                 validator: (_, value) => inputNumberValidation(_, value)
                             }
                         ]}>
-                        <Input placeholder='Please enter the required solvent volume'></Input>
+                        <Input placeholder='Please enter the required solvent volume' />
                     </Form.Item>
                 </Col>
             </Row>
@@ -154,14 +244,14 @@ function TreatmentParameters() {
                                 validator: (_, value) => inputNumberValidation(_, value)
                             }
                         ]}>
-                        <Input placeholder='Please enter the required laser power level'></Input>
+                        <Input placeholder='Please enter the required laser power level' />
                     </Form.Item>
                 </Col>
             </Row>
             <h3 className={styles.pageSubtitle}>Wait Times</h3>
             <Row>
                 <Col span={12}>
-                    <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="DelayBetweenDrugAndLight" label="Delay between Drug Administration and Light Irradiation (s)" rules={[
+                    <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="delayBetweenDrugAndLight" label="Delay between Drug Administration and Light Irradiation (s)" rules={[
                             {
                                 message: 'Wait time is required.',
                                 validator: (_, value) => inputRequiredValidation(_, value)
@@ -171,11 +261,11 @@ function TreatmentParameters() {
                                 validator: (_, value) => inputNumberValidation(_, value)
                             }
                         ]}>
-                        <Input placeholder='Please enter the required delay'></Input>
+                        <Input placeholder='Please enter the required delay' />
                     </Form.Item>
                 </Col>
                 <Col span={12}>
-                    <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="DelayBetweenLightAndSolvent" label="Delay between Light Irradiation and Solvent Administration (s)" rules={[
+                    <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="delayBetweenLightAndSolvent" label="Delay between Light Irradiation and Solvent Administration (s)" rules={[
                             {
                                 message: 'Wait time is required.',
                                 validator: (_, value) => inputRequiredValidation(_, value)
@@ -185,7 +275,7 @@ function TreatmentParameters() {
                                 validator: (_, value) => inputNumberValidation(_, value)
                             }
                         ]}>
-                        <Input placeholder='Please enter the required delay'></Input>
+                        <Input placeholder='Please enter the required delay' />
                     </Form.Item>
                 </Col>
             </Row>
