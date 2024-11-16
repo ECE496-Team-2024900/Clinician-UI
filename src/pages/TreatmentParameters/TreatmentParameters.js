@@ -1,5 +1,5 @@
 import styles from '../../css/TreatmentParameters.module.css'
-import { Form, Input, Row, Checkbox, Button, Col, message, Tooltip } from 'antd'
+import { Form, Input, Row, Checkbox, Button, Col, message, Tooltip, Image } from 'antd'
 import { InfoCircleOutlined } from '@ant-design/icons'
 import { useState, useEffect } from 'react'
 import { getTreatmentAPIUrl } from '../../getAPIUrls/getTreatmentAPIUrl'
@@ -39,22 +39,23 @@ function TreatmentParameters() {
         const getPrevTreatmentParameters = async () => {
             const url = `${getTreatmentAPIUrl()}/parameters/set?id=${treatment?.id}`;
 
-            try {
-                axios.get(url)
-                .then((response) => {
-                    if(response.status === 200) {
-                        setPrevTreatmentParameters({
-                            drugVolume: response.data.drug_volume_required,
-                            solventVolume: response.data.wash_volume_required,
-                            laserPowerLevel: response.data.laser_power_required,
-                            delayBetweenDrugAndLight: response.data.first_wait,
-                            delayBetweenLightAndSolvent: response.data.second_wait,
-                        });
-                    }
-                });
-            } catch (error) {
-                message.error("There was an error in fetching previous parameters.")
-            }
+            axios.get(url)
+            .then((response) => {
+                if(response.status === 200) {
+                    setPrevTreatmentParameters({
+                        drugVolume: response.data.drug_volume_required,
+                        solventVolume: response.data.wash_volume_required,
+                        laserPowerLevel: response.data.laser_power_required,
+                        delayBetweenDrugAndLight: response.data.first_wait,
+                        delayBetweenLightAndSolvent: response.data.second_wait,
+                    });
+                } else if(response.status === 204) {
+                    message.success("This patient has no previous treatment.")
+                }
+            })
+            .catch(() => {
+                message.error("There was an error in retrieving patient parameters.");
+            });
         }
         if(treatment?.id) {
             getPrevTreatmentParameters();
@@ -190,6 +191,18 @@ function TreatmentParameters() {
                     </Form.Item>
                 </Col>
             </Row>
+            <div className={styles.imageContainer}>
+                <Image
+                    className={styles.prevImage}
+                    width={600}
+                    src="https://www.shutterstock.com/shutterstock/photos/1300191583/display_1500/stock-vector-isolated-hand-open-wound-illustration-1300191583.jpg"
+                />
+                <Image
+                    className={styles.prevImage}
+                    width={600}
+                    src="https://www.shutterstock.com/shutterstock/photos/1300191583/display_1500/stock-vector-isolated-hand-open-wound-illustration-1300191583.jpg"
+                />
+            </div>
         </Form>
 
         <br />

@@ -37,3 +37,12 @@
     background-color: #035196;
     font-size: 0.9vw;
 }
+
+.imageContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.prevImage {
+    padding: 3vh 6vw 3vh 6vw;
+}
