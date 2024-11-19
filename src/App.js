@@ -56,12 +56,11 @@ function ParticipantView(props) {
                     controls={false}
                     muted={true}
                     playing={true}
+                    height={"300px"}
+                    width={"300px"}
                     //
                     url={videoStream}
-                    wrapper={"span"}
-                    style={{display: "flex"}}
                     //
-                    width={"50vw"}
                     onError={(err) => {
                         console.log(err, "participant video error");
                     }}
@@ -85,9 +84,14 @@ function Controls() {
         setFrontFacing(!frontFacing)
         changeWebcam(customTrack)
     }
+    const endMeeting = async () => {
+        axios.put(`${getAPIUrl()}/treatment/remove_video_call_id`,{id: 1} ).then(res => {
+            end()
+        })
+    }
     return (
         <div className={styles.buttonContainer}>
-            <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => end()}>End Meeting</Button>
+            <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => endMeeting()}>End Meeting</Button>
             <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => toggleMic()}>Toggle Mic</Button>
             <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => toggleWebcam()}>Toggle Cam</Button>
             <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => flipCam()}>Flip Cam</Button>
@@ -149,12 +153,17 @@ function App() {
     const [meetingId, setMeetingId] = useState(null);
 
     useEffect(() => {
-        const interval = setInterval(() => {
-            axios.get(`${getAPIUrl()}/treatment/get_video_call_id`).then(res => {
-                if (res.data !== "") {
-                    setMeetingId(res.data)
+        const interval = setInterval(async () => {
+            let apiRes = null
+            try {
+                apiRes = await axios.get(`${getAPIUrl()}/treatment/get_video_call_id`)
+            } catch (err) {
+                console.error(err);
+            } finally {
+                if (apiRes?.data?.message !== "") {
+                    setMeetingId(apiRes?.data?.message)
                 }
-            })
+            }
         }, 5000)
         return () => {
             clearInterval(interval)
