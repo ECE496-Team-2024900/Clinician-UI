@@ -31,13 +31,16 @@ function TreatmentParameters() {
         laserPowerLevel: null,
         delayBetweenDrugAndLight: null,
         delayBetweenLightAndSolvent: null,
+        imageUrls: null
     });
+
     const [prevForm] = Form.useForm();
     const [currForm] = Form.useForm();
 
     useEffect(() => {
         const getPrevTreatmentParameters = async () => {
-            const url = `${getTreatmentAPIUrl()}/parameters/set?id=${treatment?.id}`;
+            const today = new Date().toISOString().split('T')[0];
+            const url = `${getTreatmentAPIUrl()}/treatment/parameters/prev?id=${treatment?.id}&date=${today}`;
 
             axios.get(url)
             .then((response) => {
@@ -48,6 +51,7 @@ function TreatmentParameters() {
                         laserPowerLevel: response.data.laser_power_required,
                         delayBetweenDrugAndLight: response.data.first_wait,
                         delayBetweenLightAndSolvent: response.data.second_wait,
+                        imageUrls: (response.data.image_urls) ? response.data.image_urls : null
                     });
                 } else if(response.status === 204) {
                     message.success("This patient has no previous treatment.")
@@ -77,9 +81,8 @@ function TreatmentParameters() {
             "second_wait": Number(fields.delayBetweenLightAndSolvent)
         };
 
-        const today = new Date().toISOString().split('T')[0];
-        const url = `${getTreatmentAPIUrl()}/parameters/prev?id=${treatment?.id}&date=${today}`;
-        await axios.post(url, fieldsToUpdate)
+        const url = `${getTreatmentAPIUrl()}/treatment/parameters/set?id=${treatment?.id}`;
+        await axios.put(url, fieldsToUpdate)
                 .then((response) => {
                     if(response.status === 200) {
                         message.success("Treatment parameters set successfully. Now sending treatment approval to start treatment...");
@@ -192,16 +195,14 @@ function TreatmentParameters() {
                 </Col>
             </Row>
             <div className={styles.imageContainer}>
-                <Image
+            {prevTreatmentParameters.imageUrls?.map((item) => {
+                {console.log(item)}
+                return <Image
                     className={styles.prevImage}
                     width={600}
-                    src="https://www.shutterstock.com/shutterstock/photos/1300191583/display_1500/stock-vector-isolated-hand-open-wound-illustration-1300191583.jpg"
+                    src={item}
                 />
-                <Image
-                    className={styles.prevImage}
-                    width={600}
-                    src="https://www.shutterstock.com/shutterstock/photos/1300191583/display_1500/stock-vector-isolated-hand-open-wound-illustration-1300191583.jpg"
-                />
+            })}
             </div>
         </Form>
 
