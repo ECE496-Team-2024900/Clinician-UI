@@ -86,7 +86,7 @@ function TreatmentParameters() {
                 .then((response) => {
                     if(response.status === 200) {
                         message.success("Treatment parameters set successfully. Now sending treatment approval to start treatment...");
-                        axios.get(`${getHardwareAPIUrl()}/approval?id=${treatment?.id}`)
+                        axios.get(`${getHardwareAPIUrl()}/hardware/approval?id=${treatment?.id}`)
                             .then((response) => {
                                 if(response.status === 200) {
                                     message.success("Treatment approval sent successfully.")
