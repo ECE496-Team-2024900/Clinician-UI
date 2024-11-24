@@ -155,6 +155,9 @@ function App() {
     const [meetingId, setMeetingId] = useState(null);
     const [patients, setPatients] = useState([])
     const [clinician, setClinician] = useState()
+    const [treatments, setTreatments] = useState([])
+    const [wounds, setWounds] = useState([])
+    const [vals, setVals] = useState(new Map());
 
     useEffect(() => {
         axios.get(`${getUsersAPIUrl()}/users/find_all_patients`).then(res => {
@@ -167,7 +170,33 @@ function App() {
                 setClinician(res?.data?.message)
             }
         })
+        axios.get(`${getTreatmentAPIUrl()}/treatment/get_all_treatments` ).then(res => {
+            if (res.status === 200) {
+                setTreatments(res?.data?.message)
+            }
+        })
+        axios.get(`${getTreatmentAPIUrl()}/treatment/get_all_wounds` ).then(res => {
+            if (res.status === 200) {
+                setWounds(res?.data?.message)
+            }
+        })
     }, []);
+
+    useEffect(() => {
+        const newVals = new Map(vals)
+        treatments.forEach(treatment => {
+            const woundIndex = wounds.findIndex(wd => wd?.['id'] === treatment?.["wound_id"])
+            if (woundIndex !== -1) {
+                const patient_id = wounds[woundIndex]?.['patient_id']
+                const patientIndex = patients.findIndex(pt => pt?.['medical_ref_number'] === patient_id)
+                if (patientIndex !== -1) {
+                    const patientName = `${patients[patientIndex]?.['first_name']} ${patients[patientIndex]?.['last_name']}`
+                    newVals.set(treatment?.["id"], patientName)
+                }
+            }
+        })
+        setVals(newVals)
+    }, [wounds, treatments, patients]);
 
     useEffect(() => {
         const interval = setInterval(async () => {
@@ -194,14 +223,6 @@ function App() {
 
     return (
         <div className={styles.homePage}>
-            <h1>{`Welcome, Dr. ${clinician?.['first_name']} ${clinician?.['last_name']}`}</h1>
-            <h2 style={{color: "#004AAD"}}>Patients</h2>
-            <div className={styles.patientContainer}>
-            {patients.length !== 0 && patients.map(patient => {
-                return <div className={styles.patientAvatar}><Avatar style={{background: "#DEEBF9"}} size={64} icon={<UserOutlined style={{color: "#004AAD"}}/>}/><span style={{color: "#004AAD"}}>{patient?.['first_name'] + " " + patient?.['last_name']}</span></div>
-            })}
-            </div>
-            <h2 style={{color: "#004AAD"}}>Schedule</h2>
             {authToken && meetingId ? <MeetingProvider
                 config={{
                     meetingId,
@@ -212,7 +233,31 @@ function App() {
                 token={authToken}
             >
                 <MeetingView meetingId={meetingId} onMeetingLeave={onMeetingLeave} />
-            </MeetingProvider> : <div></div>}
+            </MeetingProvider> : <div className={styles.container}>
+                {clinician !== undefined && <h1>{`Welcome, Dr. ${clinician?.['first_name']} ${clinician?.['last_name']}`}</h1>}
+                <h2 style={{color: "#004AAD"}}>Patients</h2>
+                <div className={styles.patientContainer}>
+                    {patients.length !== 0 && patients.map(patient => {
+                        return <div className={styles.patientAvatar}>
+                            <Avatar
+                                style={{background: "#DEEBF9"}}
+                                size={64}
+                                icon={<UserOutlined style={{color: "#004AAD"}}/>}
+                            />
+                            <span style={{color: "#004AAD"}}>{patient?.['first_name'] + " " + patient?.['last_name']}</span>
+                        </div>
+                    })}
+                </div>
+                <h2 style={{color: "#004AAD"}}>Schedule</h2>
+                <div className={styles.scheduleContainer}>
+                    {treatments.length !== 0 && treatments.map(treatment => {
+                        return <div className={styles.treatmentWrapper}>
+                            <Avatar style={{background: "white", color: "#004AAD"}}>{treatment?.["id"]}</Avatar>
+                            <span>{`Treatment session at ${new Date(treatment?.['start_time_scheduled'])} for ${vals.get(treatment?.['id'])}`}</span>
+                        </div>
+                    })}
+                </div>
+            </div>}
         </div>
     );
 }
