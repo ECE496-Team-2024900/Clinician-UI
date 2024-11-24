@@ -192,7 +192,7 @@ function App() {
                 token={authToken}
             >
                 <MeetingView meetingId={meetingId} onMeetingLeave={onMeetingLeave} />
-            </MeetingProvider> : <div><Content/></div>}
+            </MeetingProvider> : <div className={styles.container}><SideMenu/><Content/></div>}
         </div>
     );
 }
@@ -206,6 +206,14 @@ function Content() {
             </Routes>
         </div>
     );
+}
+
+function SideMenu() {
+    return (
+        <div className={styles.sideMenu}>
+
+        </div>
+    )
 }
 
 export default App;

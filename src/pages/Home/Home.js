@@ -1,4 +1,4 @@
-import styles from "../../App.module.css";
+import styles from "../../css/Home.module.css";
 import {Avatar, Button} from "antd";
 import {ArrowRightOutlined, UserOutlined} from "@ant-design/icons";
 import React, {useEffect, useState} from "react";

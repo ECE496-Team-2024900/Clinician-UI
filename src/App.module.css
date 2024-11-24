@@ -1,44 +1,17 @@
 .homePage {
     width: 100vw;
     height: 100vh;
-    padding-left: 10vw;
-    padding-top: 5vh;
     background-color: #DEEBF9;
 
     .container {
         display: flex;
-        flex-direction: column;
-        gap: 1vh;
+        flex-direction: row;
+        justify-content: flex-start;
 
-        .patientContainer {
-            display: flex;
-            flex-direction: row;
-            width: 100%;
-            overflow-x: auto;
-            gap: 2vw;
-
-            .patientAvatar {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-            }
-        }
-
-        .scheduleContainer {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            overflow-y: auto;
-            gap: 2vh;
-
-            .treatmentWrapper {
-                display: flex;
-                flex-direction: row;
-                justify-content: flex-start;
-                gap: 2vw;
-                align-items: center;
-            }
+        .sideMenu {
+            width: 10vw;
+            height: 100vh;
+            background-color: #004AAD;
         }
     }
 }
