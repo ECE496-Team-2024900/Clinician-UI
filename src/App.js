@@ -70,12 +70,9 @@ function ParticipantView(props) {
     );
 }
 
-function Controls(props) {
-    const { end, toggleMic, toggleWebcam, getWebcams, changeWebcam, localParticipant } = useMeeting();
+function Controls() {
+    const { end, toggleMic, toggleWebcam, getWebcams, changeWebcam } = useMeeting();
     const [frontFacing, setFrontFacing] = useState(false)
-    const { webcamStream, webcamOn, captureImage } = useParticipant(
-        props.participantId
-    );
     const flipCam = async () => {
         const devices = await getWebcams()
         const customTrack = await createCameraVideoTrack({
@@ -92,23 +89,12 @@ function Controls(props) {
             end()
         })
     }
-    const takeAndUploadScreenshot = async () => {
-        if (webcamOn && webcamStream) {
-            const base64 = await captureImage({}); // captureImage will return base64 string
-            axios.put(`${getAPIUrl()}/treatment/add_image`, {image: base64, id: 1} ).then(res => {
-                console.log("image saved successfully")
-            })
-        } else {
-            console.error("Camera must be on to capture an image");
-        }
-    }
     return (
         <div className={styles.buttonContainer}>
             <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => endMeeting()}>End Meeting</Button>
             <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => toggleMic()}>Toggle Mic</Button>
             <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => toggleWebcam()}>Toggle Cam</Button>
             <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => flipCam()}>Flip Cam</Button>
-            <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => takeAndUploadScreenshot()}>Take Screenshot</Button>
         </div>
     );
 }
@@ -117,7 +103,7 @@ function MeetingView(props) {
     const [joined, setJoined] = useState(null);
     //Get the method which will be used to join the meeting.
     //We will also get the participants list to display all participants
-    const { join, participants, localParticipant } = useMeeting({
+    const { join, participants } = useMeeting({
         //callback for when meeting is joined successfully
         onMeetingJoined: () => {
             setJoined("JOINED");
@@ -136,7 +122,7 @@ function MeetingView(props) {
         <div className="container">
             {joined && joined === "JOINED" ? (
                 <div>
-                    <Controls participantId={[...participants.keys()].filter(id => id !== localParticipant.id)?.[0]} />
+                    <Controls />
                     {[...participants.keys()].map((participantId) => (
                         <ParticipantView
                             participantId={participantId}
