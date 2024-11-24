@@ -1,0 +1,2 @@
+//This is the Auth token, you will use it to generate a meeting and connect to it
+export const authToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlrZXkiOiI5YTcwZWFiNS1lZGUzLTQ2NGUtODllYS1mNmY2MjNhNjA0YjYiLCJwZXJtaXNzaW9ucyI6WyJhbGxvd19qb2luIl0sImlhdCI6MTczMDkyMjU0NSwiZXhwIjoxNzYyNDU4NTQ1fQ.61pgTL01Al9aCgVDHRNZlEf_34SQVGKGk3XNyGtvvj0";
