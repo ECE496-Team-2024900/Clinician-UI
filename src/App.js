@@ -13,9 +13,9 @@ import { getTreatmentAPIUrl } from "./getAPIUrls/getTreatmentAPIUrl"
 import { getUsersAPIUrl } from "./getAPIUrls/getUsersAPIUrl"
 import styles from "./App.module.css"
 import {Avatar, Button, Menu, Modal, Spin} from "antd";
-import {ArrowRightOutlined, UserOutlined} from "@ant-design/icons";
+import {ArrowRightOutlined, HomeOutlined, UserOutlined} from "@ant-design/icons";
 import TreatmentParameters from "./pages/TreatmentParameters/TreatmentParameters";
-import {Route, Routes} from "react-router-dom";
+import {Route, Routes, useNavigate} from "react-router-dom";
 import Home from "./pages/Home/Home";
 
 function ParticipantView(props) {
@@ -209,9 +209,13 @@ function Content() {
 }
 
 function SideMenu() {
+    const navigate = useNavigate()
     return (
         <div className={styles.sideMenu}>
-
+            <div className={styles.buttonContainer2}>
+                <Button className={styles.button} icon={<HomeOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/")}/>
+                <span style={{color: "white"}}>Home</span>
+            </div>
         </div>
     )
 }

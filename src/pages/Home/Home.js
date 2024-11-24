@@ -13,7 +13,7 @@ function Home() {
     const [treatments, setTreatments] = useState([])
     const [wounds, setWounds] = useState([])
     const [vals, setVals] = useState(new Map());
-    const {navigate} = useNavigate();
+    const navigate = useNavigate();
 
     useEffect(() => {
         axios.get(`${getUsersAPIUrl()}/users/find_all_patients`).then(res => {
