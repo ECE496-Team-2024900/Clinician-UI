@@ -9,9 +9,11 @@ import {
 import { authToken } from "./API";
 import ReactPlayer from "react-player";
 import axios from "axios";
-import {getAPIUrl} from "./getApiUrl";
+import { getTreatmentAPIUrl } from "./getAPIUrls/getTreatmentAPIUrl"
+import { getUsersAPIUrl } from "./getAPIUrls/getUsersAPIUrl"
 import styles from "./App.module.css"
-import {Button, Modal, Spin} from "antd";
+import {Avatar, Button, Menu, Modal, Spin} from "antd";
+import {UserOutlined} from "@ant-design/icons";
 
 function ParticipantView(props) {
     const micRef = useRef(null);
@@ -85,7 +87,7 @@ function Controls() {
         changeWebcam(customTrack)
     }
     const endMeeting = async () => {
-        axios.put(`${getAPIUrl()}/treatment/remove_video_call_id`,{id: 1} ).then(res => {
+        axios.put(`${getTreatmentAPIUrl()}/treatment/remove_video_call_id`,{id: 1} ).then(res => {
             end()
         })
     }
@@ -151,12 +153,27 @@ function MeetingView(props) {
 
 function App() {
     const [meetingId, setMeetingId] = useState(null);
+    const [patients, setPatients] = useState([])
+    const [clinician, setClinician] = useState()
+
+    useEffect(() => {
+        axios.get(`${getUsersAPIUrl()}/users/find_all_patients`).then(res => {
+            if (res.status === 200) {
+                setPatients(res?.data?.message)
+            }
+        })
+        axios.get(`${getUsersAPIUrl()}/users/get_clinician_info`, {params: {"email": "walt.disney@disney.org"}} ).then(res => {
+            if (res.status === 200) {
+                setClinician(res?.data?.message)
+            }
+        })
+    }, []);
 
     useEffect(() => {
         const interval = setInterval(async () => {
             let apiRes = null
             try {
-                apiRes = await axios.get(`${getAPIUrl()}/treatment/get_video_call_id`)
+                apiRes = await axios.get(`${getTreatmentAPIUrl()}/treatment/get_video_call_id`)
             } catch (err) {
                 console.error(err);
             } finally {
@@ -177,6 +194,14 @@ function App() {
 
     return (
         <div className={styles.homePage}>
+            <h1>{`Welcome, Dr. ${clinician?.['first_name']} ${clinician?.['last_name']}`}</h1>
+            <h2 style={{color: "#004AAD"}}>Patients</h2>
+            <div className={styles.patientContainer}>
+            {patients.length !== 0 && patients.map(patient => {
+                return <div className={styles.patientAvatar}><Avatar style={{background: "#DEEBF9"}} size={64} icon={<UserOutlined style={{color: "#004AAD"}}/>}/><span style={{color: "#004AAD"}}>{patient?.['first_name'] + " " + patient?.['last_name']}</span></div>
+            })}
+            </div>
+            <h2 style={{color: "#004AAD"}}>Schedule</h2>
             {authToken && meetingId ? <MeetingProvider
                 config={{
                     meetingId,

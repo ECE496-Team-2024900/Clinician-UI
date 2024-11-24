@@ -1,7 +1,26 @@
 .homePage {
     width: 100vw;
     height: 100vh;
+    padding-left: 10vw;
+    padding-top: 5vh;
     background-color: #DEEBF9;
+    display: flex;
+    flex-direction: column;
+
+    .patientContainer {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        overflow-x: auto;
+        gap: 2vw;
+
+        .patientAvatar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+    }
 }
 
 .buttonContainer {
