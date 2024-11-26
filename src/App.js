@@ -10,7 +10,6 @@ import { authToken } from "./API";
 import ReactPlayer from "react-player";
 import axios from "axios";
 import { getTreatmentAPIUrl } from "./getAPIUrls/getTreatmentAPIUrl"
-import { getUsersAPIUrl } from "./getAPIUrls/getUsersAPIUrl"
 import styles from "./App.module.css"
 import {Avatar, Button, Menu, Modal, Spin} from "antd";
 import {ArrowRightOutlined, HomeOutlined, UserOutlined} from "@ant-design/icons";
@@ -75,8 +74,11 @@ function ParticipantView(props) {
     );
 }
 
-function Controls() {
-    const { end, toggleMic, toggleWebcam, getWebcams, changeWebcam } = useMeeting();
+function Controls(props) {
+    const { end, toggleMic, toggleWebcam, getWebcams, changeWebcam, localParticipant } = useMeeting();
+    const { webcamStream, webcamOn, captureImage } = useParticipant(
+        props.participantId
+    );
     const navigate = useNavigate()
     const [frontFacing, setFrontFacing] = useState(false)
     const flipCam = async () => {
@@ -100,7 +102,7 @@ function Controls() {
     const takeAndUploadScreenshot = async () => {
         if (webcamOn && webcamStream) {
             const base64 = await captureImage({}); // captureImage will return base64 string
-            axios.put(`${getAPIUrl()}/treatment/add_image`, {image: base64, id: 1} ).then(res => {
+            axios.put(`${getTreatmentAPIUrl()}/treatment/add_image`, {image: base64, id: 1} ).then(res => {
                 console.log("image saved successfully")
             })
         } else {
@@ -121,9 +123,9 @@ function Controls() {
 
 function MeetingView(props) {
     const [joined, setJoined] = useState(null);
-    //Get the method which will be used to join the meeting.
-    //We will also get the participants list to display all participants
-    const { join, participants } = useMeeting({
+    const { join, participants, localParticipant } = useMeeting({
+        //Get the method which will be used to join the meeting.
+        //We will also get the participants list to display all participants
         //callback for when meeting is joined successfully
         onMeetingJoined: () => {
             setJoined("JOINED");
@@ -142,7 +144,7 @@ function MeetingView(props) {
         <div className="container">
             {joined && joined === "JOINED" ? (
                 <div>
-                    <Controls />
+                    <Controls participantId={[...participants.keys()].filter(id => id !== localParticipant.id)?.[0]} />
                     {[...participants.keys()].map((participantId) => (
                         <ParticipantView
                             participantId={participantId}
