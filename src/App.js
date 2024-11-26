@@ -1,4 +1,3 @@
-import "./App.css";
 import Login from './pages/Login.js';
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -215,7 +214,7 @@ function SideMenu() {
     return (
         <div className={styles.sideMenu}>
             <div className={styles.buttonContainer2}>
-                <Button shape={"round"} className={styles.button} icon={<HomeOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/")}/>
+                <Button shape={"round"} className={styles.button} icon={<HomeOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/home")}/>
                 <span style={{color: "white"}}>Home</span>
             </div>
         </div>
