@@ -77,6 +77,7 @@ function ParticipantView(props) {
 
 function Controls() {
     const { end, toggleMic, toggleWebcam, getWebcams, changeWebcam } = useMeeting();
+    const navigate = useNavigate()
     const [frontFacing, setFrontFacing] = useState(false)
     const flipCam = async () => {
         const devices = await getWebcams()
@@ -92,6 +93,7 @@ function Controls() {
     const endMeeting = async () => {
         axios.put(`${getTreatmentAPIUrl()}/treatment/remove_video_call_id`,{id: 1} ).then(res => {
             end()
+            navigate("/treatment_session")
         })
     }
     return (
@@ -214,7 +216,7 @@ function SideMenu() {
     return (
         <div className={styles.sideMenu}>
             <div className={styles.buttonContainer2}>
-                <Button shape={"round"} className={styles.button} icon={<HomeOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/")}/>
+                <Button shape={"round"} className={styles.button} icon={<HomeOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/home")}/>
                 <span style={{color: "white"}}>Home</span>
             </div>
         </div>
