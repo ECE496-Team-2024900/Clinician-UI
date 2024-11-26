@@ -9,9 +9,14 @@ import {
 import { authToken } from "./API";
 import ReactPlayer from "react-player";
 import axios from "axios";
-import {getAPIUrl} from "./getApiUrl";
+import { getTreatmentAPIUrl } from "./getAPIUrls/getTreatmentAPIUrl"
+import { getUsersAPIUrl } from "./getAPIUrls/getUsersAPIUrl"
 import styles from "./App.module.css"
-import {Button, Modal, Spin} from "antd";
+import {Avatar, Button, Menu, Modal, Spin} from "antd";
+import {ArrowRightOutlined, HomeOutlined, UserOutlined} from "@ant-design/icons";
+import TreatmentParameters from "./pages/TreatmentParameters/TreatmentParameters";
+import {Route, Routes, useNavigate} from "react-router-dom";
+import Home from "./pages/Home/Home";
 
 function ParticipantView(props) {
     const micRef = useRef(null);
@@ -85,7 +90,7 @@ function Controls() {
         changeWebcam(customTrack)
     }
     const endMeeting = async () => {
-        axios.put(`${getAPIUrl()}/treatment/remove_video_call_id`,{id: 1} ).then(res => {
+        axios.put(`${getTreatmentAPIUrl()}/treatment/remove_video_call_id`,{id: 1} ).then(res => {
             end()
         })
     }
@@ -156,7 +161,7 @@ function App() {
         const interval = setInterval(async () => {
             let apiRes = null
             try {
-                apiRes = await axios.get(`${getAPIUrl()}/treatment/get_video_call_id`)
+                apiRes = await axios.get(`${getTreatmentAPIUrl()}/treatment/get_video_call_id`)
             } catch (err) {
                 console.error(err);
             } finally {
@@ -187,9 +192,32 @@ function App() {
                 token={authToken}
             >
                 <MeetingView meetingId={meetingId} onMeetingLeave={onMeetingLeave} />
-            </MeetingProvider> : <div></div>}
+            </MeetingProvider> : <div className={styles.container}><SideMenu/><Content/></div>}
         </div>
     );
+}
+
+function Content() {
+    return (
+        <div>
+            <Routes>
+                <Route path="/" element={<Home />}></Route>
+                <Route path="/treatment_session" element={<TreatmentParameters />}></Route>
+            </Routes>
+        </div>
+    );
+}
+
+function SideMenu() {
+    const navigate = useNavigate()
+    return (
+        <div className={styles.sideMenu}>
+            <div className={styles.buttonContainer2}>
+                <Button shape={"round"} className={styles.button} icon={<HomeOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/")}/>
+                <span style={{color: "white"}}>Home</span>
+            </div>
+        </div>
+    )
 }
 
 export default App;
