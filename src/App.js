@@ -77,6 +77,7 @@ function ParticipantView(props) {
 
 function Controls() {
     const { end, toggleMic, toggleWebcam, getWebcams, changeWebcam } = useMeeting();
+    const navigate = useNavigate()
     const [frontFacing, setFrontFacing] = useState(false)
     const flipCam = async () => {
         const devices = await getWebcams()
@@ -92,14 +93,28 @@ function Controls() {
     const endMeeting = async () => {
         axios.put(`${getTreatmentAPIUrl()}/treatment/remove_video_call_id`,{id: 1} ).then(res => {
             end()
+            navigate("/treatment_session")
         })
     }
+
+    const takeAndUploadScreenshot = async () => {
+        if (webcamOn && webcamStream) {
+            const base64 = await captureImage({}); // captureImage will return base64 string
+            axios.put(`${getAPIUrl()}/treatment/add_image`, {image: base64, id: 1} ).then(res => {
+                console.log("image saved successfully")
+            })
+        } else {
+            console.error("Camera must be on to capture an image");
+        }
+    }
+
     return (
         <div className={styles.buttonContainer}>
             <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => endMeeting()}>End Meeting</Button>
             <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => toggleMic()}>Toggle Mic</Button>
             <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => toggleWebcam()}>Toggle Cam</Button>
             <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => flipCam()}>Flip Cam</Button>
+            <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => takeAndUploadScreenshot()}>Take Screenshot</Button>
         </div>
     );
 }
@@ -214,7 +229,7 @@ function SideMenu() {
     return (
         <div className={styles.sideMenu}>
             <div className={styles.buttonContainer2}>
-                <Button shape={"round"} className={styles.button} icon={<HomeOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/")}/>
+                <Button shape={"round"} className={styles.button} icon={<HomeOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/home")}/>
                 <span style={{color: "white"}}>Home</span>
             </div>
         </div>
