@@ -9,9 +9,14 @@ import {
 import { authToken } from "./API";
 import ReactPlayer from "react-player";
 import axios from "axios";
-import {getAPIUrl} from "./getApiUrl";
+import { getTreatmentAPIUrl } from "./getAPIUrls/getTreatmentAPIUrl"
+import { getUsersAPIUrl } from "./getAPIUrls/getUsersAPIUrl"
 import styles from "./App.module.css"
-import {Button, Modal, Spin} from "antd";
+import {Avatar, Button, Menu, Modal, Spin} from "antd";
+import {ArrowRightOutlined, HomeOutlined, UserOutlined} from "@ant-design/icons";
+import TreatmentParameters from "./pages/TreatmentParameters/TreatmentParameters";
+import {Route, Routes, useNavigate} from "react-router-dom";
+import Home from "./pages/Home/Home";
 
 function ParticipantView(props) {
     const micRef = useRef(null);
@@ -70,12 +75,9 @@ function ParticipantView(props) {
     );
 }
 
-function Controls(props) {
-    const { end, toggleMic, toggleWebcam, getWebcams, changeWebcam, localParticipant } = useMeeting();
+function Controls() {
+    const { end, toggleMic, toggleWebcam, getWebcams, changeWebcam } = useMeeting();
     const [frontFacing, setFrontFacing] = useState(false)
-    const { webcamStream, webcamOn, captureImage } = useParticipant(
-        props.participantId
-    );
     const flipCam = async () => {
         const devices = await getWebcams()
         const customTrack = await createCameraVideoTrack({
@@ -88,19 +90,9 @@ function Controls(props) {
         changeWebcam(customTrack)
     }
     const endMeeting = async () => {
-        axios.put(`${getAPIUrl()}/treatment/remove_video_call_id`,{id: 1} ).then(res => {
+        axios.put(`${getTreatmentAPIUrl()}/treatment/remove_video_call_id`,{id: 1} ).then(res => {
             end()
         })
-    }
-    const takeAndUploadScreenshot = async () => {
-        if (webcamOn && webcamStream) {
-            const base64 = await captureImage({}); // captureImage will return base64 string
-            axios.put(`${getAPIUrl()}/treatment/add_image`, {image: base64, id: 1} ).then(res => {
-                console.log("image saved successfully")
-            })
-        } else {
-            console.error("Camera must be on to capture an image");
-        }
     }
     return (
         <div className={styles.buttonContainer}>
@@ -108,7 +100,6 @@ function Controls(props) {
             <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => toggleMic()}>Toggle Mic</Button>
             <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => toggleWebcam()}>Toggle Cam</Button>
             <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => flipCam()}>Flip Cam</Button>
-            <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => takeAndUploadScreenshot()}>Take Screenshot</Button>
         </div>
     );
 }
@@ -117,7 +108,7 @@ function MeetingView(props) {
     const [joined, setJoined] = useState(null);
     //Get the method which will be used to join the meeting.
     //We will also get the participants list to display all participants
-    const { join, participants, localParticipant } = useMeeting({
+    const { join, participants } = useMeeting({
         //callback for when meeting is joined successfully
         onMeetingJoined: () => {
             setJoined("JOINED");
@@ -136,7 +127,7 @@ function MeetingView(props) {
         <div className="container">
             {joined && joined === "JOINED" ? (
                 <div>
-                    <Controls participantId={[...participants.keys()].filter(id => id !== localParticipant.id)?.[0]} />
+                    <Controls />
                     {[...participants.keys()].map((participantId) => (
                         <ParticipantView
                             participantId={participantId}
@@ -170,7 +161,7 @@ function App() {
         const interval = setInterval(async () => {
             let apiRes = null
             try {
-                apiRes = await axios.get(`${getAPIUrl()}/treatment/get_video_call_id`)
+                apiRes = await axios.get(`${getTreatmentAPIUrl()}/treatment/get_video_call_id`)
             } catch (err) {
                 console.error(err);
             } finally {
@@ -201,9 +192,32 @@ function App() {
                 token={authToken}
             >
                 <MeetingView meetingId={meetingId} onMeetingLeave={onMeetingLeave} />
-            </MeetingProvider> : <div></div>}
+            </MeetingProvider> : <div className={styles.container}><SideMenu/><Content/></div>}
         </div>
     );
+}
+
+function Content() {
+    return (
+        <div>
+            <Routes>
+                <Route path="/" element={<Home />}></Route>
+                <Route path="/treatment_session" element={<TreatmentParameters />}></Route>
+            </Routes>
+        </div>
+    );
+}
+
+function SideMenu() {
+    const navigate = useNavigate()
+    return (
+        <div className={styles.sideMenu}>
+            <div className={styles.buttonContainer2}>
+                <Button shape={"round"} className={styles.button} icon={<HomeOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/")}/>
+                <span style={{color: "white"}}>Home</span>
+            </div>
+        </div>
+    )
 }
 
 export default App;
