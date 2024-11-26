@@ -96,12 +96,25 @@ function Controls() {
             navigate("/treatment_session")
         })
     }
+
+    const takeAndUploadScreenshot = async () => {
+        if (webcamOn && webcamStream) {
+            const base64 = await captureImage({}); // captureImage will return base64 string
+            axios.put(`${getAPIUrl()}/treatment/add_image`, {image: base64, id: 1} ).then(res => {
+                console.log("image saved successfully")
+            })
+        } else {
+            console.error("Camera must be on to capture an image");
+        }
+    }
+
     return (
         <div className={styles.buttonContainer}>
             <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => endMeeting()}>End Meeting</Button>
             <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => toggleMic()}>Toggle Mic</Button>
             <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => toggleWebcam()}>Toggle Cam</Button>
             <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => flipCam()}>Flip Cam</Button>
+            <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => takeAndUploadScreenshot()}>Take Screenshot</Button>
         </div>
     );
 }
