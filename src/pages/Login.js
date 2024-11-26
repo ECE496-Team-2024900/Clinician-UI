@@ -7,7 +7,7 @@ function Login() {
     const navigate = useNavigate(); 
 
     const handleButtonClick = () => {
-        navigate("/home"); // NOTE: Update once the next page is implemented
+        navigate("/home"); 
     };
 
     return (
