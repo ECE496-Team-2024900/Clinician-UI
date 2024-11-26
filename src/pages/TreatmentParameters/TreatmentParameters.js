@@ -11,11 +11,11 @@ function TreatmentParameters() {
     const [treatment, setTreatment] = useState({'id': 1}) // set to random value for now
     const [disableSubmit, setDisableSubmit] = useState(true)
     const [errors, setErrors] = useState({
-        drugVolume: false,
-        solventVolume: false,
-        laserPowerLevel: false,
-        delayBetweenDrugAndLight: false,
-        delayBetweenLightAndSolvent: false,
+        drugVolume: true,
+        solventVolume: true,
+        laserPowerLevel: true,
+        delayBetweenDrugAndLight: true,
+        delayBetweenLightAndSolvent: true,
         acknowledgment: true
     });
     const [fields, setFields] = useState({
@@ -52,6 +52,14 @@ function TreatmentParameters() {
                         delayBetweenDrugAndLight: response.data.first_wait,
                         delayBetweenLightAndSolvent: response.data.second_wait,
                         imageUrls: (response.data.image_urls) ? response.data.image_urls : null
+                    });
+                    setErrors({
+                        drugVolume: false,
+                        solventVolume: false,
+                        laserPowerLevel: false,
+                        delayBetweenDrugAndLight: false,
+                        delayBetweenLightAndSolvent: false,
+                        acknowledgment: true
                     });
                 } else if(response.status === 204) {
                     message.success("This patient has no previous treatment.")
@@ -104,11 +112,12 @@ function TreatmentParameters() {
                 });
     }
 
-    const inputNumberValidation = (_, value) => {
-        if (isNaN(value) === false) {
+    const inputNumberValidation = (_) => {
+        const user_value = currForm.getFieldValue(_.field)
+        if (isNaN(user_value) === false) {
             setFields(fields => ({
                 ...fields,
-                [_.field]: value,
+                [_.field]: user_value,
             }))
             return Promise.resolve();
         }
@@ -119,8 +128,9 @@ function TreatmentParameters() {
         return Promise.reject('Not a number');
     }
 
-    const inputRequiredValidation = (_, value) => {
-        if(value !== null && value.trim() !== '') {
+    const inputRequiredValidation = (_) => {
+        const user_value = currForm.getFieldValue(_.field).toString()
+        if(user_value !== null && user_value.trim() !== '') {
             setErrors(errors => ({
                 ...errors,
                 [_.field]: false,
@@ -150,7 +160,6 @@ function TreatmentParameters() {
     }
 
     useEffect(() => {
-        console.log(errors)
         if(Object.values(errors).every(error => error === false)) {
             setDisableSubmit(false);
         } else {
@@ -196,7 +205,6 @@ function TreatmentParameters() {
             </Row>
             <div className={styles.imageContainer}>
             {prevTreatmentParameters.imageUrls?.map((item) => {
-                {console.log(item)}
                 return <Image
                     className={styles.prevImage}
                     width={600}
@@ -223,11 +231,11 @@ function TreatmentParameters() {
                     <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="drugVolume" label="Drug Volume (mL)" rules={[
                             {
                                 message: 'Drug volume is required.',
-                                validator: (_, value) => inputRequiredValidation(_, value)
+                                validator: (_) => inputRequiredValidation(_)
                             },
                             {
                                 message: 'Drug volume must be a number.',
-                                validator: (_, value) => inputNumberValidation(_, value)
+                                validator: (_) => inputNumberValidation(_)
                             }
                         ]}>
                         <Input placeholder='Please enter the required drug volume' />
