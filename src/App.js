@@ -16,6 +16,7 @@ import {ArrowRightOutlined, HomeOutlined, UserOutlined} from "@ant-design/icons"
 import TreatmentParameters from "./pages/TreatmentParameters/TreatmentParameters";
 import {Route, Routes, useNavigate} from "react-router-dom";
 import Home from "./pages/Home/Home";
+import {useCookies} from "react-cookie";
 
 function ParticipantView(props) {
     const micRef = useRef(null);
@@ -173,6 +174,8 @@ function MeetingView(props) {
 
 function App() {
     const [meetingId, setMeetingId] = useState(null);
+    const [cookies] = useCookies(['cookie-name']);
+
 
     useEffect(() => {
         const interval = setInterval(async () => {
@@ -209,17 +212,20 @@ function App() {
                 token={authToken}
             >
                 <MeetingView meetingId={meetingId} onMeetingLeave={onMeetingLeave} />
-            </MeetingProvider> : <div className={styles.container}><SideMenu/><Content/></div>}
+            </MeetingProvider> : <div className={styles.container}>{cookies["email"] !== "" && <SideMenu/>}<Content/></div>}
         </div>
     );
 }
 
 function Content() {
+    const [cookies, setCookie] = useCookies(['cookie-name']);
+    useEffect(() => {
+        setCookie("email", "")
+    }, []);
     return (
         <div>
             <Routes>
-                <Route path="/" element={<Login />}></Route>
-                <Route path="/home" element={<Home />}></Route>
+                <Route path="/" element={cookies["email"] !== "" ? <Home /> : <Login/>}></Route>
                 <Route path="/treatment_session" element={<TreatmentParameters />}></Route>
             </Routes>
         </div>
@@ -231,7 +237,7 @@ function SideMenu() {
     return (
         <div className={styles.sideMenu}>
             <div className={styles.buttonContainer2}>
-                <Button shape={"round"} className={styles.button} icon={<HomeOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/home")}/>
+                <Button shape={"round"} className={styles.button} icon={<HomeOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/")}/>
                 <span style={{color: "white"}}>Home</span>
             </div>
         </div>
