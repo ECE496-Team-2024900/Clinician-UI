@@ -12,7 +12,9 @@ import axios from "axios";
 import { getTreatmentAPIUrl } from "./getAPIUrls/getTreatmentAPIUrl"
 import styles from "./App.module.css"
 import {Avatar, Button, Menu, Modal, Spin} from "antd";
-import {ArrowRightOutlined, HomeOutlined, UserOutlined} from "@ant-design/icons";
+import {ArrowRightOutlined, HomeOutlined, UnorderedListOutlined, UserOutlined} from "@ant-design/icons";
+import CreatePatient from "./pages/CreatePatient/CreatePatient";
+import Patients from "./pages/Patients/Patients";
 import TreatmentParameters from "./pages/TreatmentParameters/TreatmentParameters";
 import {Route, Routes, useNavigate} from "react-router-dom";
 import Home from "./pages/Home/Home";
@@ -227,6 +229,8 @@ function Content() {
             <Routes>
                 <Route path="/" element={cookies["email"] !== "" ? <Home /> : <Login/>}></Route>
                 <Route path="/treatment_session" element={<TreatmentParameters />}></Route>
+                <Route path="/patients" element={<Patients />}></Route>
+                <Route path="/create_patient" element={<CreatePatient />}></Route>
             </Routes>
         </div>
     );
@@ -239,6 +243,10 @@ function SideMenu() {
             <div className={styles.buttonContainer2}>
                 <Button shape={"round"} className={styles.button} icon={<HomeOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/")}/>
                 <span style={{color: "white"}}>Home</span>
+            </div>
+            <div className={styles.buttonContainer2}>
+                <Button shape={"round"} className={styles.button} icon={<UnorderedListOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/patients")}/>
+                <span style={{color: "white"}}>Patients</span>
             </div>
         </div>
     )
