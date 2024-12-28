@@ -91,7 +91,6 @@ function Login() {
     const submitEmail = async () => {
         const email = currForm.getFieldValue("emailInput")
         const isRegistered = await emailRegistered(email)
-        console.log(isRegistered)
         if (isRegistered) {
             // redirect to Microsoft login
             const provider = new OAuthProvider('microsoft.com');
