@@ -11,12 +11,15 @@ import ReactPlayer from "react-player";
 import axios from "axios";
 import { getTreatmentAPIUrl } from "./getAPIUrls/getTreatmentAPIUrl"
 import styles from "./App.module.css"
-import {Avatar, Button, Menu, Modal, Spin} from "antd";
-import {ArrowRightOutlined, HomeOutlined, UserOutlined} from "@ant-design/icons";
+import {Avatar, Button, Menu, Modal, Spin, message} from "antd";
+import {LogoutOutlined, HomeOutlined} from "@ant-design/icons";
 import TreatmentParameters from "./pages/TreatmentParameters/TreatmentParameters";
 import {Route, Routes, useNavigate} from "react-router-dom";
 import Home from "./pages/Home/Home";
+import SignUp from './pages/SignUp/SignUp.js';
 import {useCookies} from "react-cookie";
+import { signOut } from "firebase/auth";
+import { auth } from "./firebaseConfig.js"
 
 function ParticipantView(props) {
     const micRef = useRef(null);
@@ -227,6 +230,7 @@ function Content() {
             <Routes>
                 <Route path="/" element={cookies["email"] !== "" ? <Home /> : <Login/>}></Route>
                 <Route path="/treatment_session" element={<TreatmentParameters />}></Route>
+                <Route path="/sign-up" element={<SignUp />}></Route>
             </Routes>
         </div>
     );
@@ -234,8 +238,24 @@ function Content() {
 
 function SideMenu() {
     const navigate = useNavigate()
+
+    // logging user out
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+            navigate("/");
+            window.location.reload()
+        } catch (error) {
+            message.error("Error logging out - please try again ");
+        }
+    };
     return (
         <div className={styles.sideMenu}>
+            <div className={styles.buttonContainer2}>
+                <Button shape={"round"} className={styles.button} icon={<LogoutOutlined style={{color: "#004AAD"}}/>} onClick={handleLogout}/>
+                <span style={{color: "white"}}>Logout</span>
+            </div>
+            <br />
             <div className={styles.buttonContainer2}>
                 <Button shape={"round"} className={styles.button} icon={<HomeOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/")}/>
                 <span style={{color: "white"}}>Home</span>

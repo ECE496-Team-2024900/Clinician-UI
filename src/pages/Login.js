@@ -1,16 +1,117 @@
-import { Button, Input } from 'antd';
+import { Button, Input, Form, message } from 'antd';
 import logo from "../assets/logo.png";
 import styles from "../css/Login.module.css";
 import {useCookies} from "react-cookie";
 import {useNavigate} from "react-router-dom";
+import { OAuthProvider, signInWithRedirect, getRedirectResult } from 'firebase/auth';
+import { auth } from '../firebaseConfig'
+import { useState, useEffect } from 'react'
+import { getUsersAPIUrl } from '../getAPIUrls/getUsersAPIUrl'
+import axios from 'axios'
+
 
 function Login() {
     const [cookies, setCookie] = useCookies(['cookie-name']);
     const navigate = useNavigate();
+    const [currForm] = Form.useForm();
+    const [submitDisabled, setSubmitDisabled] = useState(true)
+    const [errors, setErrors] = useState({
+        emailRequired: true,
+        emailDomain: true
+    });
 
-    const handleButtonClick = () => {
-        setCookie("email", "walt.disney@disney.org");
-        window.location.reload()
+    // setting submit disable depending on errors
+    useEffect(() => {
+        if(Object.values(errors).every(error => error === false)) {
+            setSubmitDisabled(false);
+        } else {
+            setSubmitDisabled(true);
+        }
+    }, [errors])
+
+    // navigating to welcome page after login
+    useEffect(() => {
+        const fetchResult = async () => {
+            const result = await getRedirectResult(auth);
+            if (result) {
+                navigate('/');
+            }
+        };
+        fetchResult();
+    }, [navigate]);
+
+    // ensuring email has been provided
+    const emailRequiredValidation = (_, value) => {
+        if(value !== null && value.trim() !== '') {
+            setErrors(errors => ({
+                ...errors,
+                emailRequired: false,
+            }))
+            return Promise.resolve();
+        }
+        setErrors(errors => ({
+            ...errors,
+            emailRequired: true,
+        }))
+        return Promise.reject('Required field');
+    }
+
+    // ensuring email domain is UHN
+    const emailDomainValidation = (_, value) => {
+        if(value.endsWith('@uhn.ca')) {
+            setErrors(errors => ({
+                ...errors,
+                emailDomain: false,
+            }))
+            return Promise.resolve();
+        }
+        setErrors(errors => ({
+            ...errors,
+            emailDomain: true,
+        }))
+        return Promise.reject('Wrong email domain');
+    }
+
+    // returns true if the email is registered, else returns false
+    async function emailRegistered(email) {
+        const url = `${getUsersAPIUrl()}/users/check_if_clinician_exists?email=${email}`;
+        try {
+            const response = await axios.get(url);
+            if (response.status === 200) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (error) {
+            return false;
+        }
+      }
+
+    // submitting email to log user in (if they are registered with app)
+    const submitEmail = async () => {
+        const email = currForm.getFieldValue("emailInput")
+        const isRegistered = await emailRegistered(email)
+        console.log(isRegistered)
+        if (isRegistered) {
+            // redirect to Microsoft login
+            const provider = new OAuthProvider('microsoft.com');
+            provider.setCustomParameters({
+                login_hint: email
+              });
+            signInWithRedirect(auth, provider);
+            try {
+                const result = await getRedirectResult(auth);
+                if (result) {
+                    setCookie("email", email);
+                    navigate('/');
+                }
+            } catch (error) {
+                message.error("Login failed - please try again");
+            }
+          } else {
+            // navigate to sign-up page if the user is not registered
+            navigate('/sign-up', { state: { email: email } });
+          }
     };
 
     return (
@@ -23,14 +124,27 @@ function Login() {
                 <h2 className={styles.subtitle}>
                     Please enter your email
                 </h2>
-                <Input 
-                    placeholder="Your email" 
-                    className={styles.email_input}
-                    allowClear
-                />
-                <Button type="primary" className={styles.enter_button} onClick={handleButtonClick}>
-                    Enter
-                </Button>
+                <Form form={currForm}>
+                    <Form.Item name="emailInput" rules={[
+                            {
+                                message: 'Email is required.',
+                                validator: (_, value) => emailRequiredValidation(_, value)
+                            },
+                            {
+                                message: 'Email must be part of the UHN domain.',
+                                validator: (_, value) => emailDomainValidation(_, value)
+                            }
+                        ]}>
+                        <Input 
+                            placeholder="Your email" 
+                            className={styles.email_input}
+                            allowClear
+                        />
+                    </Form.Item>
+                    <Button type="primary" className={styles.enter_button} onClick={submitEmail} disabled={submitDisabled}>
+                        Enter
+                    </Button>
+                </Form>
             </div>
         </div>
     );
