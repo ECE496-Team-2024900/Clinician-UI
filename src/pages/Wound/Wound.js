@@ -2,14 +2,17 @@ import styles from "../../css/Wound.module.css";
 import {getTreatmentAPIUrl} from "../../getAPIUrls/getTreatmentAPIUrl";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {Button, Image} from "antd";
+import {Button, Col, Form, Image, Input, Row} from "antd";
 import {ArrowLeftOutlined, ArrowRightOutlined} from "@ant-design/icons";
 
 function Wound() {
-    const [wound, setWound] = useState({'id': 1}) // set to random value for now
+    const [woundId, setWoundId] = useState(1)
+    const [wound, setWound] = useState(undefined)
+    const [prevForm] = Form.useForm();
     const [imageIndex, setImageIndex] = useState(0)
     const [vals, setVals] = useState(new Map());
-    const url = `${getTreatmentAPIUrl()}/treatment/get_all_images_for_wound?wound=${wound?.id}`;
+    const url = `${getTreatmentAPIUrl()}/treatment/get_all_images_for_wound?wound=${woundId}`;
+    const woundUrl = `${getTreatmentAPIUrl()}/treatment/get_wound?id=${woundId}`;
     useEffect( () => {
          axios.get(url).then((response) => {
              if (response.status === 200) {
@@ -22,14 +25,37 @@ function Wound() {
                  setVals(newVals)
             }
         })
+        axios.get(woundUrl).then((response)=> {
+            if (response.status === 200) {
+                console.log(response.data.message)
+                setWound(response.data.message)
+            }
+        })
     }, []);
 
     return <div className={styles.container}>
         <h1>Wound</h1>
         <div className={styles.container2}>
-            <div style={{width: "50vw"}}/>
+            <div className={styles.fieldsContainer}>
+                <div className={styles.fieldContainer}>
+                    <h3>Wound ID</h3>
+                    {wound !== undefined && <Input disabled defaultValue={wound?.id}/>}
+                    <h3>Date Added</h3>
+                    {wound !== undefined && <Input disabled defaultValue={wound?.date_added}/>}
+                    <h3>Device ID</h3>
+                    {wound !== undefined && <Input disabled defaultValue={wound?.device_id}/>}
+                </div>
+                <div className={styles.fieldContainer}>
+                    <h3>Infection Type</h3>
+                    {wound !== undefined && <Input disabled defaultValue={wound?.infection_type}/>}
+                    <h3>Infection Location</h3>
+                    {wound !== undefined && <Input disabled defaultValue={wound?.infection_location}/>}
+                    <h3>Wound Completely Treated</h3>
+                    {wound !== undefined && <Input disabled defaultValue={wound?.treated === true ? "Yes" : "No"}/>}
+                </div>
+            </div>
             <div className={styles.container3}>
-                <h2>Wound History</h2>
+                <h3>Wound History</h3>
                 <div className={styles.arrowContainer}>
                     <Button
                         shape={"circle"}
@@ -46,9 +72,11 @@ function Wound() {
                         icon={<ArrowRightOutlined style={{color: "white"}}/>}
                     />
                 </div>
-                <Image src={Array.from(vals.keys())[imageIndex]} width={"50vh"} height={"46vh"}/>
-                <div className={styles.labelContainer}>
-                    <h3>{`Image taken during treatment ${vals.get(Array.from(vals.keys())[imageIndex])}`}</h3>
+                <div className={styles.imageContainer}>
+                    <Image src={Array.from(vals.keys())[imageIndex]} width={"25vh"} height={"25vh"}/>
+                    <div className={styles.labelContainer}>
+                        <p>{`Image taken during treatment ${vals.get(Array.from(vals.keys())[imageIndex])}`}</p>
+                    </div>
                 </div>
             </div>
         </div>
