@@ -17,6 +17,7 @@ import {ArrowRightOutlined, HomeOutlined, UserOutlined} from "@ant-design/icons"
 import TreatmentParameters from "./pages/TreatmentParameters/TreatmentParameters";
 import {Route, Routes, useNavigate} from "react-router-dom";
 import Home from "./pages/Home/Home";
+import Wound from "./pages/Wound/Wound";
 
 function ParticipantView(props) {
     const micRef = useRef(null);
@@ -219,6 +220,7 @@ function Content() {
                 <Route path="/" element={<Login />}></Route>
                 <Route path="/home" element={<Home />}></Route>
                 <Route path="/treatment_session" element={<TreatmentParameters />}></Route>
+                <Route path="/wound" element={<Wound />}></Route>
             </Routes>
         </div>
     );
