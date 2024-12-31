@@ -23,9 +23,6 @@ function Wound() {
             }
         })
     }, []);
-    useEffect(() => {
-        setImageIndex(0)
-    }, [vals]);
 
     return <div className={styles.container}>
         <h1>Wound</h1>
