@@ -1,13 +1,16 @@
 import { Button, Input } from 'antd';
 import logo from "../assets/logo.png";
 import styles from "../css/Login.module.css";
-import { useNavigate } from "react-router-dom";
+import {useCookies} from "react-cookie";
+import {useNavigate} from "react-router-dom";
 
 function Login() {
-    const navigate = useNavigate(); 
+    const [cookies, setCookie] = useCookies(['cookie-name']);
+    const navigate = useNavigate();
 
     const handleButtonClick = () => {
-        navigate("/home"); 
+        setCookie("email", "walt.disney@disney.org");
+        window.location.reload()
     };
 
     return (
