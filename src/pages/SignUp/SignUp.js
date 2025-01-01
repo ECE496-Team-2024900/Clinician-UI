@@ -1,4 +1,4 @@
-import { Button, Input, Form, message } from 'antd';
+import { Button, Input, Form, message, Col } from 'antd';
 import logo from "../../assets/logo.png"
 import styles from "../../css/SignUp.module.css";
 import {useCookies} from "react-cookie";
@@ -95,30 +95,34 @@ function SignUp() {
                     Please enter your details to get started
                 </h2>
                 <Form form={currForm}>
-                    <Form.Item name="firstName" rules={[
-                            {
-                                message: 'First name is required.',
-                                validator: (_, value) => inputRequiredValidation(_, value)
-                            }
-                        ]}>
-                        <Input 
-                            placeholder="Your first name" 
-                            className={styles.input_field}
-                            allowClear
-                        />
-                    </Form.Item>
-                    <Form.Item name="lastName" rules={[
-                            {
-                                message: 'Last name is required.',
-                                validator: (_, value) => inputRequiredValidation(_, value)
-                            }
-                        ]}>
-                        <Input 
-                            placeholder="Your last name" 
-                            className={styles.input_field}
-                            allowClear
-                        />
-                    </Form.Item>
+                    <Col span={12}>
+                        <Form.Item name="firstName" labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} label={<span className={styles.inputTitle}>First Name</span>} rules={[
+                                {
+                                    message: 'First name is required.',
+                                    validator: (_, value) => inputRequiredValidation(_, value)
+                                }
+                            ]}>
+                            <Input 
+                                placeholder="Your first name" 
+                                className={styles.input_field}
+                                allowClear
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item name="lastName" labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} label={<span className={styles.inputTitle}>Last Name</span>} rules={[
+                                {
+                                    message: 'Last name is required.',
+                                    validator: (_, value) => inputRequiredValidation(_, value)
+                                }
+                            ]}>
+                            <Input 
+                                placeholder="Your last name" 
+                                className={styles.input_field}
+                                allowClear
+                            />
+                        </Form.Item>
+                    </Col>
                     <Button type="primary" className={styles.enter_button} onClick={submitNewUser} disabled={submitDisabled}>
                         Enter
                     </Button>

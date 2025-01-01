@@ -34,6 +34,14 @@
     margin-bottom: 35px;
 }
 
+.inputTitle {
+    color: white;
+    font-size: 20px;
+    font-weight: 350;
+    margin: 0;
+    margin-bottom: 35px;
+}
+
 .input_field {
     width: 23vw;
     height: 4.5vh;
