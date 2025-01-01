@@ -27,6 +27,17 @@ function WoundDetails() {
         fetchPastTreatments()
     }, [])
 
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const options = { 
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        };
+        return date.toLocaleDateString('en-US', options);
+    };
+
     return (
         <div className={styles.page}>
           <h3>Treatment Sessions</h3>
@@ -42,7 +53,7 @@ function WoundDetails() {
               {pastTreatments.map((treatment) => (
                 <tr key={treatment.session_number}>
                   <td>{treatment.session_number}</td>
-                  <td>{treatment.date_scheduled}</td>
+                  <td>{formatDate(treatment.date_scheduled)}</td>
                   <td>{treatment.start_time}</td>
                 </tr>
               ))}
