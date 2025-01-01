@@ -29,6 +29,7 @@ function WoundDetails() {
 
     return (
         <div className={styles.page}>
+          <h3>Treatment Sessions</h3>
           <table className={styles.treatmentTable}>
             <thead>
               <tr>
