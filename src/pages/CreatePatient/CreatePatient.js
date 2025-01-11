@@ -15,9 +15,7 @@ function CreatePatient() {
         dateOfBirth: true,
         MRN: true,
         email: true,
-        confirmEmail: true,
-        phoneNumber: true,
-        confirmPhoneNumber: true
+        phoneNumber: true
     });
     const [fields, setFields] = useState({
         firstName: null,
@@ -25,9 +23,7 @@ function CreatePatient() {
         dateOfBirth: null,
         MRN: null,
         email: null,
-        confirmEmail: null,
-        phoneNumber: null,
-        confirmPhoneNumber: null
+        phoneNumber: null
     });
     const [currForm] = Form.useForm();
 
@@ -131,42 +127,6 @@ function CreatePatient() {
         return Promise.reject('Invalid email format');
     };
 
-    const confirmEmailValidation = (_) => {
-        const email = currForm.getFieldValue('email');
-        const confirmEmail = currForm.getFieldValue('confirmEmail');
-    
-        if (email === confirmEmail) {
-            setFields(fields => ({
-                ...fields,
-                [_.field]: confirmEmail,
-            }))
-            return Promise.resolve();
-        }
-        setErrors(errors => ({
-            ...errors,
-            [_.field]: true,
-        }))
-        return Promise.reject('Email addresses do not match');
-    };
-    
-    const confirmPhoneNumberValidation = (_) => {
-        const phoneNumber = currForm.getFieldValue('phoneNumber');
-        const confirmPhoneNumber = currForm.getFieldValue('confirmPhoneNumber');
-    
-        if (phoneNumber === confirmPhoneNumber) {
-            setFields(fields => ({
-                ...fields,
-                [_.field]: confirmPhoneNumber,
-            }))
-            return Promise.resolve();
-        }
-        setErrors(errors => ({
-            ...errors,
-            [_.field]: true,
-        }))
-        return Promise.reject('Phone numbers do not match');
-    };
-
     useEffect(() => {
         if(Object.values(errors).every(error => error === false)) {
             setDisableSubmit(false);
@@ -247,22 +207,6 @@ function CreatePatient() {
                     </Form.Item>
                 </Col>
                 <Col span={12}>
-                    <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="confirmEmail" label="Confirm Email" rules={[
-                            {
-                                message: 'Email confirmation is required.',
-                                validator: (_, value) => inputRequiredValidation(_, value)
-                            },
-                            {
-                                message: 'Email addresses do not match.',
-                                validator: (_, value) => confirmEmailValidation(_, value)
-                            }
-                        ]}>
-                        <Input placeholder='Please confirm the email' />
-                    </Form.Item>
-                </Col>
-            </Row>
-            <Row>
-                <Col span={12}>
                     <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="phoneNumber" label="Phone Number" rules={[
                             {
                                 message: 'Phone number is required.',
@@ -274,20 +218,6 @@ function CreatePatient() {
                             }
                         ]}>
                         <Input placeholder='Please enter the phone number (eg. 1234567890)' />
-                    </Form.Item>
-                </Col>
-                <Col span={12}>
-                    <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="confirmPhoneNumber" label="Confirm Phone Number" rules={[
-                            {
-                                message: 'Phone number is required.',
-                                validator: (_, value) => inputRequiredValidation(_, value)
-                            },
-                            {
-                                message: 'Phone numbers do not match.',
-                                validator: (_, value) => confirmPhoneNumberValidation(_, value)
-                            }
-                        ]}>
-                        <Input placeholder='Please confirm the phone number' />
                     </Form.Item>
                 </Col>
             </Row>
