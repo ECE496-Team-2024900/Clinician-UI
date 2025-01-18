@@ -5,21 +5,9 @@ import { useState, useEffect } from 'react'
 import { getTreatmentAPIUrl } from '../../getAPIUrls/getTreatmentAPIUrl'
 import { getHardwareAPIUrl } from '../../getAPIUrls/getHardwareAPIUrl'
 import axios from 'axios'
-import { jsPDF } from 'jspdf';
-import Papa from 'papaparse';
-import 'jspdf-autotable';
-import { saveAs } from 'file-saver';
 
 
 function TreatmentParameters() {
-    const fileData = {
-        title: "Sample Data",
-        headers: ["Sample Header A", "Sample Header B", "Sample Header C"],
-        content: [
-            ["1. Sample Value A", "1. Sample Value B", "1. Sample Value C"],
-            ["2. Sample Value A", "2. Sample Value B", "2. Sample Value C"]
-        ]
-    }
     const [treatment, setTreatment] = useState({'id': 1}) // set to random value for now
     const [disableSubmit, setDisableSubmit] = useState(true)
     const [errors, setErrors] = useState({
@@ -179,47 +167,7 @@ function TreatmentParameters() {
         }
     }, [errors])
 
-    // Download data as PDF
-    const downloadAsPDF = () => {
-        // Create a new PDF
-        const pdf = new jsPDF();
-
-        // Set PDF title
-        pdf.text(fileData.title, 10, 10);
-
-        // Set PDF data in a table format
-        pdf.autoTable({
-            head: [fileData.headers],
-            body: fileData.content,
-        });
-
-        // Download the PDF to the browser
-        pdf.save(`${fileData.title}.pdf`);
-    };
-
-    // Download data as CSV
-    const downloadAsCSV = () => {
-        // Organize CSV content
-        const csvContent = [
-            [fileData.title],
-            [], // Empty row for spacing after title
-            fileData.headers,
-            ...fileData.content,
-        ];
-
-        // Create CSV
-        const csv = Papa.unparse(csvContent);
-
-        // Download the CSV to the browser
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        saveAs(blob, `${fileData.title}.csv`);
-    };
-
     return <div className={styles.container}>
-        <div>
-            <Button onClick={downloadAsPDF}>Download as PDF</Button>
-            <Button onClick={downloadAsCSV}>Download as CSV</Button>
-        </div>
         <h2 className={styles.pageTitle}>Previous Treatment Parameters</h2>
         <Form form={prevForm}>
             <h3 className={styles.pageSubtitle}>Dosages</h3>
