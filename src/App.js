@@ -244,6 +244,7 @@ function SideMenu() {
                 <Button shape={"round"} className={styles.button} icon={<HomeOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/")}/>
                 <span style={{color: "white"}}>Home</span>
             </div>
+            {/*Add button to side menu for accessing (or creating) patient records*/}
             <div className={styles.buttonContainer2}>
                 <Button shape={"round"} className={styles.button} icon={<UnorderedListOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/patients")}/>
                 <span style={{color: "white"}}>Patients</span>

@@ -7,9 +7,9 @@ import dayjs from 'dayjs';
 
 function CreatePatient() {
 
-    const [disableSubmit, setDisableSubmit] = useState(true)
-    const [errorMessage, setErrorMessage] = useState("")
-    const [errors, setErrors] = useState({
+    const [disableSubmit, setDisableSubmit] = useState(true) // boolean value for whether form submit button should be disabled
+    const [errorMessage, setErrorMessage] = useState("") // error message in case patient creation is unsuccessful 
+    const [errors, setErrors] = useState({ // boolean values for whether there's an error corresponding to each field in form
         firstName: true,
         lastName: true,
         dateOfBirth: true,
@@ -17,7 +17,7 @@ function CreatePatient() {
         email: true,
         phoneNumber: true
     });
-    const [fields, setFields] = useState({
+    const [fields, setFields] = useState({ // patient fields in form
         firstName: null,
         lastName: null,
         dateOfBirth: null,
@@ -57,9 +57,11 @@ function CreatePatient() {
         }
     }
 
+    // Function to validate that a field value is not null
     const inputRequiredValidation = (_) => {
         const user_value = currForm.getFieldValue(_.field).toString()
         if(user_value !== null && user_value.trim() !== '') {
+            // Field is not null - set value and set error to false
             setErrors(errors => ({
                 ...errors,
                 [_.field]: false,
@@ -70,6 +72,7 @@ function CreatePatient() {
             }))
             return Promise.resolve();
         }
+        // Set error to true if field is null
         setErrors(errors => ({
             ...errors,
             [_.field]: true,
@@ -77,15 +80,18 @@ function CreatePatient() {
         return Promise.reject('Required field');
     }
 
+    // Function to validate that a numerical value is entered in a field
     const inputNumberValidation = (_) => {
         const user_value = currForm.getFieldValue(_.field)
         if (isNaN(user_value) === false) {
+            // Field has a number entered - set value 
             setFields(fields => ({
                 ...fields,
                 [_.field]: user_value,
             }))
             return Promise.resolve();
         }
+        // Set error to true if field value is not a number
         setErrors(errors => ({
             ...errors,
             [_.field]: true,
@@ -93,16 +99,18 @@ function CreatePatient() {
         return Promise.reject('Not a number');
     }
 
+    //Function to validate that a valid date is entered (for date of birth)
     const inputDateValidation = (_, value) => {
-        const user_value = value ? dayjs(value).format('YYYY-MM-DD') : '';
-        const today = dayjs().format('YYYY-MM-DD');
-        if (user_value && dayjs(user_value).isBefore(today)) {
+        const user_value = value ? dayjs(value).format('YYYY-MM-DD') : ''; // format date for comparing
+        const today = dayjs().format('YYYY-MM-DD'); // today's date
+        if (user_value && dayjs(user_value).isBefore(today)) { // Field value must be not null and must be a date prior to today
             setFields(fields => ({
                 ...fields,
                 dateOfBirth: user_value,
             }));
             return Promise.resolve();
         }
+        // Set error to true if field value is not a valid date
         setErrors(errors => ({
             ...errors,
             dateOfBirth: true,
@@ -110,16 +118,18 @@ function CreatePatient() {
         return Promise.reject('Date of birth cannot be in the future.');
     };
 
+    //Function to validate that a valid email address is entered
     const emailFormatValidation = (_) => {
         const user_value = currForm.getFieldValue(_.field);
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (emailRegex.test(user_value)) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; //valid email format in regex
+        if (emailRegex.test(user_value)) { //compare email entered against the regex format
             setFields(fields => ({
                 ...fields,
                 [_.field]: user_value,
             }))
             return Promise.resolve();
         }
+        // Set error to true if field value is not a valid email
         setErrors(errors => ({
             ...errors,
             [_.field]: true,
@@ -127,6 +137,7 @@ function CreatePatient() {
         return Promise.reject('Invalid email format');
     };
 
+    // Enable submit button if there are no errors with any of the fields, otherwise disable it
     useEffect(() => {
         if(Object.values(errors).every(error => error === false)) {
             setDisableSubmit(false);
@@ -140,6 +151,7 @@ function CreatePatient() {
 
         <Form form={currForm} onFinish={submitForm}>
             <Row>
+                {/*First name field*/}
                 <Col span={12}>
                     <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="firstName" label="First Name" rules={[
                             {
@@ -150,6 +162,7 @@ function CreatePatient() {
                         <Input placeholder='Please enter the first name' />
                     </Form.Item>
                 </Col>
+                {/*Last name field*/}
                 <Col span={12}>
                     <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="lastName" label="Last Name" rules={[
                             {
@@ -162,6 +175,7 @@ function CreatePatient() {
                 </Col>
             </Row>
             <Row className={styles.rowSpacing}>
+                {/*Date of birth field*/}
                 <Col span={12}>
                     <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="dateOfBirth" label="Date of Birth" rules={[
                             {
@@ -173,9 +187,11 @@ function CreatePatient() {
                                 validator: inputDateValidation,
                             }
                         ]}>
+                        {/*Date selector with only days before today enabled for selection*/}
                         <Input type="date" max={dayjs().format('YYYY-MM-DD')} placeholder='Please enter the date of birth' />
                     </Form.Item>
                 </Col>
+                {/*MRN field*/}
                 <Col span={12}>
                     <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="MRN" label="Medical Reference Number (MRN)" rules={[
                             {
@@ -192,6 +208,7 @@ function CreatePatient() {
                 </Col>
             </Row>
             <Row>
+                {/*Email field*/}
                 <Col span={12}>
                     <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="email" label="Email" rules={[
                             {
@@ -206,6 +223,7 @@ function CreatePatient() {
                         <Input placeholder='Please enter the email (eg. user@domain.com)' />
                     </Form.Item>
                 </Col>
+                {/*Phone number field*/}
                 <Col span={12}>
                     <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="phoneNumber" label="Phone Number" rules={[
                             {
@@ -221,7 +239,9 @@ function CreatePatient() {
                     </Form.Item>
                 </Col>
             </Row>
+            {/*Submit button*/}
             <Button disabled={disableSubmit} className={styles.submitBtn} id="report-submit-btn" type="primary" htmlType="submit" block>Submit</Button>
+            {/*Error message in case of errors when creating record*/}
             <div className={styles.errorMessage}>
                 {errorMessage}
             </div>
