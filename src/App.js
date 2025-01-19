@@ -14,6 +14,7 @@ import styles from "./App.module.css"
 import {Avatar, Button, Menu, Modal, Spin} from "antd";
 import {ArrowRightOutlined, HomeOutlined, UserOutlined} from "@ant-design/icons";
 import TreatmentParameters from "./pages/TreatmentParameters/TreatmentParameters";
+import TreatmentSessionDetails from "./pages/TreatmentSessionDetails/TreatmentSessionDetails";
 import {Route, Routes, useNavigate} from "react-router-dom";
 import Home from "./pages/Home/Home";
 import {useCookies} from "react-cookie";
@@ -227,6 +228,7 @@ function Content() {
             <Routes>
                 <Route path="/" element={cookies["email"] !== "" ? <Home /> : <Login/>}></Route>
                 <Route path="/treatment_session" element={<TreatmentParameters />}></Route>
+                <Route path="/treatment_session_details/:id" element={<TreatmentSessionDetails />}></Route>
             </Routes>
         </div>
     );
