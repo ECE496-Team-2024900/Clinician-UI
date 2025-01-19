@@ -151,7 +151,7 @@ function TreatmentSessionDetails() {
             {/*Fields to display when it is a complete treatment session*/}
             {fields.completed && (
                 <div>
-                    {/*Time/duration information (start/end times, durations for drug, light and solvent administrations)*/}
+                    {/*Time/duration information (start/end times, wait times, durations for drug, light and solvent administrations)*/}
                     <h3 className={styles.formSubtitle}>Times and Durations</h3>
                     <Row>
                         <Col span={12}>
@@ -161,6 +161,18 @@ function TreatmentSessionDetails() {
                         </Col>
                         <Col span={12}>
                             <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="endTime" label="Session End Time">
+                                <Input readOnly/>
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span={12}>
+                            <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="delayBetweenDrugAndLight" label="Delay between Drug Administration and Light Irradiation (seconds)">
+                                <Input readOnly/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="delayBetweenLightAndSolvent" label="Delay between Light Irradiation and Solvent Administration (seconds)">
                                 <Input readOnly/>
                             </Form.Item>
                         </Col>
