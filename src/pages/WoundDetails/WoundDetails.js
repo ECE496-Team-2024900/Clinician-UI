@@ -14,7 +14,7 @@ function WoundDetails() {
     useEffect(() => {
         // fetching past treatments
         const fetchPastTreatments = async () => {
-            const url = `${getTreatmentAPIUrl()}/treatment/get_past_patient_treatments?patient_id=${patientId}&wound_id=${woundId}`;
+            const url = `${getTreatmentAPIUrl()}/treatment/get_treatments?patient_id=${patientId}&wound_id=${woundId}`;
             axios.get(url)
             .then((response) => {
                 // if there are no errors and past treatmentts are available, storing them in use state
