@@ -59,7 +59,7 @@ Example:
 ----------------------------------------------------------------------------------------------------------------------
 */
 
-function ReportGeneration({fileData, disabled}) {
+function ReportGeneration({fileData}) {
     const [downloadInProgress, setDownloadInProgress] = useState(false);
 
     // file style properties (e.g. font, text size, bold, spacing)
@@ -320,7 +320,7 @@ function ReportGeneration({fileData, disabled}) {
 
     return (
         <div>
-            <Dropdown disabled={disabled && downloadInProgress}menu={menu} trigger={['hover']}>
+            <Dropdown disabled={downloadInProgress }menu={menu} trigger={['hover']}>
                 <Button className={styles.downloadButton} icon={<DownloadOutlined />} size="large">
                     Download Report
                 </Button>
