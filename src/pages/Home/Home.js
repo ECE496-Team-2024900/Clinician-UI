@@ -15,13 +15,15 @@ function Home() {
     const [vals, setVals] = useState(new Map());
     const navigate = useNavigate();
 
+    const clinicianEmail = localStorage.getItem("email")
+
     useEffect(() => {
         axios.get(`${getUsersAPIUrl()}/users/find_all_patients`).then(res => {
             if (res.status === 200) {
                 setPatients(res?.data?.message)
             }
         })
-        axios.get(`${getUsersAPIUrl()}/users/get_clinician_info`, {params: {"email": "walt.disney@disney.org"}} ).then(res => {
+        axios.get(`${getUsersAPIUrl()}/users/get_clinician_info`, {params: {"email": clinicianEmail}} ).then(res => {
             if (res.status === 200) {
                 setClinician(res?.data?.message)
             }
@@ -75,7 +77,7 @@ function Home() {
                 return <div className={styles.treatmentWrapper}>
                     <Avatar style={{background: "white", color: "#004AAD"}}>{treatment?.["id"]}</Avatar>
                     <span>{`Treatment session at ${new Date(treatment?.['start_time_scheduled'])} for ${vals.get(treatment?.['id'])}`}</span>
-                    <Button shape={"circle"} style={{background: "#004AAD"}} onClick={() => navigate("/treatment_session")} icon={<ArrowRightOutlined style={{color: "white"}}/>}/>
+                    <Button shape={"circle"} style={{background: "#004AAD"}} onClick={() => navigate("/treatment_session", { state: { treatmentId: treatment?.["id"] } })} icon={<ArrowRightOutlined style={{color: "white"}}/>}/>
                 </div>
             })}
         </div>

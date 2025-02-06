@@ -103,6 +103,9 @@ function Login() {
                 if (result) {
                     setCookie("email", email);
                     navigate('/');
+
+                    // Storing in local storage for persistance
+                    localStorage.setItem("email", email)
                 }
             } catch (error) {
                 message.error("Login failed - please try again");

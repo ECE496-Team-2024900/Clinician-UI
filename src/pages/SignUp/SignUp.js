@@ -62,6 +62,9 @@ function SignUp() {
                 message.success("User logged in successfully with Microsoft.");
                 setCookie("email", email);
                 navigate('/');
+
+                // Storing in local storage for persistance
+                localStorage.setItem("email", email)
             }
         } catch {
             message.error("We encountered an issue - please try again.")
