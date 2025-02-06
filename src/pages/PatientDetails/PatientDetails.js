@@ -1,11 +1,14 @@
 import styles from '../../css/PatientDetails.module.css';
-import { List } from 'antd';
+import { Button, List } from 'antd';
 import { useState, useEffect } from 'react';
 import { getTreatmentAPIUrl } from '../../getAPIUrls/getTreatmentAPIUrl';
 import axios from 'axios';
 import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function PatientDetails() {
+
+    const navigate = useNavigate();
 
     const location = useLocation(); 
     const [wounds, setWounds] = useState(""); //List of wounds for the patient
@@ -27,8 +30,19 @@ function PatientDetails() {
 
     return <div className={styles.container}>
         <h2 className={styles.pageTitle}>Existing Patient Demographic</h2>
+        <div className={styles.subtitleAndButtonContainer}>
+            <h3 className={styles.pageSubtitle}>Wounds</h3>
+            {/*Button for creating a new wound for patient*/}
+            <Button
+                className={styles.createButton}
+                type="primary"
+                size="large"
+                onClick={() => navigate(`/create_wound?patient_id=${location.pathname.split("/")[2]}`)}
+            >
+                Create New Wound
+            </Button>
+        </div>
         {/*List of all the patient's wounds (past and ongoing)*/}
-        <h3 className={styles.pageSubtitle}>Wounds</h3>
         <List
             className={styles.list}
             header={

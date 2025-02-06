@@ -13,6 +13,7 @@ import { getTreatmentAPIUrl } from "./getAPIUrls/getTreatmentAPIUrl"
 import styles from "./App.module.css"
 import {Avatar, Button, Menu, Modal, Spin} from "antd";
 import {ArrowRightOutlined, HomeOutlined, UserOutlined} from "@ant-design/icons";
+import CreateWound from "./pages/CreateWound/CreateWound";
 import PatientDetails from "./pages/PatientDetails/PatientDetails";
 import TreatmentParameters from "./pages/TreatmentParameters/TreatmentParameters";
 import {Route, Routes, useNavigate} from "react-router-dom";
@@ -229,6 +230,7 @@ function Content() {
                 <Route path="/" element={cookies["email"] !== "" ? <Home /> : <Login/>}></Route>
                 <Route path="/treatment_session" element={<TreatmentParameters />}></Route>
                 <Route path="/patient_details/:mrn" element={<PatientDetails />}></Route>
+                <Route path="/create_wound" element={<CreateWound />}></Route>
             </Routes>
         </div>
     );
