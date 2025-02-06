@@ -12,12 +12,18 @@ import axios from "axios";
 import { getTreatmentAPIUrl } from "./getAPIUrls/getTreatmentAPIUrl"
 import styles from "./App.module.css"
 import {Avatar, Button, Menu, Modal, Spin} from "antd";
-import {ArrowRightOutlined, HomeOutlined, UserOutlined} from "@ant-design/icons";
+import {ArrowRightOutlined, HomeOutlined, UnorderedListOutlined, UserOutlined, LogoutOutlined} from "@ant-design/icons";
+import CreatePatient from "./pages/CreatePatient/CreatePatient";
+import Patients from "./pages/Patients/Patients";
 import TreatmentParameters from "./pages/TreatmentParameters/TreatmentParameters";
 import {Route, Routes, useNavigate} from "react-router-dom";
 import Home from "./pages/Home/Home";
+import SignUp from './pages/SignUp/SignUp.js';
 import {useCookies} from "react-cookie";
 import Wound from "./pages/Wound/Wound";
+import WoundDetails from './pages/WoundDetails/WoundDetails.js';
+import { signOut } from "firebase/auth";
+import { auth } from "./firebaseConfig.js"
 
 function ParticipantView(props) {
     const micRef = useRef(null);
@@ -229,6 +235,10 @@ function Content() {
                 <Route path="/" element={cookies["email"] !== "" ? <Home /> : <Login/>}></Route>
                 <Route path="/treatment_session" element={<TreatmentParameters />}></Route>
                 <Route path="/wound" element={<Wound />}></Route>
+                <Route path="/wound_details" element={<WoundDetails />}></Route>
+                <Route path="/sign-up" element={<SignUp />}></Route>
+                <Route path="/patients" element={<Patients />}></Route>
+                <Route path="/create_patient" element={<CreatePatient />}></Route>
             </Routes>
         </div>
     );
@@ -236,11 +246,32 @@ function Content() {
 
 function SideMenu() {
     const navigate = useNavigate()
+
+    // logging user out
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+            navigate("/");
+            window.location.reload()
+        } catch (error) {
+            message.error("Error logging out - please try again ");
+        }
+    };
     return (
         <div className={styles.sideMenu}>
             <div className={styles.buttonContainer2}>
+                <Button shape={"round"} className={styles.button} icon={<LogoutOutlined style={{color: "#004AAD"}}/>} onClick={handleLogout}/>
+                <span style={{color: "white"}}>Logout</span>
+            </div>
+            <br />
+            <div className={styles.buttonContainer2}>
                 <Button shape={"round"} className={styles.button} icon={<HomeOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/")}/>
                 <span style={{color: "white"}}>Home</span>
+            </div>
+            {/*Add button to side menu for accessing (or creating) patient records*/}
+            <div className={styles.buttonContainer2}>
+                <Button shape={"round"} className={styles.button} icon={<UnorderedListOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/patients")}/>
+                <span style={{color: "white"}}>Patients</span>
             </div>
         </div>
     )
