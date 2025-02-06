@@ -115,11 +115,13 @@ function Login() {
 
     return (
         <div className={styles.page}>
+            {/*Display product logo on left half of screen*/}
             <img src={logo} alt={"logo"} width={"50%"} height={"100%"} />
             <div className={styles.form}>
                 <h1 className={styles.title}>
                     Welcome back
                 </h1>
+                {/*Prompt user for their email in order to log in*/}
                 <h2 className={styles.subtitle}>
                     Please enter your email
                 </h2>
