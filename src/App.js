@@ -20,6 +20,7 @@ import {Route, Routes, useNavigate} from "react-router-dom";
 import Home from "./pages/Home/Home";
 import SignUp from './pages/SignUp/SignUp.js';
 import {useCookies} from "react-cookie";
+import WoundDetails from './pages/WoundDetails/WoundDetails.js';
 import { signOut } from "firebase/auth";
 import { auth } from "./firebaseConfig.js"
 
@@ -232,6 +233,7 @@ function Content() {
             <Routes>
                 <Route path="/" element={cookies["email"] !== "" ? <Home /> : <Login/>}></Route>
                 <Route path="/treatment_session" element={<TreatmentParameters />}></Route>
+                <Route path="/wound_details" element={<WoundDetails />}></Route>
                 <Route path="/sign-up" element={<SignUp />}></Route>
                 <Route path="/patients" element={<Patients />}></Route>
                 <Route path="/create_patient" element={<CreatePatient />}></Route>
