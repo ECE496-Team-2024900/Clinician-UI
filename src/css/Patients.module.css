@@ -1,0 +1,74 @@
+.container {
+    padding: 1vh 1vw 1vh 1vw;
+    width: 90vw;
+    height: 100vh;
+    overflow-y: auto;
+    
+    .pageTitle {
+        font-weight: bold;
+        font-size: 1.8vw;
+        text-align: left;
+        margin: 0.5vh 0 2vh 0.5vw;
+    }
+
+    .searchandButtonContainer {
+        display: flex;
+        align-items: center;
+        gap: 40vw; 
+    }
+
+    .createButton {
+        white-space: nowrap; 
+        background-color: #004AAD;
+        color: #ffffff;
+        border-radius: 400px;
+        margin-left: 27vw;
+    }
+    
+    .search {
+        width: 45vw;
+        font-size: 1rem;
+        opacity: 100% !important;
+        border-radius: 400px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        outline: none;
+        margin-bottom: 30px;
+        flex: 1;
+    }
+
+    .search .ant-input {
+        border-radius: 400px;
+        outline: none;
+    }
+    
+    .search:focus-within {
+        outline: none; 
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.6); 
+        border: 1px solid rgba(0, 123, 255, 0.6); 
+    }
+
+    .searchIcon {
+        padding-right: 8px;
+    }
+   
+    .list {
+        border-color: #000000; 
+        border-width: 1px; 
+        border-style: solid;
+    }
+
+    .listHeader {
+        color: #004AAD; 
+        font-weight: bold;
+        font-size: 1.3rem;
+        width: 100%;
+    }
+
+    .listItem {
+        background: #0AC3FC33; 
+        color: #000000; 
+        font-size: 1rem;
+        border-top: 0.5px solid #000000;
+    }
+}
