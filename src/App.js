@@ -11,7 +11,7 @@ import ReactPlayer from "react-player";
 import axios from "axios";
 import { getTreatmentAPIUrl } from "./getAPIUrls/getTreatmentAPIUrl"
 import styles from "./App.module.css"
-import {Avatar, Button, Menu, Modal, Spin} from "antd";
+import {Avatar, Button, Menu, message, Modal, Spin} from "antd";
 import {ArrowRightOutlined, HomeOutlined, UnorderedListOutlined, UserOutlined, LogoutOutlined} from "@ant-design/icons";
 import CreatePatient from "./pages/CreatePatient/CreatePatient";
 import Patients from "./pages/Patients/Patients";
