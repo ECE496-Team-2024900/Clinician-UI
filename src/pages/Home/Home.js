@@ -48,7 +48,7 @@ function Home() {
                     
                     // creating promises to allow parallel execution
                     const patientPromises = MRNs.map(async (MRN) => {
-                        const res = await axios.post(`${getUsersAPIUrl()}/users/get_patients`, { patient_id: Number(MRN) });
+                        const res = await axios.post(`${getUsersAPIUrl()}/users/get_patients`, { medical_ref_number: Number(MRN) });
                         return res.status === 200 ? res?.data?.message?.[0] : null;
                     });
         

@@ -13,7 +13,7 @@ function PatientPage() {
 
     useEffect(() => {
         // Fetch patient data from API
-        axios.get(`${getUsersAPIUrl()}/users/get_patient_info`, { params: { id: patientId } })
+        axios.get(`${getUsersAPIUrl()}/users/get_patients`, { medical_ref_number: Number(patientId) })
             .then(res => {
                 if (res.status === 200) {
                     setPatientData(res.data.message);

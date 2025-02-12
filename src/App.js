@@ -1,4 +1,5 @@
 import Login from './pages/Login.js';
+import SignUp from './pages/SignUp/SignUp.js';
 import React, { useEffect, useState } from "react";
 import { MeetingProvider } from "@videosdk.live/react-sdk";
 import { authToken } from "./API";
@@ -13,8 +14,165 @@ import PatientDetails from "./pages/PatientDetails/PatientDetails";
 import TreatmentParameters from "./pages/TreatmentParameters/TreatmentParameters";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import Home from "./pages/Home/Home";
-import { useCookies } from "react-cookie";
-import PatientPage from "./pages/Patients/PatientPage"; // Imported the new blank patient page
+import {useCookies} from "react-cookie";
+import Wound from "./pages/Wound/Wound";
+import WoundDetails from './pages/WoundDetails/WoundDetails.js';
+import { signOut } from "firebase/auth";
+import { auth } from "./firebaseConfig.js"
+
+function ParticipantView(props) {
+    const micRef = useRef(null);
+    const { webcamStream, micStream, webcamOn, micOn, isLocal, displayName } =
+        useParticipant(props.participantId);
+
+    const videoStream = useMemo(() => {
+        if (webcamOn && webcamStream) {
+            const mediaStream = new MediaStream();
+            mediaStream.addTrack(webcamStream.track);
+            return mediaStream;
+        }
+    }, [webcamStream, webcamOn]);
+
+    useEffect(() => {
+        if (micRef.current) {
+            if (micOn && micStream) {
+                const mediaStream = new MediaStream();
+                mediaStream.addTrack(micStream.track);
+
+                micRef.current.srcObject = mediaStream;
+                micRef.current
+                    .play()
+                    .catch((error) =>
+                        console.error("videoElem.current.play() failed", error)
+                    );
+            } else {
+                micRef.current.srcObject = null;
+            }
+        }
+    }, [micStream, micOn]);
+
+    return (
+        <span style={{width: "50vw", display: "flex"}}>
+            <audio ref={micRef} autoPlay playsInline muted={isLocal} />
+            {webcamOn && (
+                <ReactPlayer
+                    //
+                    playsinline // extremely crucial prop
+                    pip={false}
+                    light={false}
+                    controls={false}
+                    muted={true}
+                    playing={true}
+                    height={"300px"}
+                    width={"300px"}
+                    //
+                    url={videoStream}
+                    //
+                    onError={(err) => {
+                        console.log(err, "participant video error");
+                    }}
+                />
+            )}
+        </span>
+    );
+}
+
+function Controls(props) {
+    const { end, toggleMic, toggleWebcam, getWebcams, changeWebcam, localParticipant } = useMeeting();
+    const { webcamStream, webcamOn, captureImage } = useParticipant(
+        props.participantId
+    );
+    const navigate = useNavigate()
+    const [frontFacing, setFrontFacing] = useState(false)
+    const flipCam = async () => {
+        const devices = await getWebcams()
+        const customTrack = await createCameraVideoTrack({
+            cameraId: devices[0].deviceId,
+            facingMode: frontFacing ? "BACK" : "FRONT",
+            optimizationMode: "motion",
+            multiStream: false,
+        });
+        setFrontFacing(!frontFacing)
+        changeWebcam(customTrack)
+    }
+    const endMeeting = async () => {
+        axios.put(`${getTreatmentAPIUrl()}/treatment/remove_video_call_id`,{id: 1} ).then(res => {
+            end()
+            navigate("/treatment_session")
+        })
+    }
+
+    const takeAndUploadScreenshot = async () => {
+        if (webcamOn && webcamStream) {
+            const base64 = await captureImage({}); // captureImage will return base64 string
+            axios.put(`${getTreatmentAPIUrl()}/treatment/add_image`, {image: base64, id: 1} ).then(res => {
+                console.log("image saved successfully")
+            })
+        } else {
+            console.error("Camera must be on to capture an image");
+        }
+    }
+
+    return (
+        <div className={styles.buttonContainer}>
+            <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => endMeeting()}>End Meeting</Button>
+            <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => toggleMic()}>Toggle Mic</Button>
+            <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => toggleWebcam()}>Toggle Cam</Button>
+            <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => flipCam()}>Flip Cam</Button>
+            <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => takeAndUploadScreenshot()}>Take Screenshot</Button>
+        </div>
+    );
+}
+
+function MeetingView(props) {
+    const [joined, setJoined] = useState(null);
+    const { join, participants, localParticipant } = useMeeting({
+        //Get the method which will be used to join the meeting.
+        //We will also get the participants list to display all participants
+        //callback for when meeting is joined successfully
+        onMeetingJoined: () => {
+            setJoined("JOINED");
+        },
+        //callback for when meeting is ended
+        onMeetingLeft: () => {
+            props.onMeetingLeave();
+        },
+    });
+    const joinMeeting = () => {
+        setJoined("JOINING");
+        join();
+    };
+
+    return (
+        <div className="container">
+            {joined && joined === "JOINED" ? (
+                <div>
+                    <Controls participantId={[...participants.keys()].filter(id => id !== localParticipant.id)?.[0]} />
+                    {[...participants.keys()].map((participantId) => (
+                        <ParticipantView
+                            participantId={participantId}
+                            key={participantId}
+                        />
+                    ))}
+                </div>
+            ) : joined && joined === "JOINING" ? (
+                <Spin fullscreen={true} tip={"Joining the meeting..."} />
+            ) : (
+                <Modal
+                    closable={false}
+                    styles={{content: { backgroundColor: '#004AAD', color: "white" }, header: { backgroundColor: '#004AAD', color: "white" }}}
+                    open={true}
+                    okButtonProps={{style: {backgroundColor: "white", color: "#004AAD" }}}
+                    cancelButtonProps={{ style: { display: 'none' } }}
+                    title={<span style={{color: "white"}}>{"Please join the video call"}</span>}
+                    onOk={joinMeeting}
+                    okText={"Join"}>
+                    {"The treatment for patient has begun. Please join the video call."}
+                </Modal>
+            )}
+        </div>
+    );
+}
 
 function App() {
     const [meetingId, setMeetingId] = useState(null);
@@ -73,6 +231,8 @@ function Content() {
             <Routes>
                 <Route path="/" element={cookies["email"] !== "" ? <Home /> : <Login/>}></Route>
                 <Route path="/treatment_session" element={<TreatmentParameters />}></Route>
+                <Route path="/wound" element={<Wound />}></Route>
+                <Route path="/wound_details" element={<WoundDetails />}></Route>
                 <Route path="/sign-up" element={<SignUp />}></Route>
                 <Route path="/patients" element={<Patients />}></Route>
                 <Route path="/create_patient" element={<CreatePatient />}></Route>
