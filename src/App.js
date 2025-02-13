@@ -11,7 +11,7 @@ import ReactPlayer from "react-player";
 import axios from "axios";
 import { getTreatmentAPIUrl } from "./getAPIUrls/getTreatmentAPIUrl"
 import styles from "./App.module.css"
-import {Avatar, Button, Menu, Modal, Spin} from "antd";
+import {Avatar, Button, Menu, Modal, Spin, message} from "antd";
 import {ArrowRightOutlined, HomeOutlined, UnorderedListOutlined, UserOutlined, LogoutOutlined} from "@ant-design/icons";
 import CreatePatient from "./pages/CreatePatient/CreatePatient";
 import Patients from "./pages/Patients/Patients";
@@ -232,7 +232,7 @@ function Content() {
     return (
         <div>
             <Routes>
-                <Route path="/" element={cookies["email"] !== "" ? <Home /> : <Login/>}></Route>
+                <Route path="/" element={cookies["email"] !== "" ? <Home /> : <Home/>}></Route>
                 <Route path="/treatment_session" element={<TreatmentParameters />}></Route>
                 <Route path="/wound" element={<Wound />}></Route>
                 <Route path="/wound_details" element={<WoundDetails />}></Route>
@@ -251,6 +251,7 @@ function SideMenu() {
     const handleLogout = async () => {
         try {
             await signOut(auth);
+            localStorage.removeItem("email"); // removing from local storage
             navigate("/");
             window.location.reload()
         } catch (error) {

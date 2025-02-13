@@ -101,6 +101,7 @@ function Login() {
             try {
                 const result = await getRedirectResult(auth);
                 if (result) {
+                    localStorage.setItem("email", email); // storing in local storage for persistance
                     setCookie("email", email);
                     navigate('/');
                 }

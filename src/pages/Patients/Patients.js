@@ -58,7 +58,7 @@ function Patients() {
     return <div className={styles.container}>
         <h2 className={styles.pageTitle}>Patients</h2>
         <div className={styles.searchAndButtonContainer}>
-        {/*Search bar*/}
+            
         <Search
           className={styles.search}
           onSearch={onSearch}
@@ -70,7 +70,7 @@ function Patients() {
           }
           size="large"
         />
-        {/*Create patient button*/}
+        
         <Button
             className={styles.createButton}
             type="primary"
@@ -80,19 +80,16 @@ function Patients() {
             Create New Patient Demographic
         </Button>
     </div>
-        {/*List of search results*/}
+        
         <List
             className={styles.list}
-            {/*Column name is the patient's name*/}
             header={<div className={styles.listHeader}>Name</div>}
             bordered
-            {/*Display 8 records per page*/}
             pagination={{
                 pageSize: 8,
                 align: 'center'
             }}
             dataSource={searchResults}
-            {/*Display the patient's first and last name*/}
             renderItem={(item) => (
                 <List.Item className={styles.listItem}>
                     {item.first_name + " " + item.last_name}

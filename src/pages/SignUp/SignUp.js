@@ -60,6 +60,7 @@ function SignUp() {
             const result = await getRedirectResult(auth); 
             if (result) {
                 message.success("User logged in successfully with Microsoft.");
+                localStorage.setItem("email", email); // Storing email for persistance
                 setCookie("email", email);
                 navigate('/');
             }
