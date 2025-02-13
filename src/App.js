@@ -103,7 +103,7 @@ function Controls(props) {
     const endMeeting = async () => {
         axios.put(`${getTreatmentAPIUrl()}/treatment/remove_video_call_id`,{id: 1} ).then(res => {
             end()
-            navigate("/treatment_session")
+            navigate("/treatment_session", { state: {treatmentId: 1} })
         })
     }
 

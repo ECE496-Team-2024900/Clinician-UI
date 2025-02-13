@@ -8,7 +8,7 @@ import axios from 'axios'
 
 
 function TreatmentParameters() {
-    const [treatment, setTreatment] = useState({'id': 1}) // set to random value for now
+    const data = location.state;
     const [disableSubmit, setDisableSubmit] = useState(true)
     const [errors, setErrors] = useState({
         drugVolume: true,
@@ -41,7 +41,7 @@ function TreatmentParameters() {
         // function fetches treatmennt parameters for the most recent previous treatment for this patient
         const getPrevTreatmentParameters = async () => {
             const today = new Date().toISOString().split('T')[0];
-            const url = `${getTreatmentAPIUrl()}/treatment/parameters/prev?id=${treatment?.id}&date=${today}`;
+            const url = `${getTreatmentAPIUrl()}/treatment/parameters/prev?id=${data.treatmentId}&date=${today}`;
 
             axios.get(url)
             .then((response) => {
@@ -72,7 +72,7 @@ function TreatmentParameters() {
             });
         }
         // fetching previous treatment parameters only if the treatment id is defined, as it is needed in the API call
-        if(treatment?.id) {
+        if(data.treatmentId) {
             getPrevTreatmentParameters();
         }
       }, [])
@@ -97,13 +97,13 @@ function TreatmentParameters() {
         };
 
         // setting treatment parameters for this treatment upon form submission
-        const url = `${getTreatmentAPIUrl()}/treatment/parameters/set?id=${treatment?.id}`;
+        const url = `${getTreatmentAPIUrl()}/treatment/parameters/set?id=${data.treatmentId}`;
         await axios.put(url, fieldsToUpdate)
                 .then((response) => {
                     if(response.status === 200) {
                         // if HTTP status is 200 (i.e. no errors), can inform hardware to start treatment
                         message.success("Treatment parameters set successfully. Now sending treatment approval to start treatment...");
-                        axios.get(`${getHardwareAPIUrl()}/hardware/approval?id=${treatment?.id}`)
+                        axios.get(`${getHardwareAPIUrl()}/hardware/approval?id=${data.treatmentId}`)
                             .then((response) => {
                                 if(response.status === 200) {
                                     message.success("Treatment approval sent successfully.")

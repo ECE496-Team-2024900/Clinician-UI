@@ -6,7 +6,7 @@ import {Button, Col, Form, Image, Input, Row} from "antd";
 import {ArrowLeftOutlined, ArrowRightOutlined} from "@ant-design/icons";
 
 function Wound() {
-    const [woundId, setWoundId] = useState(1)
+    const [woundId, setWoundId] = useState(1); // need to add persistance once this is being navigated too!
     const [wound, setWound] = useState(undefined)
     const [prevForm] = Form.useForm();
     const [imageIndex, setImageIndex] = useState(0)
