@@ -15,6 +15,7 @@ import {Avatar, Button, Menu, message, Modal, Spin} from "antd";
 import {ArrowRightOutlined, HomeOutlined, UnorderedListOutlined, UserOutlined, LogoutOutlined} from "@ant-design/icons";
 import CreatePatient from "./pages/CreatePatient/CreatePatient";
 import Patients from "./pages/Patients/Patients";
+import PatientDetails from "./pages/PatientDetails/PatientDetails";
 import TreatmentParameters from "./pages/TreatmentParameters/TreatmentParameters";
 import {Route, Routes, useNavigate} from "react-router-dom";
 import Home from "./pages/Home/Home";
@@ -239,6 +240,7 @@ function Content() {
                 <Route path="/sign-up" element={<SignUp />}></Route>
                 <Route path="/patients" element={<Patients />}></Route>
                 <Route path="/create_patient" element={<CreatePatient />}></Route>
+                <Route path="/patient_details/:mrn" element={<PatientDetails />}></Route>
             </Routes>
         </div>
     );
