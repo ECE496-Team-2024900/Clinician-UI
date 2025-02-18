@@ -14,7 +14,6 @@ function WoundDetails() {
     const [pastTreatments, setPastTreatments] = useState([]); // keeping track of past treatments for this wound and patient
     const [overlay, setOverlay] = useState("")
     const [date, setDate] = useState(null)
-    const [time, setTime] = useState(null)
     const [latestTreatment, setLatestTreatment] = useState(undefined)
 
     // Temporary variables - replace once logic implemented for it
@@ -75,7 +74,10 @@ function WoundDetails() {
                "wound_id": woundId,
                "session_number": pastTreatments.length,
                "date_scheduled": new Date(values.date_scheduled).toISOString().substring(0, 10),
-               "start_time_scheduled": new Date(values.start_time_scheduled).toISOString()
+               "start_time_scheduled": new Date(values.start_time_scheduled).toISOString(),
+               "started": false,
+               "paused": false,
+               "completed": false,
            }
            const url = `${getTreatmentAPIUrl()}/treatment/add_treatment`;
            axios.post(url, payload).then(() => {
@@ -125,8 +127,8 @@ function WoundDetails() {
                             <Button icon={<CloseOutlined style={{color: "#004AAD"}}/>} style={{borderColor: "white"}} onClick={() => setOverlay("")}/>
                         </div>
                         <Form onFinish={onFinish}>
-                            <Form.Item name="date_scheduled"><DatePicker value={date} onChange={date => setDate(date)} style={{width: "250px"}}/></Form.Item>
-                            <Form.Item name="start_time_scheduled"><TimePicker value={time} onChange={time => setTime(time.add(date))} style={{width: "250px"}}/></Form.Item>
+                            <Form.Item name="date_scheduled"><DatePicker value={new Date(date)} onChange={date => setDate(date)} style={{width: "250px"}}/></Form.Item>
+                            <Form.Item name="start_time_scheduled"><TimePicker value={new Date(date).getTime()} onChange={time => setDate(new Date(date).setHours(time.hours, time.minutes, time.seconds))} style={{width: "250px"}}/></Form.Item>
                             <Form.Item><Button type="primary" style={{background: "#004aad"}} htmlType={"submit"}>Submit</Button></Form.Item>
                         </Form>
                     </div>}/>
