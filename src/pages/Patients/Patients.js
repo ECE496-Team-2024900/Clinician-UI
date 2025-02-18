@@ -83,13 +83,16 @@ function Patients() {
         {/*List of search results*/}
         <List
             className={styles.list}
+            //Column name is the patient's name
             header={<div className={styles.listHeader}>Name</div>}
             bordered
+            //Display 8 records per page
             pagination={{
                 pageSize: 8,
                 align: 'center'
             }}
             dataSource={searchResults}
+            //Display the patient's first and last name
             renderItem={(item) => (
                 <List.Item className={styles.listItem}>
                     {item.first_name + " " + item.last_name}
