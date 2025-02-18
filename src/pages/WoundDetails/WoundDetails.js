@@ -69,12 +69,13 @@ function WoundDetails() {
     }
 
     const onFinish = (values) => {
+        console.log(values)
         if (overlay === "create") {
            const payload = {
                "wound_id": woundId,
-               "sessionNumber": pastTreatments.length,
-               "date_scheduled": values.date_scheduled,
-               "start_time_scheduled": values.start_time_scheduled
+               "session_number": pastTreatments.length,
+               "date_scheduled": new Date(values.date_scheduled).toUTCString().substring(0, 10),
+               "start_time_scheduled": new Date(values.start_time_scheduled).toUTCString()
            }
            const url = `${getTreatmentAPIUrl()}/treatment/add_treatment`;
            axios.post(url, payload).then(() => {
@@ -84,8 +85,8 @@ function WoundDetails() {
            })
         } else {
             const payload = {
-                "date_scheduled": values.date_scheduled,
-                "start_time_scheduled": values.start_time_scheduled
+                "date_scheduled": new Date (values.date_scheduled).toUTCString().substring(0,10),
+                "start_time_scheduled": new Date(values.start_time_scheduled).toUTCString()
             }
             const index = overlay.replace("edit-","")
             const treatment = pastTreatments[index]
@@ -125,7 +126,7 @@ function WoundDetails() {
                         </div>
                         <Form onFinish={onFinish}>
                             <Form.Item name="date_scheduled"><DatePicker value={date} onChange={date => setDate(date)} style={{width: "250px"}}/></Form.Item>
-                            <Form.Item name="start_time_scheduled"><TimePicker value={time} onChange={time => setTime(time)} style={{width: "250px"}}/></Form.Item>
+                            <Form.Item name="start_time_scheduled"><TimePicker value={time} onChange={time => setTime(time.add(date))} style={{width: "250px"}}/></Form.Item>
                             <Form.Item><Button type="primary" style={{background: "#004aad"}} htmlType={"submit"}>Submit</Button></Form.Item>
                         </Form>
                     </div>}/>
