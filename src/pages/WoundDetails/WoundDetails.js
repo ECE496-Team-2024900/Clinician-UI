@@ -1,13 +1,22 @@
 import { useState, useEffect } from 'react'
 import { getTreatmentAPIUrl } from '../../getAPIUrls/getTreatmentAPIUrl'
 import axios from 'axios'
-import {Button, message, Modal} from 'antd';
+import {Button, DatePicker, Form, Input, message, Modal, Popover, TimePicker} from 'antd';
 import styles from "../../css/WoundDetails.module.css";
-import {CloseOutlined, FlagFilled, PlusCircleFilled, PlusCircleOutlined, PlusOutlined} from "@ant-design/icons";
+import {
+    CloseOutlined,
+    EditOutlined,
+    FlagFilled,
+    PlusCircleFilled,
+    PlusCircleOutlined,
+    PlusOutlined
+} from "@ant-design/icons";
 
 function WoundDetails() {
     const [pastTreatments, setPastTreatments] = useState([]); // keeping track of past treatments for this wound and patient
-    const [overlay, setOverlay] = useState(false)
+    const [overlay, setOverlay] = useState("")
+    const [date, setDate] = useState(null)
+    const [time, setTime] = useState(null)
 
     // Temporary variables - replace once logic implemented for it
     const woundId = 1
@@ -53,11 +62,35 @@ function WoundDetails() {
         //todo: send message to patient once messaging flow complete
     }
 
+    const onFinish = (values) => {
+        if (overlay === "create") {
+           //todo: add treatment session
+        } else {
+           //todo: modify treatment session
+           //todo: if flag is on, remove flag
+        }
+        //todo: inform patient
+        setOverlay("")
+    }
+
     return (
         <div className={styles.page}>
             <div className={styles.header}>
                 <h3>Treatment Sessions</h3>
-                <Button style={{background: "#004AAD"}} icon={<PlusOutlined style={{color: "white"}}/>} onClick={() => setOverlay(true)}/>
+                <Button disabled={overlay !== ""} style={{background: "#004AAD"}} icon={<PlusOutlined style={{color: "white"}}/>} onClick={() => setOverlay("create")}/>
+                <Popover
+                    open={overlay !== ""}
+                    content={<div>
+                        <div className={styles.header}>
+                            <h3 style={{color:"#004aad"}}>{`${overlay === "create" ? "Schedule" : "Reschedule"} Treatment Session`}</h3>
+                            <Button icon={<CloseOutlined style={{color: "#004AAD"}}/>} style={{borderColor: "white"}} onClick={() => setOverlay("")}/>
+                        </div>
+                        <Form onFinish={onFinish}>
+                            <Form.Item name="date_scheduled"><DatePicker value={date} onChange={date => setDate(date)} style={{width: "250px"}}/></Form.Item>
+                            <Form.Item name="time_scheduled"><TimePicker value={time} onChange={time => setTime(time)} style={{width: "250px"}}/></Form.Item>
+                            <Form.Item><Button type="primary" style={{background: "#004aad"}} htmlType={"submit"}>Submit</Button></Form.Item>
+                        </Form>
+                    </div>}/>
             </div>
           <table className={styles.treatmentTable}>
             <thead>
@@ -66,23 +99,27 @@ function WoundDetails() {
                 <th>#</th>
                 <th>Date</th>
                 <th>Time</th>
+                <th>Reschedule?</th>
                 <th>Cancel?</th>
               </tr>
             </thead>
             <tbody>
               {pastTreatments.map((treatment) => (
-                <tr key={treatment.session_number}>
-                  <td>{treatment.reschedule_requested ? <FlagFilled/> : <></>}</td>
-                  <td>{treatment.session_number}</td>
-                  <td>{formatDate(treatment.date_scheduled)}</td>
-                  <td>{treatment.start_time}</td>
-                  <td><Button style={{background: "red"}} icon={<CloseOutlined style={{color: "white"}}/>} onClick={e => deleteSession(treatment.session_number)}/></td>
-                </tr>
+                  <tr key={treatment.session_number}>
+                      <td>{treatment.reschedule_requested ? <FlagFilled/> : <></>}</td>
+                      <td>{treatment.session_number}</td>
+                      <td>{formatDate(treatment.date_scheduled)}</td>
+                      <td>{treatment.start_time}</td>
+                      <td><Button disabled={overlay !== ""} style={{background: "#004AAD"}} icon={<EditOutlined style={{color: "white"}}/>}
+                                  onClick={e => setOverlay("edit")}/></td>
+                      <td><Button style={{background: "red"}} icon={<CloseOutlined style={{color: "white"}}/>}
+                                  onClick={e => deleteSession(treatment.session_number)}/></td>
+                  </tr>
               ))}
             </tbody>
           </table>
         </div>
-      );
+    );
 }
 
 export default WoundDetails;

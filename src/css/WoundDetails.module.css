@@ -1,15 +1,15 @@
 .page {
     padding: 20px;
     display: block;
-
-    .header {
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 20px;
-    }
   }
+
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 20px;
+}
   
   .treatmentTable {
     width: 90vw;
