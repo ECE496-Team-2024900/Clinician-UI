@@ -15,7 +15,7 @@ function WoundDetails() {
     const [overlay, setOverlay] = useState("")
     const [date, setDate] = useState(null)
     const [time, setTime] = useState(null)
-    const [latestTreatment, setLatestTreatment] = useState("")
+    const [latestTreatment, setLatestTreatment] = useState(undefined)
 
     // Temporary variables - replace once logic implemented for it
     const woundId = 1
@@ -33,7 +33,7 @@ function WoundDetails() {
                     setPastTreatments(response.data);
                     for (let elem in response.data) {
                         const dateTime = new Date(elem.start_time_scheduled)
-                        if (latestTreatment === "" || dateTime > latestTreatment) {
+                        if (latestTreatment === undefined || dateTime > latestTreatment) {
                             setLatestTreatment(dateTime)
                         }
                     }
