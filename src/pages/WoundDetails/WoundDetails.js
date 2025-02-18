@@ -15,6 +15,7 @@ function WoundDetails() {
     const [overlay, setOverlay] = useState("")
     const [date, setDate] = useState(null)
     const [time, setTime] = useState(null)
+    const [latestTreatment, setLatestTreatment] = useState("")
 
     // Temporary variables - replace once logic implemented for it
     const woundId = 1
@@ -23,12 +24,19 @@ function WoundDetails() {
     useEffect(() => {
         // fetching past treatments
         const fetchPastTreatments = async () => {
+            setLatestTreatment("")
             const url = `${getTreatmentAPIUrl()}/treatment/get_treatments?patient_id=${patientId}&wound_id=${woundId}`;
             axios.get(url)
             .then((response) => {
                 // if there are no errors and past treatmentts are available, storing them in use state
                 if(response.status === 200) {
                     setPastTreatments(response.data);
+                    for (let elem in response.data) {
+                        const dateTime = new Date(elem.start_time_scheduled)
+                        if (latestTreatment === "" || dateTime > latestTreatment) {
+                            setLatestTreatment(dateTime)
+                        }
+                    }
                 }
             })
             .catch(() => {
