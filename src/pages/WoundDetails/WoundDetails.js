@@ -128,7 +128,13 @@ function WoundDetails() {
                         </div>
                         <Form onFinish={onFinish}>
                             <Form.Item name="date_scheduled"><DatePicker value={new Date(date)} onChange={date => setDate(date)} style={{width: "250px"}}/></Form.Item>
-                            <Form.Item name="start_time_scheduled"><TimePicker value={new Date(date).getTime()} onChange={time => setDate(new Date(date).setHours(time.hours, time.minutes, time.seconds))} style={{width: "250px"}}/></Form.Item>
+                            <Form.Item name="start_time_scheduled"><TimePicker value={new Date(date).getTime()} onChange={time => {
+                                if (new Date(date).setHours(time.hours, time.minutes, time.seconds) - latestTreatment >= 24) {
+                                    setDate(new Date(date).setHours(time.hours, time.minutes, time.seconds))
+                                } else {
+                                    message.error("treatment must be scheduled at least 24 hours after last treatment")
+                                }
+                            }} style={{width: "250px"}}/></Form.Item>
                             <Form.Item><Button type="primary" style={{background: "#004aad"}} htmlType={"submit"}>Submit</Button></Form.Item>
                         </Form>
                     </div>}/>
