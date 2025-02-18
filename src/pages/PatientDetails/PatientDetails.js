@@ -15,10 +15,10 @@ function PatientDetails() {
 
     //Get the list of wounds given the patient MRN specified in the url
     useEffect(() => {
-        axios.get(`${getTreatmentAPIUrl()}/treatment/get_all_wounds_given_patient?mrn=${location.pathname.split("/")[2]}`).then(res => {
+        axios.post(`${getTreatmentAPIUrl()}/treatment/get_wounds`, {patient_id: location.pathname.split("/")[2]}).then(res => {
             try {
                 if (res.status === 200) {
-                    setWounds(res?.data?.message);
+                    setWounds(res.data);
                 } else {
                     setWounds("");
                 }
