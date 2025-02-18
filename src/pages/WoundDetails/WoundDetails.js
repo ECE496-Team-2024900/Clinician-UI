@@ -7,8 +7,6 @@ import {
     CloseOutlined,
     EditOutlined,
     FlagFilled,
-    PlusCircleFilled,
-    PlusCircleOutlined,
     PlusOutlined
 } from "@ant-design/icons";
 
@@ -64,10 +62,42 @@ function WoundDetails() {
 
     const onFinish = (values) => {
         if (overlay === "create") {
-           //todo: add treatment session
+           const payload = {
+               "wound_id": woundId,
+               "sessionNumber": pastTreatments.length,
+               "date_scheduled": values.date_scheduled,
+               "start_time_scheduled": values.start_time_scheduled
+           }
+           const url = `${getTreatmentAPIUrl()}/treatment/add_treatment`;
+           axios.post(url, payload).then(() => {
+               setPastTreatments([])
+           }).catch(() => {
+               message.error("There was an error in creating the treatment.");
+           })
         } else {
-           //todo: modify treatment session
-           //todo: if flag is on, remove flag
+            const payload = {
+                "date_scheduled": values.date_scheduled,
+                "start_time_scheduled": values.start_time_scheduled
+            }
+            const index = overlay.replace("edit-","")
+            const treatment = pastTreatments[index]
+            const url = `${getTreatmentAPIUrl()}/treatment/parameters/set?id=${treatment.session_number}`;
+            axios.put(url, payload).then(() => {
+                if (treatment.reschedule_requested === true) {
+                    const payload = {
+                        "id": treatment.session_number,
+                        "reschedule_requested": false
+                    }
+                    const url = `${getTreatmentAPIUrl()}/treatment/request_reschedule}`;
+                    axios.put(url, payload).then(() => {
+                    }).catch(() => {
+                        message.error("There was an error in removing the reschedule request.");
+                    })
+                }
+                setPastTreatments([])
+            }).catch(() => {
+                message.error("There was an error in creating the treatment.");
+            })
         }
         //todo: inform patient
         setOverlay("")
@@ -87,7 +117,7 @@ function WoundDetails() {
                         </div>
                         <Form onFinish={onFinish}>
                             <Form.Item name="date_scheduled"><DatePicker value={date} onChange={date => setDate(date)} style={{width: "250px"}}/></Form.Item>
-                            <Form.Item name="time_scheduled"><TimePicker value={time} onChange={time => setTime(time)} style={{width: "250px"}}/></Form.Item>
+                            <Form.Item name="start_time_scheduled"><TimePicker value={time} onChange={time => setTime(time)} style={{width: "250px"}}/></Form.Item>
                             <Form.Item><Button type="primary" style={{background: "#004aad"}} htmlType={"submit"}>Submit</Button></Form.Item>
                         </Form>
                     </div>}/>
@@ -104,14 +134,14 @@ function WoundDetails() {
               </tr>
             </thead>
             <tbody>
-              {pastTreatments.map((treatment) => (
+              {pastTreatments.map((treatment, index) => (
                   <tr key={treatment.session_number}>
                       <td>{treatment.reschedule_requested ? <FlagFilled/> : <></>}</td>
                       <td>{treatment.session_number}</td>
                       <td>{formatDate(treatment.date_scheduled)}</td>
                       <td>{treatment.start_time}</td>
                       <td><Button disabled={overlay !== ""} style={{background: "#004AAD"}} icon={<EditOutlined style={{color: "white"}}/>}
-                                  onClick={e => setOverlay("edit")}/></td>
+                                  onClick={e => setOverlay(`edit-${index}`)}/></td>
                       <td><Button style={{background: "red"}} icon={<CloseOutlined style={{color: "white"}}/>}
                                   onClick={e => deleteSession(treatment.session_number)}/></td>
                   </tr>
