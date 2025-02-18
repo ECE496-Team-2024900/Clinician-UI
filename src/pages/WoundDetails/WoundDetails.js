@@ -74,8 +74,8 @@ function WoundDetails() {
            const payload = {
                "wound_id": woundId,
                "session_number": pastTreatments.length,
-               "date_scheduled": new Date(values.date_scheduled).toUTCString().substring(0, 10),
-               "start_time_scheduled": new Date(values.start_time_scheduled).toUTCString()
+               "date_scheduled": new Date(values.date_scheduled).toISOString().substring(0, 10),
+               "start_time_scheduled": new Date(values.start_time_scheduled).toISOString()
            }
            const url = `${getTreatmentAPIUrl()}/treatment/add_treatment`;
            axios.post(url, payload).then(() => {
@@ -85,8 +85,8 @@ function WoundDetails() {
            })
         } else {
             const payload = {
-                "date_scheduled": new Date (values.date_scheduled).toUTCString().substring(0,10),
-                "start_time_scheduled": new Date(values.start_time_scheduled).toUTCString()
+                "date_scheduled": new Date (values.date_scheduled).toISOString().substring(0,10),
+                "start_time_scheduled": new Date(values.start_time_scheduled).toISOString()
             }
             const index = overlay.replace("edit-","")
             const treatment = pastTreatments[index]
