@@ -50,6 +50,7 @@ function WoundDetails() {
         }).catch(() => {
             message.error("There was an error in cancelling the treatment.");
         });
+        //todo: send message to patient once messaging flow complete
     }
 
     return (
