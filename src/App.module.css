@@ -25,7 +25,8 @@
                 flex-direction: column;
                 height: 8vh;
                 align-items: center;
-                gap: 1vh;
+                gap: 0.25vh;
+                padding-top: 2vh;
 
                 .button {
                     width: 6vw;

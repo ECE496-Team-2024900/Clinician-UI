@@ -38,12 +38,14 @@ function TreatmentParameters() {
     const [currForm] = Form.useForm();
 
     useEffect(() => {
+        // function fetches treatmennt parameters for the most recent previous treatment for this patient
         const getPrevTreatmentParameters = async () => {
             const today = new Date().toISOString().split('T')[0];
             const url = `${getTreatmentAPIUrl()}/treatment/parameters/prev?id=${treatment?.id}&date=${today}`;
 
             axios.get(url)
             .then((response) => {
+                // if HTTP status is 200 (i.e. no error), locally storing parameters and setting errors to false
                 if(response.status === 200) {
                     setPrevTreatmentParameters({
                         drugVolume: response.data.drug_volume_required,
@@ -69,11 +71,14 @@ function TreatmentParameters() {
                 message.error("There was an error in retrieving patient parameters.");
             });
         }
+        // fetching previous treatment parameters only if the treatment id is defined, as it is needed in the API call
         if(treatment?.id) {
             getPrevTreatmentParameters();
         }
       }, [])
 
+      // once the previous treatment parameters are successfully stored, can pre-populate current parameters
+      // and display previous parameter ones in a read-only form
       useEffect(() => {
         prevForm.setFieldsValue(prevTreatmentParameters);
         currForm.setFieldsValue(prevTreatmentParameters);
@@ -81,6 +86,8 @@ function TreatmentParameters() {
 
     const submitForm = async () => {
         setDisableSubmit(true);
+        
+        // creating object based on what API expects
         let fieldsToUpdate = {
             "drug_volume_required": Number(fields.drugVolume),
             "wash_volume_required": Number(fields.solventVolume),
@@ -89,10 +96,12 @@ function TreatmentParameters() {
             "second_wait": Number(fields.delayBetweenLightAndSolvent)
         };
 
+        // setting treatment parameters for this treatment upon form submission
         const url = `${getTreatmentAPIUrl()}/treatment/parameters/set?id=${treatment?.id}`;
         await axios.put(url, fieldsToUpdate)
                 .then((response) => {
                     if(response.status === 200) {
+                        // if HTTP status is 200 (i.e. no errors), can inform hardware to start treatment
                         message.success("Treatment parameters set successfully. Now sending treatment approval to start treatment...");
                         axios.get(`${getHardwareAPIUrl()}/hardware/approval?id=${treatment?.id}`)
                             .then((response) => {
@@ -112,8 +121,10 @@ function TreatmentParameters() {
                 });
     }
 
+    // form field validation and error handling for numbers
     const inputNumberValidation = (_) => {
         const user_value = currForm.getFieldValue(_.field)
+        // if field does not a number, should throw an error
         if (isNaN(user_value) === false) {
             setFields(fields => ({
                 ...fields,
@@ -128,6 +139,7 @@ function TreatmentParameters() {
         return Promise.reject('Not a number');
     }
 
+    // form field validation and error handling for required fields
     const inputRequiredValidation = (_) => {
         const user_value = currForm.getFieldValue(_.field).toString()
         if(user_value !== null && user_value.trim() !== '') {
@@ -144,6 +156,8 @@ function TreatmentParameters() {
         return Promise.reject('Required field');
     }
     
+    // form field validation and error handling for acknowledgement checkbox
+    // clinicians are required to check this to sent their treatment approval
     const acknowledgmentValidation = (_, checked) => {
         if(checked) {
             setErrors(errors => ({
@@ -159,6 +173,7 @@ function TreatmentParameters() {
         return Promise.reject('Acknowledgment must be checked');
     }
 
+    // if there are any errors in the treatment parameters, submit button should be disabled
     useEffect(() => {
         if(Object.values(errors).every(error => error === false)) {
             setDisableSubmit(false);
