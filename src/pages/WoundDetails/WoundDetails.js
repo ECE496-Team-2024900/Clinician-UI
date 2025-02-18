@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import { getTreatmentAPIUrl } from '../../getAPIUrls/getTreatmentAPIUrl'
 import axios from 'axios'
-import { message } from 'antd';
+import {Button, message, Modal} from 'antd';
 import styles from "../../css/WoundDetails.module.css";
+import {CloseOutlined, PlusCircleFilled, PlusCircleOutlined, PlusOutlined} from "@ant-design/icons";
 
 function WoundDetails() {
     const [pastTreatments, setPastTreatments] = useState([]); // keeping track of past treatments for this wound and patient
+    const [overlay, setOverlay] = useState(false)
 
     // Temporary variables - replace once logic implemented for it
     const woundId = 1
@@ -27,7 +29,7 @@ function WoundDetails() {
             });
         }
         fetchPastTreatments()
-    }, [])
+    }, [pastTreatments])
 
     // helper function to format date from 'YYYY-mm-dd' to 'weekday, month date, year' (e.g. Tuesday, November 26, 2024)
     const formatDate = (dateString) => {
@@ -41,15 +43,28 @@ function WoundDetails() {
         return date.toLocaleDateString('en-US', options);
     };
 
+    const deleteSession = (id) => {
+        const url = `${getTreatmentAPIUrl()}/treatment/cancel_treatment?id=${id}`;
+        axios.delete(url).then(() => {
+            setPastTreatments([])
+        }).catch(() => {
+            message.error("There was an error in cancelling the treatment.");
+        });
+    }
+
     return (
         <div className={styles.page}>
-          <h3>Treatment Sessions</h3>
+            <div className={styles.header}>
+                <h3>Treatment Sessions</h3>
+                <Button style={{background: "#004AAD"}} icon={<PlusOutlined style={{color: "white"}}/>} onClick={() => setOverlay(true)}/>
+            </div>
           <table className={styles.treatmentTable}>
             <thead>
               <tr>
                 <th>#</th>
                 <th>Date</th>
                 <th>Time</th>
+                <th>Cancel?</th>
               </tr>
             </thead>
             <tbody>
@@ -58,6 +73,7 @@ function WoundDetails() {
                   <td>{treatment.session_number}</td>
                   <td>{formatDate(treatment.date_scheduled)}</td>
                   <td>{treatment.start_time}</td>
+                  <td><Button style={{background: "red"}} icon={<CloseOutlined style={{color: "white"}}/>} onClick={e => deleteSession(treatment.session_number)}/></td>
                 </tr>
               ))}
             </tbody>
