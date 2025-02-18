@@ -129,7 +129,7 @@ function WoundDetails() {
                         <Form onFinish={onFinish}>
                             <Form.Item name="date_scheduled"><DatePicker value={new Date(date)} onChange={date => setDate(date)} style={{width: "250px"}}/></Form.Item>
                             <Form.Item name="start_time_scheduled"><TimePicker value={new Date(date).getTime()} onChange={time => {
-                                if (new Date(date).setHours(time.hours, time.minutes, time.seconds) - latestTreatment >= 24) {
+                                if (new Date(date).setHours(time.hours, time.minutes, time.seconds) - new Date(latestTreatment).getHours() >= 24) {
                                     setDate(new Date(date).setHours(time.hours, time.minutes, time.seconds))
                                 } else {
                                     message.error("treatment must be scheduled at least 24 hours after last treatment")
