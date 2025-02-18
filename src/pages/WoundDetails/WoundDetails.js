@@ -3,7 +3,7 @@ import { getTreatmentAPIUrl } from '../../getAPIUrls/getTreatmentAPIUrl'
 import axios from 'axios'
 import {Button, message, Modal} from 'antd';
 import styles from "../../css/WoundDetails.module.css";
-import {CloseOutlined, PlusCircleFilled, PlusCircleOutlined, PlusOutlined} from "@ant-design/icons";
+import {CloseOutlined, FlagFilled, PlusCircleFilled, PlusCircleOutlined, PlusOutlined} from "@ant-design/icons";
 
 function WoundDetails() {
     const [pastTreatments, setPastTreatments] = useState([]); // keeping track of past treatments for this wound and patient
@@ -62,6 +62,7 @@ function WoundDetails() {
           <table className={styles.treatmentTable}>
             <thead>
               <tr>
+                <th></th>
                 <th>#</th>
                 <th>Date</th>
                 <th>Time</th>
@@ -71,6 +72,7 @@ function WoundDetails() {
             <tbody>
               {pastTreatments.map((treatment) => (
                 <tr key={treatment.session_number}>
+                  <td>{treatment.reschedule_requested ? <FlagFilled/> : <></>}</td>
                   <td>{treatment.session_number}</td>
                   <td>{formatDate(treatment.date_scheduled)}</td>
                   <td>{treatment.start_time}</td>
