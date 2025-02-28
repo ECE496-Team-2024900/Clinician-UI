@@ -25,6 +25,7 @@ import Wound from "./pages/Wound/Wound";
 import WoundDetails from './pages/WoundDetails/WoundDetails.js';
 import { signOut } from "firebase/auth";
 import { auth } from "./firebaseConfig.js"
+import PostTreatment from './pages/PostTreatment/PostTreatment.js';
 
 function ParticipantView(props) {
     const micRef = useRef(null);
@@ -241,6 +242,7 @@ function Content() {
                 <Route path="/patients" element={<Patients />}></Route>
                 <Route path="/create_patient" element={<CreatePatient />}></Route>
                 <Route path="/patient_details/:mrn" element={<PatientDetails />}></Route>
+                <Route path="/post_treatment_session" element={<PostTreatment />}></Route>
             </Routes>
         </div>
     );
