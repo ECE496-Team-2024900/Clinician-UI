@@ -14,6 +14,7 @@ import styles from "./App.module.css"
 import {Avatar, Button, Menu, message, Modal, Spin} from "antd";
 import {ArrowRightOutlined, HomeOutlined, UnorderedListOutlined, UserOutlined, LogoutOutlined} from "@ant-design/icons";
 import CreatePatient from "./pages/CreatePatient/CreatePatient";
+import CreateWound from "./pages/CreateWound/CreateWound";
 import Patients from "./pages/Patients/Patients";
 import PatientDetails from "./pages/PatientDetails/PatientDetails";
 import TreatmentParameters from "./pages/TreatmentParameters/TreatmentParameters";
@@ -241,6 +242,7 @@ function Content() {
                 <Route path="/patients" element={<Patients />}></Route>
                 <Route path="/create_patient" element={<CreatePatient />}></Route>
                 <Route path="/patient_details/:mrn" element={<PatientDetails />}></Route>
+                <Route path="/create_wound" element={<CreateWound />}></Route>
             </Routes>
         </div>
     );
