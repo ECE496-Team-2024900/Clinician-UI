@@ -17,6 +17,7 @@ import CreatePatient from "./pages/CreatePatient/CreatePatient";
 import Patients from "./pages/Patients/Patients";
 import PatientDetails from "./pages/PatientDetails/PatientDetails";
 import TreatmentParameters from "./pages/TreatmentParameters/TreatmentParameters";
+import TreatmentSessionDetails from "./pages/TreatmentSessionDetails/TreatmentSessionDetails";
 import {Route, Routes, useNavigate} from "react-router-dom";
 import Home from "./pages/Home/Home";
 import SignUp from './pages/SignUp/SignUp.js';
@@ -243,6 +244,7 @@ function Content() {
                 <Route path="/create_patient" element={<CreatePatient />}></Route>
                 <Route path="/patient_details/:mrn" element={<PatientDetails />}></Route>
                 <Route path="/post_treatment_session" element={<PostTreatment />}></Route>
+                <Route path="/treatment_session_details/:id" element={<TreatmentSessionDetails />}></Route>
             </Routes>
         </div>
     );
