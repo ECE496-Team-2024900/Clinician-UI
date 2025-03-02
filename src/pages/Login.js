@@ -85,32 +85,39 @@ function Login() {
         } catch (error) {
             return false;
         }
-      }
+    }
 
     // submitting email to log user in (if they are registered with app)
     const submitEmail = async () => {
         const email = currForm.getFieldValue("emailInput")
         const isRegistered = await emailRegistered(email)
         if (isRegistered) {
-            // redirect to Microsoft login
-            const provider = new OAuthProvider('microsoft.com');
-            provider.setCustomParameters({
-                login_hint: email
-              });
-            signInWithRedirect(auth, provider);
-            try {
-                const result = await getRedirectResult(auth);
-                if (result) {
-                    setCookie("email", email);
-                    navigate('/');
+            if (window.location.hostname === "localhost") {
+                setCookie("email", email)
+                navigate("/")
+                window.location.reload()
+            } else {
+                // redirect to Microsoft login
+                const provider = new OAuthProvider('microsoft.com');
+                provider.setCustomParameters({
+                    login_hint: email
+                });
+                signInWithRedirect(auth, provider);
+                try {
+                    const result = await getRedirectResult(auth);
+                    if (result) {
+                        setCookie("email", email);
+                        navigate('/');
+                        window.location.reload()
+                    }
+                } catch (error) {
+                    message.error("Login failed - please try again");
                 }
-            } catch (error) {
-                message.error("Login failed - please try again");
             }
-          } else {
+        } else {
             // navigate to sign-up page if the user is not registered
             navigate('/sign-up', { state: { email: email } });
-          }
+        }
     };
 
     return (
@@ -127,17 +134,17 @@ function Login() {
                 </h2>
                 <Form form={currForm}>
                     <Form.Item name="emailInput" rules={[
-                            {
-                                message: 'Email is required.',
-                                validator: (_, value) => emailRequiredValidation(_, value)
-                            },
-                            {
-                                message: 'Email must be part of the UHN domain.',
-                                validator: (_, value) => emailDomainValidation(_, value)
-                            }
-                        ]}>
-                        <Input 
-                            placeholder="Your email" 
+                        {
+                            message: 'Email is required.',
+                            validator: (_, value) => emailRequiredValidation(_, value)
+                        },
+                        {
+                            message: 'Email must be part of the UHN domain.',
+                            validator: (_, value) => emailDomainValidation(_, value)
+                        }
+                    ]}>
+                        <Input
+                            placeholder="Your email"
                             className={styles.email_input}
                             allowClear
                         />
