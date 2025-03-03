@@ -9,6 +9,7 @@ import {
     FlagFilled,
     PlusOutlined
 } from "@ant-design/icons";
+import {getUsersAPIUrl} from "../../getAPIUrls/getUsersAPIUrl";
 
 function WoundDetails() {
     const [pastTreatments, setPastTreatments] = useState([]); // keeping track of past treatments for this wound and patient
@@ -57,14 +58,22 @@ function WoundDetails() {
         return date.toLocaleDateString('en-US', options);
     };
 
-    const deleteSession = (id) => {
-        const url = `${getTreatmentAPIUrl()}/treatment/cancel_treatment?id=${id}`;
+    const deleteSession = (treatment) => {
+        const url = `${getTreatmentAPIUrl()}/treatment/cancel_treatment?id=${treatment.session_number}`;
         axios.delete(url).then(() => {
             setPastTreatments([])
+            const emailUrl = `${getUsersAPIUrl()}/users/send_email`
+            const phoneUrl = `${getUsersAPIUrl()}/users/send_message`
+            const payload = {
+                "id": patientId,
+                "type": "patient",
+                "message": `Your treatment session on \`${treatment.date_scheduled}\` is cancelled.`
+            }
+            axios.post(emailUrl, payload).then()
+            axios.post(phoneUrl, payload).then()
         }).catch(() => {
             message.error("There was an error in cancelling the treatment.");
         });
-        //todo: send message to patient once messaging flow complete
     }
 
     const onFinish = (values) => {
@@ -82,6 +91,15 @@ function WoundDetails() {
            const url = `${getTreatmentAPIUrl()}/treatment/add_treatment`;
            axios.post(url, payload).then(() => {
                setPastTreatments([])
+               const emailUrl = `${getUsersAPIUrl()}/users/send_email`
+               const phoneUrl = `${getUsersAPIUrl()}/users/send_message`
+               const payload = {
+                   "id": patientId,
+                   "type": "patient",
+                   "message": `Your treatment session is scheduled on \`${treatment.date_scheduled}\`.`
+               }
+               axios.post(emailUrl, payload).then()
+               axios.post(phoneUrl, payload).then()
            }).catch(() => {
                message.error("There was an error in creating the treatment.");
            })
@@ -101,6 +119,15 @@ function WoundDetails() {
                     }
                     const url = `${getTreatmentAPIUrl()}/treatment/request_reschedule}`;
                     axios.put(url, payload).then(() => {
+                        const emailUrl = `${getUsersAPIUrl()}/users/send_email`
+                        const phoneUrl = `${getUsersAPIUrl()}/users/send_message`
+                        const payload = {
+                            "id": patientId,
+                            "type": "patient",
+                            "message": `Your treatment session is rescheduled to \`${treatment.date_scheduled}\`.`
+                        }
+                        axios.post(emailUrl, payload).then()
+                        axios.post(phoneUrl, payload).then()
                     }).catch(() => {
                         message.error("There was an error in removing the reschedule request.");
                     })
@@ -110,7 +137,6 @@ function WoundDetails() {
                 message.error("There was an error in creating the treatment.");
             })
         }
-        //todo: inform patient
         setOverlay("")
     }
 
@@ -160,7 +186,7 @@ function WoundDetails() {
                       <td><Button disabled={overlay !== ""} style={{background: "#004AAD"}} icon={<EditOutlined style={{color: "white"}}/>}
                                   onClick={e => setOverlay(`edit-${index}`)}/></td>
                       <td><Button style={{background: "red"}} icon={<CloseOutlined style={{color: "white"}}/>}
-                                  onClick={e => deleteSession(treatment.session_number)}/></td>
+                                  onClick={e => deleteSession(treatment)}/></td>
                   </tr>
               ))}
             </tbody>
