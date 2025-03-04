@@ -102,10 +102,8 @@ function Controls(props) {
         changeWebcam(customTrack)
     }
     const endMeeting = async () => {
-        axios.put(`${getTreatmentAPIUrl()}/treatment/remove_video_call_id`,{id: 1} ).then(res => {
-            end()
-            navigate("/treatment_session")
-        })
+        end()
+        navigate("/treatment_session")
     }
 
     const takeAndUploadScreenshot = async () => {
@@ -138,6 +136,7 @@ function MeetingView(props) {
         //callback for when meeting is joined successfully
         onMeetingJoined: () => {
             setJoined("JOINED");
+            axios.put(`${getTreatmentAPIUrl()}/treatment/remove_video_call_id`,{id: 1} ).then()
         },
         //callback for when meeting is ended
         onMeetingLeft: () => {
