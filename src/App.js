@@ -14,6 +14,7 @@ import styles from "./App.module.css"
 import {Avatar, Button, Menu, message, Modal, Spin} from "antd";
 import {ArrowRightOutlined, HomeOutlined, UnorderedListOutlined, UserOutlined, LogoutOutlined} from "@ant-design/icons";
 import CreatePatient from "./pages/CreatePatient/CreatePatient";
+import CreateWound from "./pages/CreateWound/CreateWound";
 import Patients from "./pages/Patients/Patients";
 import PatientDetails from "./pages/PatientDetails/PatientDetails";
 import TreatmentParameters from "./pages/TreatmentParameters/TreatmentParameters";
@@ -22,11 +23,11 @@ import {Route, Routes, useNavigate} from "react-router-dom";
 import Home from "./pages/Home/Home";
 import SignUp from './pages/SignUp/SignUp.js';
 import {useCookies} from "react-cookie";
+import PostTreatment from './pages/PostTreatment/PostTreatment.js';
 import Wound from "./pages/Wound/Wound";
 import WoundDetails from './pages/WoundDetails/WoundDetails.js';
 import { signOut } from "firebase/auth";
 import { auth } from "./firebaseConfig.js"
-import PostTreatment from './pages/PostTreatment/PostTreatment.js';
 
 function ParticipantView(props) {
     const micRef = useRef(null);
@@ -237,14 +238,15 @@ function Content() {
             <Routes>
                 <Route path="/" element={cookies["email"] !== "" ? <Home /> : <Login/>}></Route>
                 <Route path="/treatment_session" element={<TreatmentParameters />}></Route>
+                <Route path="/post_treatment_session" element={<PostTreatment />}></Route>
                 <Route path="/wound" element={<Wound />}></Route>
                 <Route path="/wound_details" element={<WoundDetails />}></Route>
                 <Route path="/sign-up" element={<SignUp />}></Route>
                 <Route path="/patients" element={<Patients />}></Route>
                 <Route path="/create_patient" element={<CreatePatient />}></Route>
                 <Route path="/patient_details/:mrn" element={<PatientDetails />}></Route>
-                <Route path="/post_treatment_session" element={<PostTreatment />}></Route>
                 <Route path="/treatment_session_details/:id" element={<TreatmentSessionDetails />}></Route>
+                <Route path="/create_wound" element={<CreateWound />}></Route>
             </Routes>
         </div>
     );

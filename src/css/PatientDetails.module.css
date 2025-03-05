@@ -11,11 +11,27 @@
         margin: 0.5vh 0 2vh 0.5vw;
     }
 
+    .subtitleAndButtonContainer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+    }
+
     .pageSubtitle {
         font-weight: bold;
         font-size: 1.2vw;
         text-align: left;
         margin: 1vh 0 1vh 0.5vw;
+    }
+
+    .createButton {
+        white-space: nowrap; 
+        background-color: #004AAD;
+        color: #ffffff;
+        border-radius: 400px;
+        margin-left: 27vw;
+        margin-bottom: 1vh;
     }
 
     .list {
