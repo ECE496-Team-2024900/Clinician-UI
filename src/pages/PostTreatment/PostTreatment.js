@@ -87,7 +87,9 @@ function PostTreatment() {
                         endTime: data.end_time.toString(),
                         sessionNumber: data.session_number.toString(),
                         painScore: data.pain_score.toString(),
-                        imageUrls: ["https://t3.ftcdn.net/jpg/07/84/19/86/360_F_784198690_4iOOWmDumjnUiP85gFJdZ5lXHzEq1ojS.jpg"]
+                        imageUrls: ["https://t3.ftcdn.net/jpg/07/84/19/86/360_F_784198690_4iOOWmDumjnUiP85gFJdZ5lXHzEq1ojS.jpg"],
+                        woundChanging: String(data.wound_changing),
+                        medicineLot: data.medicine_lot
                     });
                 } else {
                     message.error("Error retrieving treatment information.");
@@ -170,6 +172,7 @@ function PostTreatment() {
                             { name: "Start Time", content: `${treatmentData.startTime}`, inlineContent: true },
                             { name: "End Time", content: `${treatmentData.endTime}`, inlineContent: true },
                             { name: "Patient's Pain Score", content: treatmentData.painScore, inlineContent: true },
+                            { name: "Medicine LOT", content: `${treatmentData.medicineLot} mL`, inlineContent: true },
                             { name: "Drug Volume", content: `${treatmentData.drugVolume} mL`, inlineContent: true },
                             { name: "Solvent Volume", content: `${treatmentData.solventVolume} mL`, inlineContent: true },
                             { name: "Laser 1's Power Level", content: `${treatmentData.laserPower1} mW`, inlineContent: true },
@@ -186,6 +189,7 @@ function PostTreatment() {
                     {
                         title: "Treatment Analysis",
                         fields: [
+                            { name: "Wound Changing", content: treatmentData.woundChanging, inlineContent: true},
                             { name: "Clinician Notes", content: treatmentData.notes, inlineContent: false},
                             { name: "Clinician-noted Issues", type: "textArray", content: treatmentData.issues }
                         ]
