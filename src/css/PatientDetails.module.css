@@ -1,0 +1,75 @@
+.container {
+    padding: 1vh 1vw 1vh 1vw;
+    width: 90vw;
+    height: 100vh;
+    overflow-y: auto;
+
+    .pageTitle {
+        font-weight: bold;
+        font-size: 1.8vw;
+        text-align: left;
+        margin: 0.5vh 0 2vh 0.5vw;
+    }
+
+    .subtitleAndButtonContainer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .pageSubtitle {
+        font-weight: bold;
+        font-size: 1.2vw;
+        text-align: left;
+        margin: 1vh 0 1vh 0.5vw;
+    }
+
+    .createButton {
+        white-space: nowrap; 
+        background-color: #004AAD;
+        color: #ffffff;
+        border-radius: 400px;
+        margin-left: 27vw;
+        margin-bottom: 1vh;
+    }
+
+    .list {
+        border-color: #000000; 
+        border-width: 1px; 
+        border-style: solid;
+    }
+
+    .listHeader {
+        color: #004AAD; 
+        font-weight: bold;
+        font-size: 1.3rem;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .listItem {
+        color: #000000; 
+        font-size: 1rem;
+        border-top: 0.5px solid #000000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .treated {
+        background-color: #d3d3d3;
+    }
+    
+    .notTreated {
+        background-color: #0AC3FC33;
+    }
+
+    .treatedColumn {
+        font-weight: bold;
+    }
+
+    .treatedStatus {
+        margin-left: auto;
+    }
+}

@@ -1,0 +1,33 @@
+.page {
+    padding: 20px;
+    display: block;
+  }
+  
+  .treatmentTable {
+    width: 90vw;
+    max-width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .treatmentTable thead tr,
+  .treatmentTable tbody tr {
+    border: 2px solid black;
+  }
+  
+  .treatmentTable thead tr {
+    background-color: #004AAD;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+  }
+  
+  .treatmentTable tbody tr {
+    background-color: #B1EDFF;
+    text-align: center;
+  }
+  
+  .treatmentTable th,
+  .treatmentTable td {
+    padding: 8px;
+    text-align: center;
+  }  
