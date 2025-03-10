@@ -188,6 +188,8 @@ function App() {
 
 
     useEffect(() => {
+        if(meetingId) return;
+                
         const interval = setInterval(async () => {
             let apiRes = null
             try {
@@ -203,7 +205,7 @@ function App() {
         return () => {
             clearInterval(interval)
         }
-    }, [])
+    }, [meetingId])
 
     //This will set Meeting Id to null when meeting is left or ended
     const onMeetingLeave = () => {
