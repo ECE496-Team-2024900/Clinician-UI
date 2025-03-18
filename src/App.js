@@ -24,7 +24,6 @@ import Home from "./pages/Home/Home";
 import SignUp from './pages/SignUp/SignUp.js';
 import {useCookies} from "react-cookie";
 import PostTreatment from './pages/PostTreatment/PostTreatment.js';
-import Wound from "./pages/Wound/Wound";
 import WoundDetails from './pages/WoundDetails/WoundDetails.js';
 import { signOut } from "firebase/auth";
 import { auth } from "./firebaseConfig.js"
@@ -188,25 +187,25 @@ function App() {
     const [cookies] = useCookies(['cookie-name']);
 
 
-    useEffect(() => {
-        if(meetingId) return;
+    // useEffect(() => {
+    //     if(meetingId) return;
                 
-        const interval = setInterval(async () => {
-            let apiRes = null
-            try {
-                apiRes = await axios.get(`${getTreatmentAPIUrl()}/treatment/get_video_call_id`)
-            } catch (err) {
-                console.error(err);
-            } finally {
-                if (apiRes?.data?.message !== "") {
-                    setMeetingId(apiRes?.data?.message)
-                }
-            }
-        }, 5000)
-        return () => {
-            clearInterval(interval)
-        }
-    }, [meetingId])
+    //     const interval = setInterval(async () => {
+    //         let apiRes = null
+    //         try {
+    //             apiRes = await axios.get(`${getTreatmentAPIUrl()}/treatment/get_video_call_id`)
+    //         } catch (err) {
+    //             console.error(err);
+    //         } finally {
+    //             if (apiRes?.data?.message !== "") {
+    //                 setMeetingId(apiRes?.data?.message)
+    //             }
+    //         }
+    //     }, 5000)
+    //     return () => {
+    //         clearInterval(interval)
+    //     }
+    // }, [meetingId])
 
     //This will set Meeting Id to null when meeting is left or ended
     const onMeetingLeave = () => {
@@ -242,7 +241,6 @@ function Content() {
                 <Route path="/treatment_session" element={<TreatmentParameters />}></Route>
                 <Route path="/treatment_session_details/:id" element={<TreatmentSessionDetails />}></Route>
                 <Route path="/post_treatment_session" element={<PostTreatment />}></Route>
-                <Route path="/wound" element={<Wound />}></Route>
                 <Route path="/wound_details" element={<WoundDetails />}></Route>
                 <Route path="/sign-up" element={<SignUp />}></Route>
                 <Route path="/patients" element={<Patients />}></Route>
