@@ -51,17 +51,23 @@ function SignUp() {
             .catch(() => {
                 message.error("There was an error in updating the parameters. Treatment approval not sent.");
             });
-            // logging user in via microsoft
-            const provider = new OAuthProvider('microsoft.com');
-            provider.setCustomParameters({
-                login_hint: email,
-            });
-            signInWithRedirect(auth, provider);
-            const result = await getRedirectResult(auth); 
-            if (result) {
-                message.success("User logged in successfully with Microsoft.");
-                setCookie("email", email);
-                navigate('/');
+            if (window.location.hostname === "localhost") {
+                setCookie("email", email)
+                navigate("/")
+                window.location.reload()
+            } else {
+                const provider = new OAuthProvider('microsoft.com');
+                provider.setCustomParameters({
+                    login_hint: email,
+                });
+                signInWithRedirect(auth, provider);
+                const result = await getRedirectResult(auth);
+                if (result) {
+                    message.success("User logged in successfully with Microsoft.");
+                    setCookie("email", email);
+                    navigate('/');
+                    window.location.reload()
+                }
             }
         } catch {
             message.error("We encountered an issue - please try again.")
