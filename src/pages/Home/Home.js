@@ -16,7 +16,7 @@ function Home() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get(`${getUsersAPIUrl()}/users/find_all_patients`).then(res => {
+        axios.get(`${getUsersAPIUrl()}/users/get_all_patients`).then(res => {
             if (res.status === 200) {
                 setPatients(res?.data?.message)
             }
