@@ -189,6 +189,8 @@ function App() {
 
 
     useEffect(() => {
+        if(meetingId) return;
+                
         const interval = setInterval(async () => {
             let apiRes = null
             try {
@@ -204,7 +206,7 @@ function App() {
         return () => {
             clearInterval(interval)
         }
-    }, [])
+    }, [meetingId])
 
     //This will set Meeting Id to null when meeting is left or ended
     const onMeetingLeave = () => {
@@ -238,6 +240,7 @@ function Content() {
             <Routes>
                 <Route path="/" element={cookies["email"] !== "" ? <Home /> : <Login/>}></Route>
                 <Route path="/treatment_session" element={<TreatmentParameters />}></Route>
+                <Route path="/treatment_session_details/:id" element={<TreatmentSessionDetails />}></Route>
                 <Route path="/post_treatment_session" element={<PostTreatment />}></Route>
                 <Route path="/wound" element={<Wound />}></Route>
                 <Route path="/wound_details" element={<WoundDetails />}></Route>
@@ -245,7 +248,6 @@ function Content() {
                 <Route path="/patients" element={<Patients />}></Route>
                 <Route path="/create_patient" element={<CreatePatient />}></Route>
                 <Route path="/patient_details/:mrn" element={<PatientDetails />}></Route>
-                <Route path="/treatment_session_details/:id" element={<TreatmentSessionDetails />}></Route>
                 <Route path="/create_wound" element={<CreateWound />}></Route>
             </Routes>
         </div>
