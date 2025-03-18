@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { getTreatmentAPIUrl } from '../../getAPIUrls/getTreatmentAPIUrl'
 import axios from 'axios'
 import { useLocation } from "react-router-dom";
+import ReportGeneration from '../../utilities/ReportGeneration/ReportGeneration'
 
 function TreatmentSessionDetails() {
 
@@ -39,9 +40,13 @@ function TreatmentSessionDetails() {
     // Form component
     const [form] = Form.useForm();
 
+    // Retrieving report data if the treatment is complete
+    const [fileData, setFileData] = useState(null);
+
     // Retrieving details of the treatment session with the id specified in the webpage url at the top
     useEffect(() => {
-            const url = `${getTreatmentAPIUrl()}/treatment/parameters/get?id=${location.pathname.split("/")[2]}`;
+            const treatmentId = location.pathname.split("/")[2]
+            const url = `${getTreatmentAPIUrl()}/treatment/parameters/get?id=${treatmentId}`;
             axios.get(url)
             .then((response) => {
                 if(response.status === 200) { // Successfully retrieved data
@@ -71,6 +76,15 @@ function TreatmentSessionDetails() {
                         notes: response.data.notes,
                         issues: response.data.issues
                     });
+                    // Retrieving report object if this treatment was marked as complete
+                    if(response.data.completed) {
+                        axios.get(`${getTreatmentAPIUrl()}/treatment/get_report?id=${treatmentId}`)
+                        .then((reportResponse) => {
+                            if(reportResponse.status == 200) {
+                                setFileData(reportResponse.data.report_data)
+                            }
+                        })
+                    }
                 } else if(response.status === 204) { // The specified treatment session record wasn't found
                     message.error("No treatment session found for the given id.")
                 }
@@ -106,7 +120,16 @@ function TreatmentSessionDetails() {
             {/*Page title indicates session number (eg. session 1 is first session for that wound) and its scheduled date and time*/}
             <h2 className={styles.pageTitle}>{"Treatment Session #"}{fields.sessionNumber}{": "}{fields.dateTimeScheduled}</h2>
             {/*Page subtitle indicates whether the treatment session is completed or not*/}
-            <h3 className={styles.pageSubtitle}>{"Session status: "}{fields.completed ? "Complete" : "Incomplete"}</h3>
+            <Row className={styles.topRow}>
+                <h3 className={styles.pageSubtitle}>
+                    {"Session status: "}{fields.completed ? "Complete" : "Incomplete"}
+                </h3>
+                {fileData && (
+                    <div className={styles.rightAlign}>
+                        <ReportGeneration fileData={fileData}/>
+                    </div>
+                )}
+            </Row>
             <Form form={form}>
             {/*Fields to display when it is an upcoming treatment session*/}
             {!fields.completed && (

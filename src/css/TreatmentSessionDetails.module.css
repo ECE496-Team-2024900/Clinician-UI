@@ -48,4 +48,13 @@
         border: 1px solid #ccc;
         border-radius: 8px;
     }
+
+    .topRow {
+        display: flex;
+        align-items: center;
+    }
+    
+    .rightAlign {
+        margin-left: auto;
+    }
 }
