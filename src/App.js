@@ -187,25 +187,25 @@ function App() {
     const [cookies] = useCookies(['cookie-name']);
 
 
-    // useEffect(() => {
-    //     if(meetingId) return;
+    useEffect(() => {
+        if(meetingId) return;
                 
-    //     const interval = setInterval(async () => {
-    //         let apiRes = null
-    //         try {
-    //             apiRes = await axios.get(`${getTreatmentAPIUrl()}/treatment/get_video_call_id`)
-    //         } catch (err) {
-    //             console.error(err);
-    //         } finally {
-    //             if (apiRes?.data?.message !== "") {
-    //                 setMeetingId(apiRes?.data?.message)
-    //             }
-    //         }
-    //     }, 5000)
-    //     return () => {
-    //         clearInterval(interval)
-    //     }
-    // }, [meetingId])
+        const interval = setInterval(async () => {
+            let apiRes = null
+            try {
+                apiRes = await axios.get(`${getTreatmentAPIUrl()}/treatment/get_video_call_id`)
+            } catch (err) {
+                console.error(err);
+            } finally {
+                if (apiRes?.data?.message !== "") {
+                    setMeetingId(apiRes?.data?.message)
+                }
+            }
+        }, 5000)
+        return () => {
+            clearInterval(interval)
+        }
+    }, [meetingId])
 
     //This will set Meeting Id to null when meeting is left or ended
     const onMeetingLeave = () => {
