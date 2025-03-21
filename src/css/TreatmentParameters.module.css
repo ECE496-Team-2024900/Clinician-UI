@@ -48,4 +48,10 @@
     .prevImage {
         padding: 3vh 6vw 3vh 6vw;
     }
+
+    .defaultMessage {
+        margin: 0.5vh 0.5vw 0.5vh 0.5vw;
+        text-align: left;
+        padding-bottom: 10vh;
+    }
 }

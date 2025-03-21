@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react'
 import { getTreatmentAPIUrl } from '../../getAPIUrls/getTreatmentAPIUrl'
 import { getHardwareAPIUrl } from '../../getAPIUrls/getHardwareAPIUrl'
 import axios from 'axios'
+import { useLocation } from 'react-router-dom';
 
 
 function TreatmentParameters() {
@@ -33,11 +34,27 @@ function TreatmentParameters() {
         laserPowerLevel: null,
         delayBetweenDrugAndLight: null,
         delayBetweenLightAndSolvent: null,
-        imageUrls: null
+        imageUrls: null,
+        notes: null
     });
+    const [currTreatmentParameters, setCurrTreatmentParameters] = useState({
+        drugVolume: null,
+        solventVolume: null,
+        laserPowerLevel: null,
+        delayBetweenDrugAndLight: null,
+        delayBetweenLightAndSolvent: null,
+        imageUrls: null,
+        notes: null
+    });
+    const [treatmentComplete, setTreatmentComplete] = useState(false)
 
     const [prevForm] = Form.useForm();
     const [currForm] = Form.useForm();
+    
+
+    const location = useLocation();
+    const data = location.state;
+    const allowMods = data && data.preTreatment
 
     useEffect(() => {
         // function fetches treatmennt parameters for the most recent previous treatment for this patient
@@ -55,7 +72,8 @@ function TreatmentParameters() {
                         laserPowerLevel: response.data.laser_power_required,
                         delayBetweenDrugAndLight: response.data.first_wait,
                         delayBetweenLightAndSolvent: response.data.second_wait,
-                        imageUrls: (response.data.image_urls) ? response.data.image_urls : null
+                        imageUrls: (response.data.image_urls) ? response.data.image_urls : null,
+                        notes: (response.data.notes) ? response.data.notes : "No notes exist for this treatment."
                     });
                     setErrors({
                         drugVolume: false,
@@ -74,17 +92,48 @@ function TreatmentParameters() {
                 message.error("There was an error in retrieving patient parameters.");
             });
         }
+
+        const getCurrTreatmentStatus = async () => {
+            const url = `${getTreatmentAPIUrl()}/treatment/parameters/get?id=${treatment?.id}`;
+            axios.get(url)
+            .then((response) => {
+                if(response.status == 200) {
+                    const complete = response.data.completed
+                    setTreatmentComplete(complete)
+                    if(complete) {
+                        setCurrTreatmentParameters({
+                            drugVolume: response.data.drug_volume_required,
+                            solventVolume: response.data.wash_volume_required,
+                            laserPowerLevel: response.data.laser_power_required,
+                            delayBetweenDrugAndLight: response.data.first_wait,
+                            delayBetweenLightAndSolvent: response.data.second_wait,
+                            imageUrls: (response.data.image_urls) ? response.data.image_urls : null,
+                            notes: (response.data.notes) ? response.data.notes : ""
+                        });
+                    }
+                }
+            })
+        }
         // fetching previous treatment parameters only if the treatment id is defined, as it is needed in the API call
         if(treatment?.id) {
             getPrevTreatmentParameters();
+            getCurrTreatmentStatus();
         }
       }, [])
+
+      useEffect(() => {
+        if(treatmentComplete && !allowMods) {
+            currForm.setFieldsValue(currTreatmentParameters);
+        }
+      }, [currTreatmentParameters])
 
       // once the previous treatment parameters are successfully stored, can pre-populate current parameters
       // and display previous parameter ones in a read-only form
       useEffect(() => {
         prevForm.setFieldsValue(prevTreatmentParameters);
-        currForm.setFieldsValue(prevTreatmentParameters);
+        if(!treatmentComplete && allowMods) {
+            currForm.setFieldsValue(prevTreatmentParameters);
+        }
     }, [prevTreatmentParameters]);
 
     const submitForm = async () => {
@@ -222,6 +271,22 @@ function TreatmentParameters() {
                     </Form.Item>
                 </Col>
             </Row>
+            <h3 className={styles.pageSubtitle}>Clinician Notes</h3>
+            <Form.Item
+                className={styles.inputField}
+                labelCol={{span: 24}}
+                wrapperCol={{span: 24}}
+                name="notes"
+                label="Clinician Notes during Treatment"
+            >
+                <Input.TextArea readOnly
+                    rows={4}
+                    placeholder=""
+                    onChange={(e) =>
+                        setFields((fields) => ({...fields, notes: e.target.value}))
+                    }
+                />
+            </Form.Item>
             <div className={styles.imageContainer}>
             {prevTreatmentParameters.imageUrls?.map((item) => {
                 return <Image
@@ -238,11 +303,78 @@ function TreatmentParameters() {
         <br />
         <br />
         <br />
-
-        <h2 className={styles.pageTitle}>{"Current Treatment Parameters"} <Tooltip title="Current treatment parameters have been filled with the parameters used in this patient's previous treatment (if this patient had a previous treatment).">
+        
+        
+        <h2 className={styles.pageTitle}>{"Current Treatment Parameters"} <Tooltip title="Current treatment parameters have/will been filled with the parameters used in this patient's previous treatment (if this patient had a previous treatment).">
             <InfoCircleOutlined />
         </Tooltip></h2>
 
+        
+        {treatmentComplete &&
+        // Read only view of current params
+        <Form form={currForm}>
+            <h3 className={styles.pageSubtitle}>Dosages</h3>
+            <Row>
+                <Col span={12}>
+                    <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="drugVolume" label="Drug Volume (mL)">
+                        <Input readOnly/>
+                    </Form.Item>
+                </Col>
+                <Col span={12}>
+                    <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="solventVolume" label="Solvent Volume (mL)">
+                        <Input readOnly/>
+                    </Form.Item>
+                </Col>
+            </Row>
+            <Row>
+                <Col span={12}>
+                    <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="laserPowerLevel" label="Laser Power Level (W)">
+                        <Input readOnly/>
+                    </Form.Item>
+                </Col>
+            </Row>
+            <h3 className={styles.pageSubtitle}>Wait Times</h3>
+            <Row>
+                <Col span={12}>
+                    <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="delayBetweenDrugAndLight" label="Delay between Drug Administration and Light Irradiation (s)">
+                        <Input readOnly/>
+                    </Form.Item>
+                </Col>
+                <Col span={12}>
+                    <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="delayBetweenLightAndSolvent" label="Delay between Light Irradiation and Solvent Administration (s)">
+                        <Input readOnly/>
+                    </Form.Item>
+                </Col>
+            </Row>
+            <h3 className={styles.pageSubtitle}>Clinician Notes</h3>
+            <Form.Item
+                className={styles.inputField}
+                labelCol={{span: 24}}
+                wrapperCol={{span: 24}}
+                name="notes"
+                label="Clinician Notes during Treatment"
+            >
+                <Input.TextArea readOnly
+                    rows={4}
+                    placeholder=""
+                    onChange={(e) =>
+                        setFields((fields) => ({...fields, notes: e.target.value}))
+                    }
+                />
+            </Form.Item>
+            <div className={styles.imageContainer}>
+            {prevTreatmentParameters.imageUrls?.map((item) => {
+                return <Image
+                    className={styles.prevImage}
+                    width={600}
+                    src={item}
+                />
+            })}
+            </div>
+        </Form>}
+
+        {!treatmentComplete && allowMods ?
+        // Can modify current params
         <Form form={currForm} onFinish={submitForm}>
             <h3 className={styles.pageSubtitle}>Dosages</h3>
             <Row>
@@ -324,6 +456,7 @@ function TreatmentParameters() {
                             message: 'Wait time must be a number.',
                             validator: (_, value) => inputNumberValidation(_, value)
                         }
+
                     ]}>
                         <Input placeholder='Please enter the required delay'/>
                     </Form.Item>
@@ -335,7 +468,7 @@ function TreatmentParameters() {
                 labelCol={{span: 24}}
                 wrapperCol={{span: 24}}
                 name="notes"
-                label="Clinician Notes"
+                label="Clinician Notes during Treatment"
             >
                 <Input.TextArea
                     rows={4}
@@ -359,7 +492,9 @@ function TreatmentParameters() {
             </Row>
             <Button disabled={disableSubmit} className={styles.startTreatmentBtn} id="report-submit-btn" type="primary"
                     htmlType="submit" block>Start Treatment</Button>
-        </Form>
+        </Form> : <p className={styles.defaultMessage}>Current treatment parameters are modifiable near treatment time and readable after treatment is complete.</p>}
+        
+
     </div>
 }
 
