@@ -16,7 +16,8 @@ function TreatmentParameters() {
         laserPowerLevel: true,
         delayBetweenDrugAndLight: true,
         delayBetweenLightAndSolvent: true,
-        acknowledgment: true
+        acknowledgment: true,
+        notes: false,
     });
     const [fields, setFields] = useState({
         drugVolume: null,
@@ -24,6 +25,7 @@ function TreatmentParameters() {
         laserPowerLevel: null,
         delayBetweenDrugAndLight: null,
         delayBetweenLightAndSolvent: null,
+        notes: false,
     });
     const [prevTreatmentParameters, setPrevTreatmentParameters] = useState({
         drugVolume: null,
@@ -61,7 +63,8 @@ function TreatmentParameters() {
                         laserPowerLevel: false,
                         delayBetweenDrugAndLight: false,
                         delayBetweenLightAndSolvent: false,
-                        acknowledgment: true
+                        acknowledgment: true,
+                        notes: false,
                     });
                 } else if(response.status === 204) {
                     message.success("This patient has no previous treatment.")
@@ -86,14 +89,15 @@ function TreatmentParameters() {
 
     const submitForm = async () => {
         setDisableSubmit(true);
-        
+
         // creating object based on what API expects
         let fieldsToUpdate = {
             "drug_volume_required": Number(fields.drugVolume),
             "wash_volume_required": Number(fields.solventVolume),
             "laser_power_required": Number(fields.laserPowerLevel),
             "first_wait": Number(fields.delayBetweenDrugAndLight),
-            "second_wait": Number(fields.delayBetweenLightAndSolvent)
+            "second_wait": Number(fields.delayBetweenLightAndSolvent),
+            notes: fields.notes,
         };
 
         // setting treatment parameters for this treatment upon form submission
@@ -155,7 +159,7 @@ function TreatmentParameters() {
         }))
         return Promise.reject('Required field');
     }
-    
+
     // form field validation and error handling for acknowledgement checkbox
     // clinicians are required to check this to sent their treatment approval
     const acknowledgmentValidation = (_, checked) => {
@@ -238,97 +242,123 @@ function TreatmentParameters() {
         <h2 className={styles.pageTitle}>{"Current Treatment Parameters"} <Tooltip title="Current treatment parameters have been filled with the parameters used in this patient's previous treatment (if this patient had a previous treatment).">
             <InfoCircleOutlined />
         </Tooltip></h2>
-  
+
         <Form form={currForm} onFinish={submitForm}>
             <h3 className={styles.pageSubtitle}>Dosages</h3>
             <Row>
                 <Col span={12}>
-                    <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="drugVolume" label="Drug Volume (mL)" rules={[
-                            {
-                                message: 'Drug volume is required.',
-                                validator: (_) => inputRequiredValidation(_)
-                            },
-                            {
-                                message: 'Drug volume must be a number.',
-                                validator: (_) => inputNumberValidation(_)
-                            }
-                        ]}>
-                        <Input placeholder='Please enter the required drug volume' />
+                    <Form.Item className={styles.inputField} labelCol={{span: 24}} wrapperCol={{span: 24}}
+                               name="drugVolume" label="Drug Volume (mL)" rules={[
+                        {
+                            message: 'Drug volume is required.',
+                            validator: (_) => inputRequiredValidation(_)
+                        },
+                        {
+                            message: 'Drug volume must be a number.',
+                            validator: (_) => inputNumberValidation(_)
+                        }
+                    ]}>
+                        <Input placeholder='Please enter the required drug volume'/>
                     </Form.Item>
                 </Col>
                 <Col span={12}>
-                    <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="solventVolume" label="Solvent Volume (mL)" rules={[
-                            {
-                                message: 'Solvent volume is required.',
-                                validator: (_, value) => inputRequiredValidation(_, value)
-                            },
-                            {
-                                message: 'Solvent volume must be a number.',
-                                validator: (_, value) => inputNumberValidation(_, value)
-                            }
-                        ]}>
-                        <Input placeholder='Please enter the required solvent volume' />
+                    <Form.Item className={styles.inputField} labelCol={{span: 24}} wrapperCol={{span: 24}}
+                               name="solventVolume" label="Solvent Volume (mL)" rules={[
+                        {
+                            message: 'Solvent volume is required.',
+                            validator: (_, value) => inputRequiredValidation(_, value)
+                        },
+                        {
+                            message: 'Solvent volume must be a number.',
+                            validator: (_, value) => inputNumberValidation(_, value)
+                        }
+                    ]}>
+                        <Input placeholder='Please enter the required solvent volume'/>
                     </Form.Item>
                 </Col>
             </Row>
             <Row>
                 <Col span={12}>
-                    <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="laserPowerLevel" label="Laser Power Level (W)" rules={[
-                            {
-                                message: 'Laser power level is required.',
-                                validator: (_, value) => inputRequiredValidation(_, value)
-                            },
-                            {
-                                message: 'Laser power level must be a number.',
-                                validator: (_, value) => inputNumberValidation(_, value)
-                            }
-                        ]}>
-                        <Input placeholder='Please enter the required laser power level' />
+                    <Form.Item className={styles.inputField} labelCol={{span: 24}} wrapperCol={{span: 24}}
+                               name="laserPowerLevel" label="Laser Power Level (W)" rules={[
+                        {
+                            message: 'Laser power level is required.',
+                            validator: (_, value) => inputRequiredValidation(_, value)
+                        },
+                        {
+                            message: 'Laser power level must be a number.',
+                            validator: (_, value) => inputNumberValidation(_, value)
+                        }
+                    ]}>
+                        <Input placeholder='Please enter the required laser power level'/>
                     </Form.Item>
                 </Col>
             </Row>
             <h3 className={styles.pageSubtitle}>Wait Times</h3>
             <Row>
                 <Col span={12}>
-                    <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="delayBetweenDrugAndLight" label="Delay between Drug Administration and Light Irradiation (s)" rules={[
-                            {
-                                message: 'Wait time is required.',
-                                validator: (_, value) => inputRequiredValidation(_, value)
-                            },
-                            {
-                                message: 'Wait time must be a number.',
-                                validator: (_, value) => inputNumberValidation(_, value)
-                            }
-                        ]}>
-                        <Input placeholder='Please enter the required delay' />
+                    <Form.Item className={styles.inputField} labelCol={{span: 24}} wrapperCol={{span: 24}}
+                               name="delayBetweenDrugAndLight"
+                               label="Delay between Drug Administration and Light Irradiation (s)" rules={[
+                        {
+                            message: 'Wait time is required.',
+                            validator: (_, value) => inputRequiredValidation(_, value)
+                        },
+                        {
+                            message: 'Wait time must be a number.',
+                            validator: (_, value) => inputNumberValidation(_, value)
+                        }
+                    ]}>
+                        <Input placeholder='Please enter the required delay'/>
                     </Form.Item>
                 </Col>
                 <Col span={12}>
-                    <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="delayBetweenLightAndSolvent" label="Delay between Light Irradiation and Solvent Administration (s)" rules={[
-                            {
-                                message: 'Wait time is required.',
-                                validator: (_, value) => inputRequiredValidation(_, value)
-                            },
-                            {
-                                message: 'Wait time must be a number.',
-                                validator: (_, value) => inputNumberValidation(_, value)
-                            }
-                        ]}>
-                        <Input placeholder='Please enter the required delay' />
+                    <Form.Item className={styles.inputField} labelCol={{span: 24}} wrapperCol={{span: 24}}
+                               name="delayBetweenLightAndSolvent"
+                               label="Delay between Light Irradiation and Solvent Administration (s)" rules={[
+                        {
+                            message: 'Wait time is required.',
+                            validator: (_, value) => inputRequiredValidation(_, value)
+                        },
+                        {
+                            message: 'Wait time must be a number.',
+                            validator: (_, value) => inputNumberValidation(_, value)
+                        }
+                    ]}>
+                        <Input placeholder='Please enter the required delay'/>
                     </Form.Item>
                 </Col>
             </Row>
+            <h3 className={styles.pageSubtitle}>Clinician Notes</h3>
+            <Form.Item
+                className={styles.inputField}
+                labelCol={{span: 24}}
+                wrapperCol={{span: 24}}
+                name="notes"
+                label="Clinician Notes"
+            >
+                <Input.TextArea
+                    rows={4}
+                    placeholder="Enter any additional notes for the treatment (optional)"
+                    onChange={(e) =>
+                        setFields((fields) => ({...fields, notes: e.target.value}))
+                    }
+                />
+            </Form.Item>
             <Row>
                 <Form.Item className={styles.acknowledgment} name="acknowledgment" valuePropName="checked" rules={[
-                        {
-                            message: 'Checking this acknowledgment is required.',
-                            validator: (_, checked) => acknowledgmentValidation(_, checked)
-                        }
-                    ]}>
-                    <Checkbox className={styles.acknowledgmentText}> I understand that clicking the button below indicates my approval for this treatment. Once I click it, the parameters for this treatment cannot be changed and the treatment will begin.</Checkbox>
+                    {
+                        message: 'Checking this acknowledgment is required.',
+                        validator: (_, checked) => acknowledgmentValidation(_, checked)
+                    }
+                ]}>
+                    <Checkbox className={styles.acknowledgmentText}> I understand that clicking the button below
+                        indicates my approval for this treatment. Once I click it, the parameters for this treatment
+                        cannot be changed and the treatment will begin.</Checkbox>
                 </Form.Item>
             </Row>
-            <Button disabled={disableSubmit} className={styles.startTreatmentBtn} id="report-submit-btn" type="primary" htmlType="submit" block>Start Treatment</Button>
+            <Button disabled={disableSubmit} className={styles.startTreatmentBtn} id="report-submit-btn" type="primary"
+                    htmlType="submit" block>Start Treatment</Button>
         </Form>
     </div>
 }
