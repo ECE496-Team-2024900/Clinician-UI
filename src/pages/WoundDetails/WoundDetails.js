@@ -142,7 +142,7 @@ function WoundDetails() {
             const url = `${getTreatmentAPIUrl()}/treatment/parameters/set?id=${treatment.id}`;
             axios.put(url, payload).then(() => {
                 // Issue with this logic! - disabled for now
-                if (false) {
+                if (treatment.reschedule_requested === true) {
                     const payload = {
                         "id": treatment.session_number,
                         "reschedule_requested": false
