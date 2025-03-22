@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { getTreatmentAPIUrl } from '../../getAPIUrls/getTreatmentAPIUrl'
 import axios from 'axios'
-import {Button, DatePicker, Form, Input, message, Popover, TimePicker, Image} from 'antd';
+import {Button, DatePicker, Form, Input, message, Popover, TimePicker, Image, Checkbox} from 'antd';
 import styles from "../../css/WoundDetails.module.css";
 import {
     CloseOutlined,
@@ -28,6 +28,7 @@ function WoundDetails() {
 
     const url = `${getTreatmentAPIUrl()}/treatment/get_all_images_for_wound?wound=${woundId}`;
     const woundUrl = `${getTreatmentAPIUrl()}/treatment/get_wound?id=${woundId}`;
+    const updateWoundStatusUrl = `${getTreatmentAPIUrl()}/treatment/update_wound_status`;
     
     useEffect( () => {
          axios.get(url).then((response) => {
@@ -46,7 +47,20 @@ function WoundDetails() {
                 setWound(response.data.message)
             }
         })
-    }, []);
+    }, [woundId]);
+
+    const handleTreatedChange = (e) => {
+        const newTreatedStatus = e.target.checked;
+        setWound({ ...wound, treated: newTreatedStatus });  // Update UI state immediately
+
+        axios.post(updateWoundStatusUrl, {
+            wound_id: woundId,
+            treated: newTreatedStatus
+        })
+            .catch(error => {
+                message.error("There was an error in setting wound status.")
+            });
+    };
 
     useEffect(() => {
         // fetching past treatments
@@ -141,7 +155,6 @@ function WoundDetails() {
             const treatment = treatments[index]
             const url = `${getTreatmentAPIUrl()}/treatment/parameters/set?id=${treatment.id}`;
             axios.put(url, payload).then(() => {
-                // Issue with this logic! - disabled for now
                 if (treatment.reschedule_requested === true) {
                     const payload = {
                         "id": treatment.session_number,
@@ -177,19 +190,28 @@ function WoundDetails() {
                 <div className={styles.fieldsContainer}>
                     <div className={styles.fieldContainer}>
                         <h3>Wound ID</h3>
-                        {wound !== undefined && <Input disabled defaultValue={wound?.id}/>}
+                        {wound !== undefined && <Input readOnly defaultValue={wound?.id}/>}
                         <h3>Date Added</h3>
-                        {wound !== undefined && <Input disabled defaultValue={wound?.date_added}/>}
+                        {wound !== undefined && <Input readOnly defaultValue={wound?.date_added}/>}
                         <h3>Device ID</h3>
-                        {wound !== undefined && <Input disabled defaultValue={wound?.device_id}/>}
+                        {wound !== undefined && <Input readOnly defaultValue={wound?.device_id}/>}
                     </div>
                     <div className={styles.fieldContainer}>
                         <h3>Infection Type</h3>
-                        {wound !== undefined && <Input disabled defaultValue={wound?.infection_type}/>}
+                        {wound !== undefined && <Input readOnly defaultValue={wound?.infection_type}/>}
                         <h3>Infection Location</h3>
-                        {wound !== undefined && <Input disabled defaultValue={wound?.infection_location}/>}
+                        {wound !== undefined && <Input readOnly defaultValue={wound?.infection_location}/>}
+                        
                         <h3>Wound Completely Treated</h3>
-                        {wound !== undefined && <Input disabled defaultValue={wound?.treated === true ? "Yes" : "No"}/>}
+                        {wound !== undefined && (
+                            <Checkbox
+                                checked={wound?.treated}
+                                onChange={handleTreatedChange}
+                            >
+                                {wound.treated ? "Yes" : "No"}
+                            </Checkbox>
+                        )}
+
                     </div>
                 </div>
                 <div className={styles.container3}>
