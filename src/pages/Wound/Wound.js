@@ -2,7 +2,7 @@ import styles from "../../css/Wound.module.css";
 import { getTreatmentAPIUrl } from "../../getAPIUrls/getTreatmentAPIUrl";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Button, Input, Image, Checkbox } from "antd";
+import { Button, Input, Image, Checkbox, message } from "antd";
 import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
 
 function Wound() {
@@ -35,7 +35,6 @@ function Wound() {
         });
     }, [woundId]);
 
-    // NEW CODE ADDED HERE: Function to handle checkbox click
     const handleTreatedChange = (e) => {
         const newTreatedStatus = e.target.checked;
         setWound({ ...wound, treated: newTreatedStatus });  // Update UI state immediately
@@ -44,14 +43,10 @@ function Wound() {
             wound_id: woundId,
             treated: newTreatedStatus
         })
-            .then(response => {
-                console.log("Wound status updated:", response.data);
-            })
             .catch(error => {
-                console.error("Error updating wound status:", error);
+                message.error("There was an error in setting wound status.")
             });
     };
-    // NEW CODE ENDS HERE
 
     return (
         <div className={styles.container}>
@@ -72,7 +67,6 @@ function Wound() {
                         <h3>Infection Location</h3>
                         {wound !== undefined && <Input disabled defaultValue={wound?.infection_location} />}
 
-                        {/* NEW CODE ADDED HERE: Checkbox for Wound Completely Treated */}
                         <h3>Wound Completely Treated</h3>
                         {wound !== undefined && (
                             <Checkbox
@@ -82,7 +76,6 @@ function Wound() {
                                 {wound.treated ? "Yes" : "No"}
                             </Checkbox>
                         )}
-                        {/* NEW CODE ENDS HERE */}
                     </div>
                 </div>
                 <div className={styles.container3}>
