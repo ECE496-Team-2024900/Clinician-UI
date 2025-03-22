@@ -85,7 +85,7 @@ function Login() {
         } catch (error) {
             return false;
         }
-      }
+    }
 
     // submitting email to log user in (if they are registered with app)
     const submitEmail = async () => {
@@ -114,10 +114,10 @@ function Login() {
                     message.error("Login failed - please try again");
                 }
             }
-          } else {
+        } else {
             // navigate to sign-up page if the user is not registered
             navigate('/sign-up', { state: { email: email } });
-          }
+        }
     };
 
     return (
@@ -134,17 +134,17 @@ function Login() {
                 </h2>
                 <Form form={currForm}>
                     <Form.Item name="emailInput" rules={[
-                            {
-                                message: 'Email is required.',
-                                validator: (_, value) => emailRequiredValidation(_, value)
-                            },
-                            {
-                                message: 'Email must be part of the UHN domain.',
-                                validator: (_, value) => emailDomainValidation(_, value)
-                            }
-                        ]}>
-                        <Input 
-                            placeholder="Your email" 
+                        {
+                            message: 'Email is required.',
+                            validator: (_, value) => emailRequiredValidation(_, value)
+                        },
+                        {
+                            message: 'Email must be part of the UHN domain.',
+                            validator: (_, value) => emailDomainValidation(_, value)
+                        }
+                    ]}>
+                        <Input
+                            placeholder="Your email"
                             className={styles.email_input}
                             allowClear
                         />

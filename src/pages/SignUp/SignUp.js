@@ -41,16 +41,16 @@ function SignUp() {
             // adding user information to our DB
             const url = `${getUsersAPIUrl()}/users/add_clinician`;
             await axios.put(url, fieldsToUpdate)
-            .then((response) => {
-                if(response.status === 200) {
-                    message.success("User created successfully");
-                } else {
-                    message.error("We encountered an issue - please try again.");
-                }
-            })
-            .catch(() => {
-                message.error("There was an error in updating the parameters. Treatment approval not sent.");
-            });
+                .then((response) => {
+                    if(response.status === 200) {
+                        message.success("User created successfully");
+                    } else {
+                        message.error("We encountered an issue - please try again.");
+                    }
+                })
+                .catch(() => {
+                    message.error("There was an error in updating the parameters. Treatment approval not sent.");
+                });
             if (window.location.hostname === "localhost") {
                 setCookie("email", email)
                 navigate("/")
@@ -103,13 +103,13 @@ function SignUp() {
                 <Form form={currForm}>
                     <Col span={12}>
                         <Form.Item name="firstName" labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} label={<span className={styles.inputTitle}>First Name</span>} rules={[
-                                {
-                                    message: 'First name is required.',
-                                    validator: (_, value) => inputRequiredValidation(_, value)
-                                }
-                            ]}>
-                            <Input 
-                                placeholder="Your first name" 
+                            {
+                                message: 'First name is required.',
+                                validator: (_, value) => inputRequiredValidation(_, value)
+                            }
+                        ]}>
+                            <Input
+                                placeholder="Your first name"
                                 className={styles.input_field}
                                 allowClear
                             />
@@ -117,13 +117,13 @@ function SignUp() {
                     </Col>
                     <Col span={12}>
                         <Form.Item name="lastName" labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} label={<span className={styles.inputTitle}>Last Name</span>} rules={[
-                                {
-                                    message: 'Last name is required.',
-                                    validator: (_, value) => inputRequiredValidation(_, value)
-                                }
-                            ]}>
-                            <Input 
-                                placeholder="Your last name" 
+                            {
+                                message: 'Last name is required.',
+                                validator: (_, value) => inputRequiredValidation(_, value)
+                            }
+                        ]}>
+                            <Input
+                                placeholder="Your last name"
                                 className={styles.input_field}
                                 allowClear
                             />
