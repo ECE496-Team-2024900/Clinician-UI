@@ -18,10 +18,12 @@ import CreateWound from "./pages/CreateWound/CreateWound";
 import Patients from "./pages/Patients/Patients";
 import PatientDetails from "./pages/PatientDetails/PatientDetails";
 import TreatmentParameters from "./pages/TreatmentParameters/TreatmentParameters";
+import TreatmentSessionDetails from "./pages/TreatmentSessionDetails/TreatmentSessionDetails";
 import {Route, Routes, useNavigate} from "react-router-dom";
 import Home from "./pages/Home/Home";
 import SignUp from './pages/SignUp/SignUp.js';
 import {useCookies} from "react-cookie";
+import PostTreatment from './pages/PostTreatment/PostTreatment.js';
 import Wound from "./pages/Wound/Wound";
 import WoundDetails from './pages/WoundDetails/WoundDetails.js';
 import { signOut } from "firebase/auth";
@@ -187,6 +189,8 @@ function App() {
 
 
     useEffect(() => {
+        if(meetingId) return;
+                
         const interval = setInterval(async () => {
             let apiRes = null
             try {
@@ -202,7 +206,7 @@ function App() {
         return () => {
             clearInterval(interval)
         }
-    }, [])
+    }, [meetingId])
 
     //This will set Meeting Id to null when meeting is left or ended
     const onMeetingLeave = () => {
@@ -236,6 +240,8 @@ function Content() {
             <Routes>
                 <Route path="/" element={cookies["email"] !== "" ? <Home /> : <Login/>}></Route>
                 <Route path="/treatment_session" element={<TreatmentParameters />}></Route>
+                <Route path="/treatment_session_details/:id" element={<TreatmentSessionDetails />}></Route>
+                <Route path="/post_treatment_session" element={<PostTreatment />}></Route>
                 <Route path="/wound" element={<Wound />}></Route>
                 <Route path="/wound_details" element={<WoundDetails />}></Route>
                 <Route path="/sign-up" element={<SignUp />}></Route>
