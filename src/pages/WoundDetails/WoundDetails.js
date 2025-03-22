@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { getTreatmentAPIUrl } from '../../getAPIUrls/getTreatmentAPIUrl'
 import axios from 'axios'
-import {Button, DatePicker, Form, Input, message, Modal, Popover, TimePicker} from 'antd';
+import {Button, DatePicker, Form, Input, message, Popover, TimePicker, Image, Checkbox} from 'antd';
 import styles from "../../css/WoundDetails.module.css";
 import {
     CloseOutlined,
@@ -10,27 +10,68 @@ import {
     PlusOutlined
 } from "@ant-design/icons";
 import {getUsersAPIUrl} from "../../getAPIUrls/getUsersAPIUrl";
+import {ArrowLeftOutlined, ArrowRightOutlined} from "@ant-design/icons";
 
 function WoundDetails() {
-    const [pastTreatments, setPastTreatments] = useState([]); // keeping track of past treatments for this wound and patient
+    const [treatments, setTreatments] = useState([]); // keeping track of past treatments for this wound and patient
     const [overlay, setOverlay] = useState("")
     const [date, setDate] = useState(null)
     const [latestTreatment, setLatestTreatment] = useState(undefined)
+    const [wound, setWound] = useState(undefined)
+    const [imageIndex, setImageIndex] = useState(0)
+    const [vals, setVals] = useState(new Map());
+    const [updated, setUpdated] = useState(Date.now());
 
-    // Temporary variables - replace once logic implemented for it
+        // Temporary variables - replace once logic implemented for it
     const woundId = 1
     const patientId = 1
 
+    const url = `${getTreatmentAPIUrl()}/treatment/get_all_images_for_wound?wound=${woundId}`;
+    const woundUrl = `${getTreatmentAPIUrl()}/treatment/get_wound?id=${woundId}`;
+    const updateWoundStatusUrl = `${getTreatmentAPIUrl()}/treatment/update_wound_status`;
+    
+    useEffect( () => {
+         axios.get(url).then((response) => {
+             if (response.status === 200) {
+                 const newVals = new Map(vals)
+                 response.data.message.forEach(val => {
+                    val.image_urls.forEach(url => {
+                        newVals.set(url, val.id)
+                    })
+                })
+                 setVals(newVals)
+            }
+        })
+        axios.get(woundUrl).then((response)=> {
+            if (response.status === 200) {
+                setWound(response.data.message)
+            }
+        })
+    }, [woundId]);
+
+    const handleTreatedChange = (e) => {
+        const newTreatedStatus = e.target.checked;
+        setWound({ ...wound, treated: newTreatedStatus });  // Update UI state immediately
+
+        axios.post(updateWoundStatusUrl, {
+            wound_id: woundId,
+            treated: newTreatedStatus
+        })
+            .catch(error => {
+                message.error("There was an error in setting wound status.")
+            });
+    };
+
     useEffect(() => {
         // fetching past treatments
-        const fetchPastTreatments = async () => {
+        const fetchTreatments = async () => {
             setLatestTreatment("")
             const url = `${getTreatmentAPIUrl()}/treatment/get_treatments?patient_id=${patientId}&wound_id=${woundId}`;
             axios.get(url)
             .then((response) => {
                 // if there are no errors and past treatmentts are available, storing them in use state
                 if(response.status === 200) {
-                    setPastTreatments(response.data);
+                    setTreatments(response.data);
                     for (let elem in response.data) {
                         const dateTime = new Date(elem.start_time_scheduled)
                         if (latestTreatment === undefined || dateTime > latestTreatment) {
@@ -43,25 +84,28 @@ function WoundDetails() {
                 message.error("There was an error in retrieving past treatments.");
             });
         }
-        fetchPastTreatments()
-    }, [pastTreatments])
+        fetchTreatments()
+    }, [patientId, woundId, updated])
 
     // helper function to format date from 'YYYY-mm-dd' to 'weekday, month date, year' (e.g. Tuesday, November 26, 2024)
     const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        const options = { 
+        const date = new Date(dateString + "T00:00:00");
+        return date.toLocaleDateString('en-US', {
             weekday: 'long',
             year: 'numeric',
             month: 'long',
             day: 'numeric'
-        };
-        return date.toLocaleDateString('en-US', options);
+        });
+    };
+
+    const formattedTime = (timeString) => {
+        return new Date(timeString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
     };
 
     const deleteSession = (treatment) => {
         const url = `${getTreatmentAPIUrl()}/treatment/cancel_treatment?id=${treatment.session_number}`;
         axios.delete(url).then(() => {
-            setPastTreatments([])
+            setTreatments([])
             const emailUrl = `${getUsersAPIUrl()}/users/send_email`
             const phoneUrl = `${getUsersAPIUrl()}/users/send_message`
             const payload = {
@@ -77,26 +121,25 @@ function WoundDetails() {
     }
 
     const onFinish = (values) => {
-        console.log(values)
         if (overlay === "create") {
            const payload = {
                "wound_id": woundId,
-               "session_number": pastTreatments.length,
+               "session_number": treatments.length,
                "date_scheduled": new Date(values.date_scheduled).toISOString().substring(0, 10),
-               "start_time_scheduled": new Date(values.start_time_scheduled).toISOString(),
+               "start_time_scheduled": values.start_time_scheduled.format("HH:mm"),
                "started": false,
                "paused": false,
                "completed": false,
            }
            const url = `${getTreatmentAPIUrl()}/treatment/add_treatment`;
            axios.post(url, payload).then(() => {
-               setPastTreatments([])
+               setTreatments([])
                const emailUrl = `${getUsersAPIUrl()}/users/send_email`
                const phoneUrl = `${getUsersAPIUrl()}/users/send_message`
                const payload = {
                    "id": patientId,
                    "type": "patient",
-                   "message": `Your treatment session is scheduled on \`${treatment.date_scheduled}\`.`
+                   "message": `Your treatment session is scheduled on \`${values.date_scheduled}\`.`
                }
                axios.post(emailUrl, payload).then()
                axios.post(phoneUrl, payload).then()
@@ -109,15 +152,15 @@ function WoundDetails() {
                 "start_time_scheduled": new Date(values.start_time_scheduled).toISOString()
             }
             const index = overlay.replace("edit-","")
-            const treatment = pastTreatments[index]
-            const url = `${getTreatmentAPIUrl()}/treatment/parameters/set?id=${treatment.session_number}`;
+            const treatment = treatments[index]
+            const url = `${getTreatmentAPIUrl()}/treatment/parameters/set?id=${treatment.id}`;
             axios.put(url, payload).then(() => {
                 if (treatment.reschedule_requested === true) {
                     const payload = {
                         "id": treatment.session_number,
                         "reschedule_requested": false
                     }
-                    const url = `${getTreatmentAPIUrl()}/treatment/request_reschedule}`;
+                    const url = `${getTreatmentAPIUrl()}/treatment/request_reschedule`;
                     axios.put(url, payload).then(() => {
                         const emailUrl = `${getUsersAPIUrl()}/users/send_email`
                         const phoneUrl = `${getUsersAPIUrl()}/users/send_message`
@@ -132,7 +175,7 @@ function WoundDetails() {
                         message.error("There was an error in removing the reschedule request.");
                     })
                 }
-                setPastTreatments([])
+                setUpdated(Date.now())
             }).catch(() => {
                 message.error("There was an error in creating the treatment.");
             })
@@ -141,7 +184,62 @@ function WoundDetails() {
     }
 
     return (
-        <div className={styles.page}>
+        <div className={styles.container}>
+            <h1>Wound</h1>
+            <div className={styles.container2}>
+                <div className={styles.fieldsContainer}>
+                    <div className={styles.fieldContainer}>
+                        <h3>Wound ID</h3>
+                        {wound !== undefined && <Input readOnly defaultValue={wound?.id}/>}
+                        <h3>Date Added</h3>
+                        {wound !== undefined && <Input readOnly defaultValue={wound?.date_added}/>}
+                        <h3>Device ID</h3>
+                        {wound !== undefined && <Input readOnly defaultValue={wound?.device_id}/>}
+                    </div>
+                    <div className={styles.fieldContainer}>
+                        <h3>Infection Type</h3>
+                        {wound !== undefined && <Input readOnly defaultValue={wound?.infection_type}/>}
+                        <h3>Infection Location</h3>
+                        {wound !== undefined && <Input readOnly defaultValue={wound?.infection_location}/>}
+                        
+                        <h3>Wound Completely Treated</h3>
+                        {wound !== undefined && (
+                            <Checkbox
+                                checked={wound?.treated}
+                                onChange={handleTreatedChange}
+                            >
+                                {wound.treated ? "Yes" : "No"}
+                            </Checkbox>
+                        )}
+
+                    </div>
+                </div>
+                <div className={styles.container3}>
+                    <h3>Wound History</h3>
+                    <div className={styles.arrowContainer}>
+                        <Button
+                            shape={"circle"}
+                            disabled={imageIndex === 0}
+                            onClick={() => setImageIndex(imageIndex-1)}
+                            style={{background: "#004AAD"}}
+                            icon={<ArrowLeftOutlined style={{color: "white"}}/>}
+                        />
+                        <Button
+                            shape={"circle"}
+                            disabled={imageIndex === vals.size-1}
+                            onClick={() => setImageIndex(imageIndex+1)}
+                            style={{background: "#004AAD"}}
+                            icon={<ArrowRightOutlined style={{color: "white"}}/>}
+                        />
+                    </div>
+                    <div className={styles.imageContainer}>
+                        <Image src={Array.from(vals.keys())[imageIndex]} width={"25vh"} height={"25vh"}/>
+                        <div className={styles.labelContainer}>
+                            <p>{`Image taken during treatment ${vals.get(Array.from(vals.keys())[imageIndex])}`}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div className={styles.header}>
                 <h3>Treatment Sessions</h3>
                 <Button disabled={overlay !== ""} style={{background: "#004AAD"}} icon={<PlusOutlined style={{color: "white"}}/>} onClick={() => setOverlay("create")}/>
@@ -177,12 +275,12 @@ function WoundDetails() {
               </tr>
             </thead>
             <tbody>
-              {pastTreatments.map((treatment, index) => (
+              {treatments.map((treatment, index) => (
                   <tr key={treatment.session_number}>
                       <td>{treatment.reschedule_requested ? <FlagFilled/> : <></>}</td>
                       <td>{treatment.session_number}</td>
                       <td>{formatDate(treatment.date_scheduled)}</td>
-                      <td>{treatment.start_time}</td>
+                      <td>{formattedTime(treatment.start_time_scheduled)}</td>
                       <td><Button disabled={overlay !== ""} style={{background: "#004AAD"}} icon={<EditOutlined style={{color: "white"}}/>}
                                   onClick={e => setOverlay(`edit-${index}`)}/></td>
                       <td><Button style={{background: "red"}} icon={<CloseOutlined style={{color: "white"}}/>}

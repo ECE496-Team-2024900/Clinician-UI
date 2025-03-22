@@ -24,7 +24,6 @@ import Home from "./pages/Home/Home";
 import SignUp from './pages/SignUp/SignUp.js';
 import {useCookies} from "react-cookie";
 import PostTreatment from './pages/PostTreatment/PostTreatment.js';
-import Wound from "./pages/Wound/Wound";
 import WoundDetails from './pages/WoundDetails/WoundDetails.js';
 import { signOut } from "firebase/auth";
 import { auth } from "./firebaseConfig.js"
@@ -107,7 +106,7 @@ function Controls(props) {
     const endMeeting = async () => {
         axios.put(`${getTreatmentAPIUrl()}/treatment/remove_video_call_id`,{id: 1} ).then(res => {
             end()
-            navigate("/treatment_session")
+            navigate("/treatment_session", { state: {preTreatment: true} })
         })
     }
 
@@ -242,7 +241,6 @@ function Content() {
                 <Route path="/treatment_session" element={<TreatmentParameters />}></Route>
                 <Route path="/treatment_session_details/:id" element={<TreatmentSessionDetails />}></Route>
                 <Route path="/post_treatment_session" element={<PostTreatment />}></Route>
-                <Route path="/wound" element={<Wound />}></Route>
                 <Route path="/wound_details" element={<WoundDetails />}></Route>
                 <Route path="/sign-up" element={<SignUp />}></Route>
                 <Route path="/patients" element={<Patients />}></Route>
