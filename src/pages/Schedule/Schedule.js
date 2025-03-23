@@ -46,7 +46,7 @@ function Schedule() {
     }, [wounds, treatments, patients]);
 
     const dateCellRender = (value) => {
-        const listData = treatments.filter(treatment => new Date(treatment.date_scheduled).getDate() === value)
+        const listData = treatments.filter(treatment => new Date(treatment.date_scheduled).getDate() === new Date(value).getDate() &&  new Date(treatment.date_scheduled).getMonth() === new Date(value).getMonth() &&  new Date(treatment.date_scheduled).getFullYear() === new Date(value).getFullYear())
         return (
             <ul className="events">
                 {listData.map((item) => (
