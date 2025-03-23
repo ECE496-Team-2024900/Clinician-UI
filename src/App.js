@@ -12,7 +12,14 @@ import axios from "axios";
 import { getTreatmentAPIUrl } from "./getAPIUrls/getTreatmentAPIUrl"
 import styles from "./App.module.css"
 import {Avatar, Button, Menu, message, Modal, Spin} from "antd";
-import {ArrowRightOutlined, HomeOutlined, UnorderedListOutlined, UserOutlined, LogoutOutlined} from "@ant-design/icons";
+import {
+    ArrowRightOutlined,
+    HomeOutlined,
+    UnorderedListOutlined,
+    UserOutlined,
+    LogoutOutlined,
+    UsergroupAddOutlined, ClockCircleOutlined
+} from "@ant-design/icons";
 import CreatePatient from "./pages/CreatePatient/CreatePatient";
 import CreateWound from "./pages/CreateWound/CreateWound";
 import Patients from "./pages/Patients/Patients";
@@ -27,6 +34,7 @@ import PostTreatment from './pages/PostTreatment/PostTreatment.js';
 import WoundDetails from './pages/WoundDetails/WoundDetails.js';
 import { signOut } from "firebase/auth";
 import { auth } from "./firebaseConfig.js"
+import Schedule from "./pages/Schedule/Schedule";
 
 function ParticipantView(props) {
     const micRef = useRef(null);
@@ -247,6 +255,7 @@ function Content() {
                 <Route path="/create_patient" element={<CreatePatient />}></Route>
                 <Route path="/patient_details/:mrn" element={<PatientDetails />}></Route>
                 <Route path="/create_wound" element={<CreateWound />}></Route>
+                <Route path="/schedule" element={<Schedule />}></Route>
             </Routes>
         </div>
     );
@@ -278,8 +287,13 @@ function SideMenu() {
             </div>
             {/*Add button to side menu for accessing (or creating) patient records*/}
             <div className={styles.buttonContainer2}>
-                <Button shape={"round"} className={styles.button} icon={<UnorderedListOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/patients")}/>
+                <Button shape={"round"} className={styles.button} icon={<UsergroupAddOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/patients")}/>
                 <span style={{color: "white"}}>Patients</span>
+            </div>
+            {/*Add button to side menu for accessing schedule*/}
+            <div className={styles.buttonContainer2}>
+                <Button shape={"round"} className={styles.button} icon={<ClockCircleOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/schedule")}/>
+                <span style={{color: "white"}}>Schedule</span>
             </div>
         </div>
     )
