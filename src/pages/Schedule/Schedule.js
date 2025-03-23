@@ -46,11 +46,11 @@ function Schedule() {
     }, [wounds, treatments, patients]);
 
     const dateCellRender = (value) => {
-        const listData = treatments.filter(treatment => new Date(treatment.start_time_scheduled).getDate() === value)
+        const listData = treatments.filter(treatment => new Date(treatment.date_scheduled).getDate() === value)
         return (
             <ul className="events">
                 {listData.map((item) => (
-                    <li key={item.id}>{`Treatment session: ${vals.get(item.id)}, ${item.start_time_scheduled}`}</li>
+                    <li key={item.id}>{`Treatment session: ${vals.get(item.id)}, ${new Date(item.start_time_scheduled).toLocaleTimeString()}`}</li>
                 ))}
             </ul>
         );
