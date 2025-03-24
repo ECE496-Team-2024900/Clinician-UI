@@ -35,6 +35,7 @@ import WoundDetails from './pages/WoundDetails/WoundDetails.js';
 import { signOut } from "firebase/auth";
 import { auth } from "./firebaseConfig.js"
 import Schedule from "./pages/Schedule/Schedule";
+import {Footer} from "antd/es/layout/layout";
 
 function ParticipantView(props) {
     const micRef = useRef(null);
@@ -232,7 +233,10 @@ function App() {
                 token={authToken}
             >
                 <MeetingView meetingId={meetingId} onMeetingLeave={onMeetingLeave} />
-            </MeetingProvider> : <div className={styles.container}>{cookies["email"] !== "" && <SideMenu/>}<Content/></div>}
+            </MeetingProvider> : <div className={styles.container}>{cookies["email"] !== "" && <SideMenu/>}
+                <Content/>
+            </div>}
+            <Footer className={styles.footer}>{"© 2025 University of Toronto Department of Electrical and Computer Engineering Capstone Design Project Team 2024900 (Faatima Abidi, Nilofer Hyder, Shreya Setlur, Zoya Chishtie)"}</Footer>
         </div>
     );
 }

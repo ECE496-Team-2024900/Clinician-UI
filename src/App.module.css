@@ -2,13 +2,14 @@
     width: 100vw;
     height: 100vh;
     background-color: #DEEBF9;
-    overflow-y: hidden;
     overflow-x: hidden;
+    overflow-y: hidden;
 
     .container {
         display: flex;
         flex-direction: row;
         justify-content: flex-start;
+        height: 95vh;
 
         .sideMenu {
             width: 10vw;
@@ -45,4 +46,12 @@
     justify-content: center;
     align-items: center;
     font-size: 20px;
+}
+
+.footer {
+    background-color: #004AAD;
+    color: white;
+    text-align: center;
+    height: 20px;
+    padding: 10px;
 }
