@@ -207,7 +207,9 @@ function TreatmentSessionDetails() {
     const [meetingId, setMeetingId] = useState(null);
 
     useEffect(() => {
-        if(meetingId) return;
+        if(meetingId) {
+            return;
+        }
 
         const interval = setInterval(async () => {
             let apiRes = null
