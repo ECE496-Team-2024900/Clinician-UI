@@ -49,7 +49,7 @@ function SignUp() {
                     }
                 })
                 .catch(() => {
-                    message.error("There was an error in updating the parameters. Treatment approval not sent.");
+                    message.error("There was an error in creating user.");
                 });
             if (window.location.hostname === "localhost") {
                 setCookie("email", email)
