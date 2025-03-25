@@ -43,34 +43,34 @@ function TreatmentSessionDetails() {
         }, [micStream, micOn]);
 
         return (
-            <span style={{width: "50vw", display: "flex"}}>
-            <audio ref={micRef} autoPlay playsInline muted={isLocal} />
-                {webcamOn && (
-                    <ReactPlayer
-                        //
-                        playsinline // extremely crucial prop
-                        pip={false}
-                        light={false}
-                        controls={false}
-                        muted={true}
-                        playing={true}
-                        height={"300px"}
-                        width={"300px"}
-                        //
-                        url={videoStream}
-                        //
-                        onError={(err) => {
-                            console.log(err, "participant video error");
-                        }}
-                    />
-                )}
-        </span>
+            <span style={{height: "48vw", width: "48vw", background: "black"}}>
+                    <audio ref={micRef} autoPlay playsInline muted={isLocal}/>
+                    {webcamOn && (
+                        <ReactPlayer
+                            //
+                            playsinline // extremely crucial prop
+                            pip={false}
+                            light={false}
+                            controls={false}
+                            muted={true}
+                            playing={true}
+                            height={"48vw"}
+                            width={"48vw"}
+                            //
+                            url={videoStream}
+                            //
+                            onError={(err) => {
+                                console.log(err, "participant video error");
+                            }}
+                        />
+                    )}
+            </span>
         );
     }
 
     function Controls(props) {
-        const { end, toggleMic, toggleWebcam, getWebcams, changeWebcam, localParticipant } = useMeeting();
-        const { webcamStream, webcamOn, captureImage } = useParticipant(
+        const {end, toggleMic, toggleWebcam, getWebcams, changeWebcam, localParticipant} = useMeeting();
+        const {webcamStream, webcamOn, captureImage} = useParticipant(
             props.participantId
         );
         const navigate = useNavigate()
@@ -139,12 +139,14 @@ function TreatmentSessionDetails() {
                 {joined && joined === "JOINED" ? (
                     <div>
                         <Controls participantId={[...participants.keys()].filter(id => id !== localParticipant.id)?.[0]} />
+                        <div style={{display: "flex", flexDirection: "row", gap: "20px"}}>
                         {[...participants.keys()].map((participantId) => (
                             <ParticipantView
                                 participantId={participantId}
                                 key={participantId}
                             />
                         ))}
+                        </div>
                     </div>
                 ) : joined && joined === "JOINING" ? (
                     <Spin fullscreen={true} tip={"Joining the meeting..."} />
