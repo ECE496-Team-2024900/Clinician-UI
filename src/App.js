@@ -1,18 +1,8 @@
 import Login from './pages/Login.js';
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import {
-    MeetingProvider,
-    MeetingConsumer,
-    useMeeting,
-    useParticipant, createCameraVideoTrack,
-} from "@videosdk.live/react-sdk";
-import { authToken } from "./API";
-import ReactPlayer from "react-player";
-import axios from "axios";
-import { getTreatmentAPIUrl } from "./getAPIUrls/getTreatmentAPIUrl"
+import React, { useEffect } from "react";
 import styles from "./App.module.css"
-import {Avatar, Button, Menu, message, Modal, Spin} from "antd";
-import {ArrowRightOutlined, HomeOutlined, UnorderedListOutlined, UserOutlined, LogoutOutlined} from "@ant-design/icons";
+import { Button, message } from "antd";
+import { HomeOutlined, UnorderedListOutlined, LogoutOutlined} from "@ant-design/icons";
 import CreatePatient from "./pages/CreatePatient/CreatePatient";
 import CreateWound from "./pages/CreateWound/CreateWound";
 import Patients from "./pages/Patients/Patients";
@@ -29,35 +19,7 @@ import { signOut } from "firebase/auth";
 import { auth } from "./firebaseConfig.js"
 
 function App() {
-    const [meetingId, setMeetingId] = useState(null);
     const [cookies] = useCookies(['cookie-name']);
-
-
-    useEffect(() => {
-        if(meetingId) return;
-                
-        const interval = setInterval(async () => {
-            let apiRes = null
-            try {
-                apiRes = await axios.get(`${getTreatmentAPIUrl()}/treatment/get_video_call_id`)
-            } catch (err) {
-                console.error(err);
-            } finally {
-                if (apiRes?.data?.message !== "") {
-                    setMeetingId(apiRes?.data?.message)
-                }
-            }
-        }, 5000)
-        return () => {
-            clearInterval(interval)
-        }
-    }, [meetingId])
-
-    //This will set Meeting Id to null when meeting is left or ended
-    const onMeetingLeave = () => {
-        setMeetingId(null);
-    };
-
     return (
         <div className={styles.homePage}>
             <div className={styles.container}>{cookies["email"] !== "" && <SideMenu/>}

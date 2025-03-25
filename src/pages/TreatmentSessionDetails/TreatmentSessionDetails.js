@@ -8,7 +8,6 @@ import ReportGeneration from '../../utilities/ReportGeneration/ReportGeneration'
 import {createCameraVideoTrack, MeetingProvider, useMeeting, useParticipant} from "@videosdk.live/react-sdk";
 import ReactPlayer from "react-player";
 import {authToken} from "../../API";
-import {useCookies} from "react-cookie";
 
 function TreatmentSessionDetails() {
 
@@ -88,7 +87,7 @@ function TreatmentSessionDetails() {
             changeWebcam(customTrack)
         }
         const endMeeting = async () => {
-            axios.put(`${getTreatmentAPIUrl()}/treatment/remove_video_call_id`,{id: 1} ).then(res => {
+            axios.put(`${getTreatmentAPIUrl()}/treatment/remove_video_call_id?id=${treatmentId}` ).then(res => {
                 end()
                 navigate("/treatment_session", { state: {preTreatment: true} })
             })

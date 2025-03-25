@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 import { getTreatmentAPIUrl } from '../../getAPIUrls/getTreatmentAPIUrl'
 import { getHardwareAPIUrl } from '../../getAPIUrls/getHardwareAPIUrl'
 import axios from 'axios'
-import { useLocation } from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 
 
 function TreatmentParameters() {
@@ -136,6 +136,8 @@ function TreatmentParameters() {
         }
     }, [prevTreatmentParameters]);
 
+    const navigate = useNavigate()
+
     const submitForm = async () => {
         setDisableSubmit(true);
 
@@ -168,6 +170,7 @@ function TreatmentParameters() {
                         message.error("There was an error in updating the parameters. Treatment approval not sent.");
                     }
                     setDisableSubmit(false);
+                    navigate(`/treatment_session_details/${treatment.id}`)
                 })
                 .catch(() => {
                     message.error("There was an error in updating the parameters. Treatment approval not sent.");
