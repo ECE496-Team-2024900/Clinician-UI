@@ -6,7 +6,7 @@
 
     .pageTitle {
         font-weight: bold;
-        font-size: 1.8vw;
+        font-size: 1.8rem;
         text-align: left;
         margin: 0.5vh 0 2vh 0.5vw;
     }
@@ -36,7 +36,7 @@
     border-radius: 5px;
     border: 1px solid #ccc;
     background-color: white;
-    font-size: 1vw;
+    font-size: 1rem;
 }
 
 .errorMessage {
@@ -50,5 +50,5 @@
     margin: 0.5vh 0.5vw 0.5vh 0.5vw;
     text-align: center;
     background-color: #035196;
-    font-size: 0.9vw;
+    font-size: 0.9rem;
 }
