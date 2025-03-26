@@ -88,7 +88,11 @@ function TreatmentSessionDetails() {
         }
         const endMeeting = async () => {
             end()
-            navigate("/treatment_session", { state: {preTreatment: true} })
+            if (props.completed === true) {
+                navigate("/post_treatment_session")
+            } else {
+                navigate("/treatment_session", { state: {preTreatment: true} })
+            }
         }
 
         const takeAndUploadScreenshot = async () => {
@@ -137,7 +141,7 @@ function TreatmentSessionDetails() {
             <div className="container">
                 {joined && joined === "JOINED" ? (
                     <div>
-                        <Controls participantId={[...participants.keys()].filter(id => id !== localParticipant.id)?.[0]} />
+                        <Controls participantId={[...participants.keys()].filter(id => id !== localParticipant.id)?.[0]} completed={props.completed} />
                         <div style={{display: "flex", flexDirection: "row", gap: "20px"}}>
                         {[...participants.keys()].map((participantId) => (
                             <ParticipantView
@@ -314,7 +318,7 @@ function TreatmentSessionDetails() {
                 }}
                 token={authToken}
             >
-                <MeetingView meetingId={meetingId} onMeetingLeave={onMeetingLeave} />
+                <MeetingView meetingId={meetingId} onMeetingLeave={onMeetingLeave} completed={fields.completed} />
             </MeetingProvider> :
             <div>
             {/*Page title indicates session number (eg. session 1 is first session for that wound) and its scheduled date and time*/}
