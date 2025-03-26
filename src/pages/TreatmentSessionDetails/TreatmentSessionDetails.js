@@ -87,10 +87,8 @@ function TreatmentSessionDetails() {
             changeWebcam(customTrack)
         }
         const endMeeting = async () => {
-            axios.put(`${getTreatmentAPIUrl()}/treatment/remove_video_call_id?id=${treatmentId}` ).then(res => {
-                end()
-                navigate("/treatment_session", { state: {preTreatment: true} })
-            })
+            end()
+            navigate("/treatment_session", { state: {preTreatment: true} })
         }
 
         const takeAndUploadScreenshot = async () => {
@@ -123,6 +121,7 @@ function TreatmentSessionDetails() {
             //callback for when meeting is joined successfully
             onMeetingJoined: () => {
                 setJoined("JOINED");
+                axios.put(`${getTreatmentAPIUrl()}/treatment/remove_video_call_id?id=${treatmentId}`).then( )
             },
             //callback for when meeting is ended
             onMeetingLeft: () => {
