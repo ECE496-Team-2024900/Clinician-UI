@@ -29,7 +29,7 @@ function App() {
     const location = useLocation()
     return (
         <div className={styles.homePage}>
-            <div className={styles.container}>{(location.pathname.length > 1 || !location.pathname.endsWith("sign-up")) && <SideMenu/>}
+            <div className={styles.container}>{(location.pathname.length > 1 && !location.pathname.endsWith("sign-up")) && <SideMenu/>}
                 <Content/>
             </div>
             <Footer className={styles.footer}>{"© 2025 University of Toronto Department of Electrical and Computer Engineering Capstone Design Project Team 2024900 (Faatima Abidi, Nilofer Hyder, Shreya Setlur, Zoya Chishtie)"}</Footer>
