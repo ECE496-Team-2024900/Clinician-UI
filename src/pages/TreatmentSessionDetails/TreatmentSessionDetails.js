@@ -1,12 +1,174 @@
 import styles from '../../css/TreatmentSessionDetails.module.css'
-import { Form, Input, Row, Col, message, Image } from 'antd'
-import { useState, useEffect } from 'react'
+import {Form, Input, Row, Col, message, Image, Button, Spin, Modal} from 'antd'
+import React, {useState, useEffect, useRef, useMemo} from 'react'
 import { getTreatmentAPIUrl } from '../../getAPIUrls/getTreatmentAPIUrl'
 import axios from 'axios'
-import { useLocation } from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import ReportGeneration from '../../utilities/ReportGeneration/ReportGeneration'
+import {createCameraVideoTrack, MeetingProvider, useMeeting, useParticipant} from "@videosdk.live/react-sdk";
+import ReactPlayer from "react-player";
+import {authToken} from "../../API";
 
 function TreatmentSessionDetails() {
+
+    function ParticipantView(props) {
+        const micRef = useRef(null);
+        const { webcamStream, micStream, webcamOn, micOn, isLocal, displayName } =
+            useParticipant(props.participantId);
+
+        const videoStream = useMemo(() => {
+            if (webcamOn && webcamStream) {
+                const mediaStream = new MediaStream();
+                mediaStream.addTrack(webcamStream.track);
+                return mediaStream;
+            }
+        }, [webcamStream, webcamOn]);
+
+        useEffect(() => {
+            if (micRef.current) {
+                if (micOn && micStream) {
+                    const mediaStream = new MediaStream();
+                    mediaStream.addTrack(micStream.track);
+
+                    micRef.current.srcObject = mediaStream;
+                    micRef.current
+                        .play()
+                        .catch((error) =>
+                            console.error("videoElem.current.play() failed", error)
+                        );
+                } else {
+                    micRef.current.srcObject = null;
+                }
+            }
+        }, [micStream, micOn]);
+
+        return (
+            <span style={{height: "48vw", width: "48vw", background: "black"}}>
+                    <audio ref={micRef} autoPlay playsInline muted={isLocal}/>
+                    {webcamOn && (
+                        <ReactPlayer
+                            //
+                            playsinline // extremely crucial prop
+                            pip={false}
+                            light={false}
+                            controls={false}
+                            muted={true}
+                            playing={true}
+                            height={"48vw"}
+                            width={"48vw"}
+                            //
+                            url={videoStream}
+                            //
+                            onError={(err) => {
+                                console.log(err, "participant video error");
+                            }}
+                        />
+                    )}
+            </span>
+        );
+    }
+
+    function Controls(props) {
+        const {end, toggleMic, toggleWebcam, getWebcams, changeWebcam, localParticipant} = useMeeting();
+        const {webcamStream, webcamOn, captureImage} = useParticipant(
+            props.participantId
+        );
+        const navigate = useNavigate()
+        const [frontFacing, setFrontFacing] = useState(false)
+        const flipCam = async () => {
+            const devices = await getWebcams()
+            const customTrack = await createCameraVideoTrack({
+                cameraId: devices[0].deviceId,
+                facingMode: frontFacing ? "BACK" : "FRONT",
+                optimizationMode: "motion",
+                multiStream: false,
+            });
+            setFrontFacing(!frontFacing)
+            changeWebcam(customTrack)
+        }
+        const endMeeting = async () => {
+            end()
+            if (props.completed === true) {
+                navigate("/post_treatment_session")
+            } else {
+                navigate("/treatment_session", { state: {preTreatment: true} })
+            }
+        }
+
+        const takeAndUploadScreenshot = async () => {
+            if (webcamOn && webcamStream) {
+                const base64 = await captureImage({}); // captureImage will return base64 string
+                axios.put(`${getTreatmentAPIUrl()}/treatment/add_image`, {image: base64, id: 1} ).then(res => {
+                    console.log("image saved successfully")
+                })
+            } else {
+                console.error("Camera must be on to capture an image");
+            }
+        }
+
+        return (
+            <div className={styles.buttonContainer}>
+                <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => endMeeting()}>End Meeting</Button>
+                <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => toggleMic()}>Toggle Mic</Button>
+                <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => toggleWebcam()}>Toggle Cam</Button>
+                <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => flipCam()}>Flip Cam</Button>
+                <Button type={"primary"} style={{background: "#004AAD"}} onClick={() => takeAndUploadScreenshot()}>Take Screenshot</Button>
+            </div>
+        );
+    }
+
+    function MeetingView(props) {
+        const [joined, setJoined] = useState(null);
+        const { join, participants, localParticipant } = useMeeting({
+            //Get the method which will be used to join the meeting.
+            //We will also get the participants list to display all participants
+            //callback for when meeting is joined successfully
+            onMeetingJoined: () => {
+                setJoined("JOINED");
+                axios.put(`${getTreatmentAPIUrl()}/treatment/remove_video_call_id?id=${treatmentId}`).then( )
+            },
+            //callback for when meeting is ended
+            onMeetingLeft: () => {
+                props.onMeetingLeave();
+            },
+        });
+        const joinMeeting = () => {
+            setJoined("JOINING");
+            join();
+        };
+
+        return (
+            <div className="container">
+                {joined && joined === "JOINED" ? (
+                    <div>
+                        <Controls participantId={[...participants.keys()].filter(id => id !== localParticipant.id)?.[0]} completed={props.completed} />
+                        <div style={{display: "flex", flexDirection: "row", gap: "20px"}}>
+                        {[...participants.keys()].map((participantId) => (
+                            <ParticipantView
+                                participantId={participantId}
+                                key={participantId}
+                            />
+                        ))}
+                        </div>
+                    </div>
+                ) : joined && joined === "JOINING" ? (
+                    <Spin fullscreen={true} tip={"Joining the meeting..."} />
+                ) : (
+                    <Modal
+                        closable={false}
+                        styles={{content: { backgroundColor: '#004AAD', color: "white" }, header: { backgroundColor: '#004AAD', color: "white" }}}
+                        open={true}
+                        okButtonProps={{style: {backgroundColor: "white", color: "#004AAD" }}}
+                        cancelButtonProps={{ style: { display: 'none' } }}
+                        title={<span style={{color: "white"}}>{"Please join the video call"}</span>}
+                        onOk={joinMeeting}
+                        okText={"Join"}>
+                        {"The treatment for patient has begun. Please join the video call."}
+                    </Modal>
+                )}
+            </div>
+        );
+    }
 
     const location = useLocation(); 
 
@@ -43,9 +205,39 @@ function TreatmentSessionDetails() {
     // Retrieving report data if the treatment is complete
     const [fileData, setFileData] = useState(null);
 
+    const treatmentId = location.pathname.split("/")[2]
+
+    const [meetingId, setMeetingId] = useState(null);
+
+    useEffect(() => {
+        if(meetingId) {
+            return;
+        }
+
+        const interval = setInterval(async () => {
+            let apiRes = null
+            try {
+                apiRes = await axios.get(`${getTreatmentAPIUrl()}/treatment/get_video_call_id?id=${treatmentId}`)
+            } catch (err) {
+                console.error(err);
+            } finally {
+                if (apiRes?.data?.message !== "") {
+                    setMeetingId(apiRes?.data?.message)
+                }
+            }
+        }, 5000)
+        return () => {
+            clearInterval(interval)
+        }
+    }, [meetingId])
+
+    //This will set Meeting Id to null when meeting is left or ended
+    const onMeetingLeave = () => {
+        setMeetingId(null);
+    };
+
     // Retrieving details of the treatment session with the id specified in the webpage url at the top
     useEffect(() => {
-            const treatmentId = location.pathname.split("/")[2]
             const url = `${getTreatmentAPIUrl()}/treatment/parameters/get?id=${treatmentId}`;
             axios.get(url)
             .then((response) => {
@@ -117,6 +309,18 @@ function TreatmentSessionDetails() {
 
     return (
         <div className={styles.container}>
+            {authToken && meetingId ? <MeetingProvider
+                config={{
+                    meetingId,
+                    micEnabled: true,
+                    webcamEnabled: true,
+                    name: "clinician",
+                }}
+                token={authToken}
+            >
+                <MeetingView meetingId={meetingId} onMeetingLeave={onMeetingLeave} completed={fields.completed} />
+            </MeetingProvider> :
+            <div>
             {/*Page title indicates session number (eg. session 1 is first session for that wound) and its scheduled date and time*/}
             <h2 className={styles.pageTitle}>{"Treatment Session #"}{fields.sessionNumber}{": "}{fields.dateTimeScheduled}</h2>
             {/*Page subtitle indicates whether the treatment session is completed or not*/}
@@ -294,6 +498,7 @@ function TreatmentSessionDetails() {
                 </div>
             )}
             </Form>
+        </div>}
         </div>
     )
 }
