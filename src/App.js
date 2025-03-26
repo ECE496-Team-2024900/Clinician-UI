@@ -94,39 +94,42 @@ function SideMenu() {
     return (
         <div className={styles.sideMenu}>
             <div className={styles.buttonContainer2}>
-                <Button shape={"round"} className={styles.button} icon={<LogoutOutlined style={{color: "#004AAD"}}/>}
-                        onClick={handleLogout}/>
-                <span style={{color: "white"}}>Logout</span>
-            </div>
-            <div className={styles.buttonContainer2}>
                 <Button shape={"round"} className={styles.button} icon={<EyeOutlined style={{color: "#004AAD"}}/>}
                         onClick={handleDarkMode}/>
-                <span style={{color: "white"}}>Toggle Dark Mode</span>
+                <span style={{color: "white", textAlign: "center"}}>Toggle Dark Mode</span>
+            </div>
+            <br/>
+            <br/>
+            <br/>
+            <div className={styles.buttonContainer2}>
+                <Button shape={"round"} className={styles.button} icon={<LogoutOutlined style={{color: "#004AAD"}}/>}
+                        onClick={handleLogout}/>
+                <span style={{color: "white", textAlign: "center"}}>Logout</span>
             </div>
             <br/>
             <div className={styles.buttonContainer2}>
                 <Button shape={"round"} className={styles.button} icon={<HomeOutlined style={{color: "#004AAD"}}/>}
                         onClick={() => navigate("/home")}/>
-                <span style={{color: "white"}}>Home</span>
+                <span style={{color: "white", textAlign: "center"}}>Home</span>
             </div>
             {/*Add button to side menu for accessing (or creating) patient records*/}
             <div className={styles.buttonContainer2}>
                 <Button shape={"round"} className={styles.button}
                         icon={<UsergroupAddOutlined style={{color: "#004AAD"}}/>}
                         onClick={() => navigate("/patients")}/>
-                <span style={{color: "white"}}>Patients</span>
+                <span style={{color: "white", textAlign: "center"}}>Patients</span>
             </div>
             {/*Add button to side menu for accessing schedule*/}
             <div className={styles.buttonContainer2}>
                 <Button shape={"round"} className={styles.button}
                         icon={<ClockCircleOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/schedule")}/>
-                <span style={{color: "white"}}>Schedule</span>
+                <span style={{color: "white", textAlign: "center"}}>Schedule</span>
             </div>
             {/*Add button to side menu for accessing personal info*/}
             <div className={styles.buttonContainer2}>
                 <Button shape={"round"} className={styles.button} icon={<UserOutlined style={{color: "#004AAD"}}/>}
                         onClick={() => navigate("/my_info")}/>
-                <span style={{color: "white"}}>My Account</span>
+                <span style={{color: "white", textAlign: "center"}}>My Account</span>
             </div>
         </div>
     )
