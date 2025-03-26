@@ -5,7 +5,7 @@ const hostOptions = {
     production: "https://hardware-comm.onrender.com"
 } 
 export function getHardwareAPIUrl() {   
-    if(clientHost !== "production") {
+    if(clientHost !== "localhost") {
         return hostOptions.local
     }
     return hostOptions.production

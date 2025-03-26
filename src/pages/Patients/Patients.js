@@ -36,7 +36,7 @@ function Patients() {
         } else {
             try {
                 // Retrieve all patient records and set to search results 
-                const res = await axios.get(`${getUsersAPIUrl()}/users/get_all_patients`);
+                const res = await axios.get(`${getUsersAPIUrl()}/users/find_all_patients`);
                 if (res.status === 200) {
                     setSearchResults(res.data.message);
                 }
@@ -48,7 +48,7 @@ function Patients() {
 
     // Default is to retrieve all patients and displaying as search results
     useEffect(() => {
-        axios.get(`${getUsersAPIUrl()}/users/get_all_patients`).then(res => {
+        axios.get(`${getUsersAPIUrl()}/users/find_all_patients`).then(res => {
             if (res.status === 200) {
                 setSearchResults(res?.data?.message)
             }
@@ -94,7 +94,7 @@ function Patients() {
             dataSource={searchResults}
             //Display the patient's first and last name
             renderItem={(item) => (
-                <List.Item className={styles.listItem}>
+                <List.Item className={styles.listItem} onClick={() => navigate(`/patient_details/${item.medical_ref_number}`)}>
                     {item.first_name + " " + item.last_name}
                 </List.Item>
             )}

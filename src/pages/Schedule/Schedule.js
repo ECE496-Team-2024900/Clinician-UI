@@ -4,15 +4,18 @@ import axios from "axios";
 import {getTreatmentAPIUrl} from "../../getAPIUrls/getTreatmentAPIUrl";
 import { Calendar } from "antd";
 import {getUsersAPIUrl} from "../../getAPIUrls/getUsersAPIUrl";
+import {useNavigate} from "react-router-dom";
 
 function Schedule() {
     const [patients, setPatients] = useState([])
     const [treatments, setTreatments] = useState([])
     const [wounds, setWounds] = useState([])
     const [vals, setVals] = useState(new Map());
+    const navigate = useNavigate()
+
 
     useEffect(() => {
-        axios.get(`${getUsersAPIUrl()}/users/get_all_patients`).then(res => {
+        axios.get(`${getUsersAPIUrl()}/users/find_all_patients`).then(res => {
             if (res.status === 200) {
                 setPatients(res?.data?.message)
             }
@@ -50,7 +53,7 @@ function Schedule() {
         return (
             <ul className="events">
                 {listData.map((item) => (
-                    <li key={item.id}>{`Treatment session: ${vals.get(item.id)}, ${new Date(item.start_time_scheduled).toLocaleTimeString()}`}</li>
+                    <li key={item.id} onClick={() => navigate(`/treatment_session_details/${item.id}`)}>{`Treatment session: ${vals.get(item.id)}, ${new Date(item.start_time_scheduled).toLocaleTimeString()}`}</li>
                 ))}
             </ul>
         );

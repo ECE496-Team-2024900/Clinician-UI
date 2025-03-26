@@ -6,6 +6,8 @@ import axios from "axios";
 import {getUsersAPIUrl} from "../../getAPIUrls/getUsersAPIUrl";
 import {getTreatmentAPIUrl} from "../../getAPIUrls/getTreatmentAPIUrl";
 import {useNavigate} from "react-router-dom";
+import { auth } from "../../firebaseConfig"
+
 
 function Home() {
     const [patients, setPatients] = useState([])
@@ -16,7 +18,13 @@ function Home() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get(`${getUsersAPIUrl()}/users/get_all_patients`).then(res => {
+        if (auth.currentUser == null) {
+            navigate("/")
+        }
+    }, []);
+
+    useEffect(() => {
+        axios.get(`${getUsersAPIUrl()}/users/find_all_patients`).then(res => {
             if (res.status === 200) {
                 setPatients(res?.data?.message)
             }
@@ -59,7 +67,7 @@ function Home() {
         <h2 style={{color: "#004AAD"}}>Patients</h2>
         <div className={styles.patientContainer}>
             {patients.length !== 0 && patients.map(patient => {
-                return <div className={styles.patientAvatar}>
+                return <div className={styles.patientAvatar} onClick={() => navigate(`/patient_details/${patient.medical_ref_number}`)}>
                     <Avatar
                         style={{background: "#DEEBF9"}}
                         size={64}

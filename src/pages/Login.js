@@ -1,17 +1,14 @@
 import { Button, Input, Form, message } from 'antd';
 import logo from "../assets/logo.png";
 import styles from "../css/Login.module.css";
-import {useCookies} from "react-cookie";
 import {useNavigate} from "react-router-dom";
 import { OAuthProvider, signInWithRedirect, getRedirectResult } from 'firebase/auth';
-import { auth } from '../firebaseConfig'
 import { useState, useEffect } from 'react'
 import { getUsersAPIUrl } from '../getAPIUrls/getUsersAPIUrl'
 import axios from 'axios'
-
+import {auth} from "../firebaseConfig"
 
 function Login() {
-    const [cookies, setCookie] = useCookies(['cookie-name']);
     const navigate = useNavigate();
     const [currForm] = Form.useForm();
     const [submitDisabled, setSubmitDisabled] = useState(true)
@@ -34,7 +31,7 @@ function Login() {
         const fetchResult = async () => {
             const result = await getRedirectResult(auth);
             if (result) {
-                navigate('/');
+                navigate('/home');
             }
         };
         fetchResult();
@@ -93,9 +90,8 @@ function Login() {
         const isRegistered = await emailRegistered(email)
         if (isRegistered) {
             if (window.location.hostname === "localhost") {
-                setCookie("email", email)
-                navigate("/")
-                window.location.reload()
+                auth.currentUser = { uid: "testUser123", email: "test@example.com" }; // Fake user
+                navigate("/home")
             } else {
                 // redirect to Microsoft login
                 const provider = new OAuthProvider('microsoft.com');
@@ -106,9 +102,7 @@ function Login() {
                 try {
                     const result = await getRedirectResult(auth);
                     if (result) {
-                        setCookie("email", email);
                         navigate('/');
-                        window.location.reload()
                     }
                 } catch (error) {
                     message.error("Login failed - please try again");

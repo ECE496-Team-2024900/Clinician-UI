@@ -13,10 +13,9 @@ import Patients from "./pages/Patients/Patients";
 import PatientDetails from "./pages/PatientDetails/PatientDetails";
 import TreatmentParameters from "./pages/TreatmentParameters/TreatmentParameters";
 import TreatmentSessionDetails from "./pages/TreatmentSessionDetails/TreatmentSessionDetails";
-import {Route, Routes, useNavigate} from "react-router-dom";
+import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
 import Home from "./pages/Home/Home";
 import SignUp from './pages/SignUp/SignUp.js';
-import {useCookies} from "react-cookie";
 import PostTreatment from './pages/PostTreatment/PostTreatment.js';
 import WoundDetails from './pages/WoundDetails/WoundDetails.js';
 import { signOut } from "firebase/auth";
@@ -24,11 +23,12 @@ import { auth } from "./firebaseConfig.js"
 import Schedule from "./pages/Schedule/Schedule";
 import {Footer} from "antd/es/layout/layout";
 
+
 function App() {
-    const [cookies] = useCookies(['cookie-name']);
+    const location = useLocation()
     return (
         <div className={styles.homePage}>
-            <div className={styles.container}>{cookies["email"] !== "" && <SideMenu/>}
+            <div className={styles.container}>{location.pathname.length > 1 && <SideMenu/>}
                 <Content/>
             </div>
             <Footer className={styles.footer}>{"© 2025 University of Toronto Department of Electrical and Computer Engineering Capstone Design Project Team 2024900 (Faatima Abidi, Nilofer Hyder, Shreya Setlur, Zoya Chishtie)"}</Footer>
@@ -37,18 +37,15 @@ function App() {
 }
 
 function Content() {
-    const [cookies, setCookie] = useCookies(['cookie-name']);
-    useEffect(() => {
-        setCookie("email", "")
-    }, []);
     return (
         <div>
             <Routes>
-                <Route path="/" element={cookies["email"] !== "" ? <Home /> : <Login/>}></Route>
+                <Route path="/" element={<Login/>}></Route>
+                <Route path="/home" element={<Home />}></Route>
                 <Route path="/treatment_session" element={<TreatmentParameters />}></Route>
                 <Route path="/treatment_session_details/:id" element={<TreatmentSessionDetails />}></Route>
                 <Route path="/post_treatment_session" element={<PostTreatment />}></Route>
-                <Route path="/wound_details" element={<WoundDetails />}></Route>
+                <Route path="/wound_details/:id" element={<WoundDetails />}></Route>
                 <Route path="/sign-up" element={<SignUp />}></Route>
                 <Route path="/patients" element={<Patients />}></Route>
                 <Route path="/create_patient" element={<CreatePatient />}></Route>
@@ -66,9 +63,10 @@ function SideMenu() {
     // logging user out
     const handleLogout = async () => {
         try {
-            await signOut(auth);
+            if (window.location.hostname !== "localhost") {
+                await signOut(auth);
+            }
             navigate("/");
-            window.location.reload()
         } catch (error) {
             message.error("Error logging out - please try again ");
         }
@@ -81,7 +79,7 @@ function SideMenu() {
             </div>
             <br />
             <div className={styles.buttonContainer2}>
-                <Button shape={"round"} className={styles.button} icon={<HomeOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/")}/>
+                <Button shape={"round"} className={styles.button} icon={<HomeOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/home")}/>
                 <span style={{color: "white"}}>Home</span>
             </div>
             {/*Add button to side menu for accessing (or creating) patient records*/}
