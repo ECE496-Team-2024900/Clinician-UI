@@ -322,7 +322,7 @@ function TreatmentSessionDetails() {
             </MeetingProvider> :
             <div>
             {/*Page title indicates session number (eg. session 1 is first session for that wound) and its scheduled date and time*/}
-            <h2 className={styles.pageTitle}>{"Treatment Session #"}{fields.sessionNumber}{": "}{fields.dateTimeScheduled}</h2>
+            <h1>{"Treatment Session #"}{fields.sessionNumber}{": "}{fields.dateTimeScheduled}</h1>
             {/*Page subtitle indicates whether the treatment session is completed or not*/}
             <Row className={styles.topRow}>
                 <h3 className={styles.pageSubtitle}>
