@@ -97,7 +97,7 @@ function SideMenu() {
             {/*Add button to side menu for accessing personal info*/}
             <div className={styles.buttonContainer2}>
                 <Button shape={"round"} className={styles.button} icon={<UserOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/my_info")}/>
-                <span style={{color: "white"}}>My Information</span>
+                <span style={{color: "white"}}>My Account</span>
             </div>
         </div>
     )
