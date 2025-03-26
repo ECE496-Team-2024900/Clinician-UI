@@ -94,7 +94,7 @@ function Patients() {
             dataSource={searchResults}
             //Display the patient's first and last name
             renderItem={(item) => (
-                <List.Item className={styles.listItem}>
+                <List.Item className={styles.listItem} onClick={() => navigate(`/patient_details/${item.medical_ref_number}`)}>
                     {item.first_name + " " + item.last_name}
                 </List.Item>
             )}

@@ -45,7 +45,7 @@ function Content() {
                 <Route path="/treatment_session" element={<TreatmentParameters />}></Route>
                 <Route path="/treatment_session_details/:id" element={<TreatmentSessionDetails />}></Route>
                 <Route path="/post_treatment_session" element={<PostTreatment />}></Route>
-                <Route path="/wound_details" element={<WoundDetails />}></Route>
+                <Route path="/wound_details/:id" element={<WoundDetails />}></Route>
                 <Route path="/sign-up" element={<SignUp />}></Route>
                 <Route path="/patients" element={<Patients />}></Route>
                 <Route path="/create_patient" element={<CreatePatient />}></Route>

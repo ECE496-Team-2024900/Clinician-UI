@@ -67,7 +67,7 @@ function Home() {
         <h2 style={{color: "#004AAD"}}>Patients</h2>
         <div className={styles.patientContainer}>
             {patients.length !== 0 && patients.map(patient => {
-                return <div className={styles.patientAvatar}>
+                return <div className={styles.patientAvatar} onClick={() => navigate(`/patient_details/${patient.medical_ref_number}`)}>
                     <Avatar
                         style={{background: "#DEEBF9"}}
                         size={64}

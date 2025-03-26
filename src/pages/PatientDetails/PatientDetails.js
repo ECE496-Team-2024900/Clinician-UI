@@ -61,7 +61,7 @@ function PatientDetails() {
             renderItem={(item) => ( 
                 //Wounds in the list are sorted such that all treated wounds are at the end of the list and ongoing wounds are at the beginning
                 //Colour-coded with treated wounds being grey and ongoing being blue
-                <List.Item className={`${styles.listItem} ${item.treated ? styles.treated : styles.notTreated}`}>
+                <List.Item className={`${styles.listItem} ${item.treated ? styles.treated : styles.notTreated}`} onClick={() => navigate(`/wound_details/${item.id}`)}>
                     <span>{item.infection_location}</span>
                     <span className={styles.treatedStatus}>
                         {item.treated ? "Yes" : "No"}

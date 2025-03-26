@@ -11,6 +11,7 @@ import {
 } from "@ant-design/icons";
 import {getUsersAPIUrl} from "../../getAPIUrls/getUsersAPIUrl";
 import {ArrowLeftOutlined, ArrowRightOutlined} from "@ant-design/icons";
+import {useLocation} from "react-router-dom";
 
 function WoundDetails() {
     const [treatments, setTreatments] = useState([]); // keeping track of past treatments for this wound and patient
@@ -21,9 +22,10 @@ function WoundDetails() {
     const [imageIndex, setImageIndex] = useState(0)
     const [vals, setVals] = useState(new Map());
     const [updated, setUpdated] = useState(Date.now());
+    const location = useLocation();
 
         // Temporary variables - replace once logic implemented for it
-    const woundId = 1
+    const woundId = location.pathname.split("/")[2]
     const patientId = 1
 
     const url = `${getTreatmentAPIUrl()}/treatment/get_all_images_for_wound?wound=${woundId}`;
