@@ -2,13 +2,8 @@ import Login from './pages/Login.js';
 import React, { useEffect } from "react";
 import styles from "./App.module.css"
 import { Button, message } from "antd";
-import { HomeOutlined, UnorderedListOutlined, LogoutOutlined} from "@ant-design/icons";
-import {Avatar, Button, Menu, message, Modal, Spin} from "antd";
 import {
-    ArrowRightOutlined,
     HomeOutlined,
-    UnorderedListOutlined,
-    UserOutlined,
     LogoutOutlined,
     UsergroupAddOutlined, ClockCircleOutlined
 } from "@ant-design/icons";
