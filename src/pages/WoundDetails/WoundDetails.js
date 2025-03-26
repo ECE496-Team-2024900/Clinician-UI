@@ -128,7 +128,7 @@ function WoundDetails() {
                "wound_id": woundId,
                "session_number": treatments.length,
                "date_scheduled": new Date(values.date_scheduled).toISOString().substring(0, 10),
-               "start_time_scheduled": values.start_time_scheduled.format("HH:mm"),
+               "start_time_scheduled": new Date(values.date_scheduled).toISOString(),
                "started": false,
                "paused": false,
                "completed": false,
