@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 import { getTreatmentAPIUrl } from '../../getAPIUrls/getTreatmentAPIUrl'
 import { getHardwareAPIUrl } from '../../getAPIUrls/getHardwareAPIUrl'
 import axios from 'axios'
-import { useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 
 function TreatmentParameters() {
@@ -51,7 +51,7 @@ function TreatmentParameters() {
     const [prevForm] = Form.useForm();
     const [currForm] = Form.useForm();
     
-
+    const navigate = useNavigate();
     const location = useLocation();
     const data = location.state;
     const allowMods = data && data.preTreatment
@@ -160,6 +160,8 @@ function TreatmentParameters() {
                             .then((response) => {
                                 if(response.status === 200) {
                                     message.success("Treatment approval sent successfully.")
+                                    navigate('/treatment_updates');
+                                    window.location.reload()
                                 } else {
                                     message.error("There was an error is sending your treatment approval.")
                                 }
