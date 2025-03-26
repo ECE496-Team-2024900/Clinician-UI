@@ -1,11 +1,11 @@
 import Login from './pages/Login.js';
 import React, { useEffect } from "react";
 import styles from "./App.module.css"
-import { Button, message } from "antd";
+import { Button, message} from "antd";
 import {
     HomeOutlined,
     LogoutOutlined,
-    UsergroupAddOutlined, ClockCircleOutlined
+    UsergroupAddOutlined, ClockCircleOutlined, UserOutlined
 } from "@ant-design/icons";
 import CreatePatient from "./pages/CreatePatient/CreatePatient";
 import CreateWound from "./pages/CreateWound/CreateWound";
@@ -22,6 +22,7 @@ import { signOut } from "firebase/auth";
 import { auth } from "./firebaseConfig.js"
 import Schedule from "./pages/Schedule/Schedule";
 import {Footer} from "antd/es/layout/layout";
+import MyInfo from "./pages/MyInfo/MyInfo";
 
 
 function App() {
@@ -41,6 +42,7 @@ function Content() {
         <div>
             <Routes>
                 <Route path="/" element={<Login/>}></Route>
+                <Route path="/my_info" element={<MyInfo/>}></Route>
                 <Route path="/home" element={<Home />}></Route>
                 <Route path="/treatment_session" element={<TreatmentParameters />}></Route>
                 <Route path="/treatment_session_details/:id" element={<TreatmentSessionDetails />}></Route>
@@ -91,6 +93,11 @@ function SideMenu() {
             <div className={styles.buttonContainer2}>
                 <Button shape={"round"} className={styles.button} icon={<ClockCircleOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/schedule")}/>
                 <span style={{color: "white"}}>Schedule</span>
+            </div>
+            {/*Add button to side menu for accessing personal info*/}
+            <div className={styles.buttonContainer2}>
+                <Button shape={"round"} className={styles.button} icon={<UserOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/my_info")}/>
+                <span style={{color: "white"}}>My Information</span>
             </div>
         </div>
     )
