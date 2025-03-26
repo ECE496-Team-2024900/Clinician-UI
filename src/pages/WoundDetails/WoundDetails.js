@@ -103,7 +103,7 @@ function WoundDetails() {
     };
 
     const deleteSession = (treatment) => {
-        const url = `${getTreatmentAPIUrl()}/treatment/cancel_treatment?id=${treatment.session_number}`;
+        const url = `${getTreatmentAPIUrl()}/treatment/cancel_treatment?id=${treatment.id}`;
         axios.delete(url).then(() => {
             setTreatments([])
             const emailUrl = `${getUsersAPIUrl()}/users/send_email`
@@ -152,29 +152,30 @@ function WoundDetails() {
                 "start_time_scheduled": new Date(values.start_time_scheduled).toISOString()
             }
             const index = overlay.replace("edit-","")
+            console.log(index)
             const treatment = treatments[index]
+            console.log(treatment)
             const url = `${getTreatmentAPIUrl()}/treatment/parameters/set?id=${treatment.id}`;
             axios.put(url, payload).then(() => {
                 if (treatment.reschedule_requested === true) {
                     const payload = {
-                        "id": treatment.session_number,
                         "reschedule_requested": false
                     }
-                    const url = `${getTreatmentAPIUrl()}/treatment/request_reschedule`;
+                    const url = `${getTreatmentAPIUrl()}/treatment/request_reschedule?id=${treatment.id}`;
                     axios.put(url, payload).then(() => {
-                        const emailUrl = `${getUsersAPIUrl()}/users/send_email`
-                        const phoneUrl = `${getUsersAPIUrl()}/users/send_message`
-                        const payload = {
-                            "id": patientId,
-                            "type": "patient",
-                            "message": `Your treatment session is rescheduled to \`${treatment.date_scheduled}\`.`
-                        }
-                        axios.post(emailUrl, payload).then()
-                        axios.post(phoneUrl, payload).then()
                     }).catch(() => {
                         message.error("There was an error in removing the reschedule request.");
                     })
                 }
+                const emailUrl = `${getUsersAPIUrl()}/users/send_email`
+                const phoneUrl = `${getUsersAPIUrl()}/users/send_message`
+                const payload = {
+                    "id": patientId,
+                    "type": "patient",
+                    "message": `Your treatment session is rescheduled to \`${treatment.date_scheduled}\`.`
+                }
+                axios.post(emailUrl, payload).then()
+                axios.post(phoneUrl, payload).then()
                 setUpdated(Date.now())
             }).catch(() => {
                 message.error("There was an error in creating the treatment.");
@@ -201,7 +202,6 @@ function WoundDetails() {
                         {wound !== undefined && <Input readOnly defaultValue={wound?.infection_type}/>}
                         <h3>Infection Location</h3>
                         {wound !== undefined && <Input readOnly defaultValue={wound?.infection_location}/>}
-                        
                         <h3>Wound Completely Treated</h3>
                         {wound !== undefined && (
                             <Checkbox
@@ -253,11 +253,7 @@ function WoundDetails() {
                         <Form onFinish={onFinish}>
                             <Form.Item name="date_scheduled"><DatePicker value={new Date(date)} onChange={date => setDate(date)} style={{width: "250px"}}/></Form.Item>
                             <Form.Item name="start_time_scheduled"><TimePicker value={new Date(date).getTime()} onChange={time => {
-                                if (new Date(date).setHours(time.hours, time.minutes, time.seconds) - new Date(latestTreatment).getHours() >= 24) {
-                                    setDate(new Date(date).setHours(time.hours, time.minutes, time.seconds))
-                                } else {
-                                    message.error("treatment must be scheduled at least 24 hours after last treatment")
-                                }
+                                setDate(new Date(date).setHours(time.hours, time.minutes, time.seconds))
                             }} style={{width: "250px"}}/></Form.Item>
                             <Form.Item><Button type="primary" style={{background: "#004aad"}} htmlType={"submit"}>Submit</Button></Form.Item>
                         </Form>
@@ -266,7 +262,7 @@ function WoundDetails() {
           <table className={styles.treatmentTable}>
             <thead>
               <tr>
-                <th></th>
+                <th>Request</th>
                 <th>#</th>
                 <th>Date</th>
                 <th>Time</th>
