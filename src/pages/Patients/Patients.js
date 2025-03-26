@@ -36,7 +36,7 @@ function Patients() {
         } else {
             try {
                 // Retrieve all patient records and set to search results 
-                const res = await axios.get(`${getUsersAPIUrl()}/users/get_all_patients`);
+                const res = await axios.get(`${getUsersAPIUrl()}/users/find_all_patients`);
                 if (res.status === 200) {
                     setSearchResults(res.data.message);
                 }
@@ -48,7 +48,7 @@ function Patients() {
 
     // Default is to retrieve all patients and displaying as search results
     useEffect(() => {
-        axios.get(`${getUsersAPIUrl()}/users/get_all_patients`).then(res => {
+        axios.get(`${getUsersAPIUrl()}/users/find_all_patients`).then(res => {
             if (res.status === 200) {
                 setSearchResults(res?.data?.message)
             }

@@ -1,7 +1,6 @@
 import { Button, Input, Form, message, Col } from 'antd';
 import logo from "../../assets/logo.png"
 import styles from "../../css/SignUp.module.css";
-import {useCookies} from "react-cookie";
 import {useNavigate, useLocation} from "react-router-dom";
 import { useState, useEffect } from 'react'
 import { auth } from '../../firebaseConfig'
@@ -10,7 +9,6 @@ import { getUsersAPIUrl } from '../../getAPIUrls/getUsersAPIUrl'
 import axios from 'axios'
 
 function SignUp() {
-    const [cookies, setCookie] = useCookies(['cookie-name']);
     const navigate = useNavigate();
     const [currForm] = Form.useForm();
     const [submitDisabled, setSubmitDisabled] = useState(true)
@@ -52,9 +50,8 @@ function SignUp() {
                     message.error("There was an error in updating the parameters. Treatment approval not sent.");
                 });
             if (window.location.hostname === "localhost") {
-                setCookie("email", email)
-                navigate("/")
-                window.location.reload()
+                auth.currentUser = { uid: "testUser123", email: "test@example.com" }; // Fake user
+                navigate("/home")
             } else {
                 const provider = new OAuthProvider('microsoft.com');
                 provider.setCustomParameters({
@@ -64,9 +61,7 @@ function SignUp() {
                 const result = await getRedirectResult(auth);
                 if (result) {
                     message.success("User logged in successfully with Microsoft.");
-                    setCookie("email", email);
-                    navigate('/');
-                    window.location.reload()
+                    navigate('/home');
                 }
             }
         } catch {
