@@ -89,8 +89,9 @@ function Login() {
         const email = currForm.getFieldValue("emailInput")
         const isRegistered = await emailRegistered(email)
         if (isRegistered) {
+            localStorage.setItem("email", email);
             if (window.location.hostname === "localhost") {
-                auth.currentUser = { uid: "testUser123", email: "test@example.com" }; // Fake user
+                auth.currentUser = { uid: "testUser123", email: email }; // Fake user
                 navigate("/home")
             } else {
                 // redirect to Microsoft login

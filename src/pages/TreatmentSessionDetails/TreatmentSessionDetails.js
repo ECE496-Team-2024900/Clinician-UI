@@ -89,16 +89,16 @@ function TreatmentSessionDetails() {
         const endMeeting = async () => {
             end()
             if (props.completed === true) {
-                navigate("/post_treatment_session")
+                navigate("/post_treatment_session", { state: {patientEmail: "test@gmail.com", treatmentId: treatmentId, woundId: data.woundId} })
             } else {
-                navigate("/treatment_session", { state: {preTreatment: true} })
+                navigate("/treatment_session", { state: {preTreatment: true, treatmentId: treatmentId} })
             }
         }
 
         const takeAndUploadScreenshot = async () => {
             if (webcamOn && webcamStream) {
                 const base64 = await captureImage({}); // captureImage will return base64 string
-                axios.put(`${getTreatmentAPIUrl()}/treatment/add_image`, {image: base64, id: 1} ).then(res => {
+                axios.put(`${getTreatmentAPIUrl()}/treatment/add_image`, {image: base64, id: treatmentId} ).then(res => {
                     console.log("image saved successfully")
                 })
             } else {
@@ -171,6 +171,7 @@ function TreatmentSessionDetails() {
     }
 
     const location = useLocation(); 
+    const data = location.state
 
     // All the fields related to treatment session that will be displayed
     const [fields, setFields] = useState({

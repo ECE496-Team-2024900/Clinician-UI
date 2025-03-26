@@ -24,9 +24,9 @@ function WoundDetails() {
     const [updated, setUpdated] = useState(Date.now());
     const location = useLocation();
 
-        // Temporary variables - replace once logic implemented for it
     const woundId = location.pathname.split("/")[2]
-    const patientId = 1
+    const data = location.state;
+    const patientId = data.patientId
 
     const url = `${getTreatmentAPIUrl()}/treatment/get_all_images_for_wound?wound=${woundId}`;
     const woundUrl = `${getTreatmentAPIUrl()}/treatment/get_wound?id=${woundId}`;
