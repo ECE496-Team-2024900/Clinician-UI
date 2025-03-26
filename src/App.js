@@ -1,11 +1,11 @@
 import Login from './pages/Login.js';
-import React, { useEffect } from "react";
+import React, {useEffect, useState} from "react";
 import styles from "./App.module.css"
 import { Button, message} from "antd";
 import {
     HomeOutlined,
     LogoutOutlined,
-    UsergroupAddOutlined, ClockCircleOutlined, UserOutlined
+    UsergroupAddOutlined, ClockCircleOutlined, UserOutlined, EyeOutlined
 } from "@ant-design/icons";
 import CreatePatient from "./pages/CreatePatient/CreatePatient";
 import CreateWound from "./pages/CreateWound/CreateWound";
@@ -29,7 +29,7 @@ function App() {
     const location = useLocation()
     return (
         <div className={styles.homePage}>
-            <div className={styles.container}>{location.pathname.length > 1 && <SideMenu/>}
+            <div className={styles.container}>{(location.pathname.length > 1 || location.pathname.endsWith("sign-up")) && <SideMenu/>}
                 <Content/>
             </div>
             <Footer className={styles.footer}>{"© 2025 University of Toronto Department of Electrical and Computer Engineering Capstone Design Project Team 2024900 (Faatima Abidi, Nilofer Hyder, Shreya Setlur, Zoya Chishtie)"}</Footer>
@@ -61,6 +61,7 @@ function Content() {
 
 function SideMenu() {
     const navigate = useNavigate()
+    const [darkMode, setDarkMode] = useState(false)
 
     // logging user out
     const handleLogout = async () => {
@@ -73,30 +74,58 @@ function SideMenu() {
             message.error("Error logging out - please try again ");
         }
     };
+
+    const handleDarkMode = () => {
+        if (darkMode) {
+            setDarkMode(false)
+            const child = document.getElementById("dark-mode")
+            console.log(child)
+            document.getElementsByTagName('head')[0].removeChild(child)
+        } else {
+            setDarkMode(true)
+            const style = document.createElement('style');
+            style.id = "dark-mode"
+            style.type = 'text/css';
+            style.innerHTML = '* { color: white !important; background-color: black !important; }';
+            document.getElementsByTagName('head')[0].appendChild(style)
+        }
+    }
+
     return (
         <div className={styles.sideMenu}>
             <div className={styles.buttonContainer2}>
-                <Button shape={"round"} className={styles.button} icon={<LogoutOutlined style={{color: "#004AAD"}}/>} onClick={handleLogout}/>
+                <Button shape={"round"} className={styles.button} icon={<LogoutOutlined style={{color: "#004AAD"}}/>}
+                        onClick={handleLogout}/>
                 <span style={{color: "white"}}>Logout</span>
             </div>
-            <br />
             <div className={styles.buttonContainer2}>
-                <Button shape={"round"} className={styles.button} icon={<HomeOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/home")}/>
+                <Button shape={"round"} className={styles.button} icon={<EyeOutlined style={{color: "#004AAD"}}/>}
+                        onClick={handleDarkMode}/>
+                <span style={{color: "white"}}>Toggle Dark Mode</span>
+            </div>
+            <br/>
+            <div className={styles.buttonContainer2}>
+                <Button shape={"round"} className={styles.button} icon={<HomeOutlined style={{color: "#004AAD"}}/>}
+                        onClick={() => navigate("/home")}/>
                 <span style={{color: "white"}}>Home</span>
             </div>
             {/*Add button to side menu for accessing (or creating) patient records*/}
             <div className={styles.buttonContainer2}>
-                <Button shape={"round"} className={styles.button} icon={<UsergroupAddOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/patients")}/>
+                <Button shape={"round"} className={styles.button}
+                        icon={<UsergroupAddOutlined style={{color: "#004AAD"}}/>}
+                        onClick={() => navigate("/patients")}/>
                 <span style={{color: "white"}}>Patients</span>
             </div>
             {/*Add button to side menu for accessing schedule*/}
             <div className={styles.buttonContainer2}>
-                <Button shape={"round"} className={styles.button} icon={<ClockCircleOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/schedule")}/>
+                <Button shape={"round"} className={styles.button}
+                        icon={<ClockCircleOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/schedule")}/>
                 <span style={{color: "white"}}>Schedule</span>
             </div>
             {/*Add button to side menu for accessing personal info*/}
             <div className={styles.buttonContainer2}>
-                <Button shape={"round"} className={styles.button} icon={<UserOutlined style={{color: "#004AAD"}}/>} onClick={() => navigate("/my_info")}/>
+                <Button shape={"round"} className={styles.button} icon={<UserOutlined style={{color: "#004AAD"}}/>}
+                        onClick={() => navigate("/my_info")}/>
                 <span style={{color: "white"}}>My Account</span>
             </div>
         </div>
