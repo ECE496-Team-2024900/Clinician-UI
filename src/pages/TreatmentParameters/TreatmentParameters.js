@@ -47,6 +47,7 @@ function TreatmentParameters() {
         notes: null
     });
     const [treatmentComplete, setTreatmentComplete] = useState(false)
+    const [sessionNumber, setSessionNumber] = useState(null)
 
     const [prevForm] = Form.useForm();
     const [currForm] = Form.useForm();
@@ -100,6 +101,7 @@ function TreatmentParameters() {
                 if(response.status == 200) {
                     const complete = response.data.completed
                     setTreatmentComplete(complete)
+                    setSessionNumber(response.data.session_number)
                     if(complete) {
                         setCurrTreatmentParameters({
                             drugVolume: response.data.drug_volume_required,
@@ -108,7 +110,7 @@ function TreatmentParameters() {
                             delayBetweenDrugAndLight: response.data.first_wait,
                             delayBetweenLightAndSolvent: response.data.second_wait,
                             imageUrls: (response.data.image_urls) ? response.data.image_urls : null,
-                            notes: (response.data.notes) ? response.data.notes : ""
+                            notes: (response.data.notes) ? response.data.notes : "",
                         });
                     }
                 }
@@ -239,6 +241,7 @@ function TreatmentParameters() {
     }, [errors])
 
     return <div className={styles.container}>
+        <h1>{"Set Parameters for Treatment Session #"}{sessionNumber}</h1>
         <h2 className={styles.pageTitle}>Previous Treatment Parameters</h2>
         <Form form={prevForm}>
             <h3 className={styles.pageSubtitle}>Dosages</h3>
