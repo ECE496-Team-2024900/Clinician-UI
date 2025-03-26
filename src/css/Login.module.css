@@ -21,14 +21,14 @@
 
 .title {
     color: white;
-    font-size: 52px;
+    font-size: 3rem;
     margin: 0;
     margin-bottom: 20px;
 }
 
 .subtitle {
     color: white;
-    font-size: 34px;
+    font-size: 2rem;
     font-weight: 350;
     margin: 0;
     margin-bottom: 35px;
@@ -38,7 +38,7 @@
     width: 23vw;
     height: 4.5vh;
     border-radius: 18px;
-    font-size: 18px;
+    font-size: 1rem;
     padding: 0 10px;
     outline: none;
     border: 1px solid #ccc;
@@ -54,7 +54,7 @@
     width: 10vw;
     height: 6vh;
     border-radius: 22px;
-    font-size: 28px;
+    font-size: 2rem;
     font-weight: 600;
     color: #004AAD;
     background-color: #DEEBF9;

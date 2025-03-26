@@ -6,21 +6,21 @@
     
     .pageTitle {
         font-weight: normal;
-        font-size: 1.8vw;
+        font-size: 1.8rem;
         text-align: left;
         margin: 0.5vh 0 2vh 0.5vw;
     }
     
     .pageSubtitle {
         font-weight: bold;
-        font-size: 1.3vw;
+        font-size: 1.3rem;
         text-align: left;
         margin: 1vh 0 4vh 0.5vw;
     }
 
     .formSubtitle {
         font-weight: bold;
-        font-size: 1vw;
+        font-size: 1rem;
         text-align: left;
         margin: 2vh 0 0 0.5vw;
     }
@@ -66,5 +66,5 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    font-size: 20px;
+    font-size: 1rem;
 }

@@ -6,7 +6,7 @@
     
     .pageTitle {
         font-weight: bold;
-        font-size: 1.8vw;
+        font-size: 1.8rem;
         text-align: left;
         margin: 0.5vh 0 2vh 0.5vw;
     }
@@ -25,7 +25,7 @@
         margin: 5vh 0.5vw 0.5vh 0.5vw;
         text-align: center;
         background-color: #004AAD;
-        font-size: 0.9vw;
+        font-size: 0.9rem;
     }
 
     .errorMessage {

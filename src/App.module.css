@@ -1,9 +1,11 @@
+
+
 .homePage {
     width: 100vw;
     height: 100vh;
     background-color: #DEEBF9;
     overflow-x: hidden;
-    overflow-y: hidden;
+    overflow-y: auto;
 
     .container {
         display: flex;
@@ -45,13 +47,13 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    font-size: 20px;
+    font-size: 1rem;
 }
 
 .footer {
     background-color: #004AAD;
     color: white;
     text-align: center;
-    height: 20px;
+    height: fit-content;
     padding: 10px;
 }
