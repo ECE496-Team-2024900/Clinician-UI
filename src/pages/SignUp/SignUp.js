@@ -47,7 +47,7 @@ function SignUp() {
                     }
                 })
                 .catch(() => {
-                    message.error("There was an error in updating the parameters. Treatment approval not sent.");
+                    message.error("There was an error in creating user.");
                 });
             if (window.location.hostname === "localhost") {
                 auth.currentUser = { uid: "testUser123", email: "test@example.com" }; // Fake user
