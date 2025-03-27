@@ -203,7 +203,7 @@ function CreatePatient() {
                                 validator: (_, value) => inputNumberValidation(_, value)
                             }
                         ]}>
-                        <Input placeholder='Please enter the MRN' />
+                        <Input placeholder='Please enter the MRN' type={"number"} />
                     </Form.Item>
                 </Col>
             </Row>
@@ -235,7 +235,7 @@ function CreatePatient() {
                                 validator: (_, value) => inputNumberValidation(_, value)
                             }
                         ]}>
-                        <Input placeholder='Please enter the phone number (eg. 1234567890)' />
+                        <Input placeholder='Please enter the phone number (eg. 1234567890)' minLength={10} maxLength={10} type={"number"} />
                     </Form.Item>
                 </Col>
             </Row>
