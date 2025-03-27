@@ -11,7 +11,7 @@ import {
 } from "@ant-design/icons";
 import {getUsersAPIUrl} from "../../getAPIUrls/getUsersAPIUrl";
 import {ArrowLeftOutlined, ArrowRightOutlined} from "@ant-design/icons";
-import {useLocation} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import Icon from "antd/es/icon";
 import dayjs from "dayjs";
 
@@ -25,6 +25,7 @@ function WoundDetails() {
     const [vals, setVals] = useState(new Map());
     const [updated, setUpdated] = useState(Date.now());
     const location = useLocation();
+    const navigate = useNavigate();
 
         // Temporary variables - replace once logic implemented for it
     const woundId = location.pathname.split("/")[2]
@@ -282,7 +283,7 @@ function WoundDetails() {
             </thead>
             <tbody>
               {treatments.map((treatment, index) => (
-                  <tr key={treatment.session_number}>
+                  <tr key={treatment.session_number} onClick={() => navigate(`/treatment_session_details/${treatment.id}`)}>
                       <td>{treatment.reschedule_requested ? <FlagFilled/> : <></>}</td>
                       <td>{treatment.session_number}</td>
                       <td>{formatDate(treatment.date_scheduled)}</td>
