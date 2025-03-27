@@ -90,16 +90,16 @@ function TreatmentSessionDetails() {
         const endMeeting = async () => {
             end()
             if (props.completed === true) {
-                navigate("/post_treatment_session")
+                navigate("/post_treatment_session", { state: {patientEmail: "test@gmail.com", treatmentId: treatmentId, woundId: data.woundId} })
             } else {
-                navigate("/treatment_session", { state: {preTreatment: true} })
+                navigate("/treatment_session", { state: {preTreatment: true, treatmentId: treatmentId} })
             }
         }
 
         const takeAndUploadScreenshot = async () => {
             if (webcamOn && webcamStream) {
                 const base64 = await captureImage({}); // captureImage will return base64 string
-                axios.put(`${getTreatmentAPIUrl()}/treatment/add_image`, {image: base64, id: 1} ).then(res => {
+                axios.put(`${getTreatmentAPIUrl()}/treatment/add_image`, {image: base64, id: treatmentId} ).then(res => {
                     console.log("image saved successfully")
                 })
             } else {
@@ -172,6 +172,7 @@ function TreatmentSessionDetails() {
     }
 
     const location = useLocation(); 
+    const data = location.state
 
     // All the fields related to treatment session that will be displayed
     const [fields, setFields] = useState({
@@ -430,19 +431,19 @@ function TreatmentSessionDetails() {
                     <Row>
                         <Col span={12}>
                             <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="drugVolumeRequired" label="Drug Volume (mL)">
-                                <Input readOnly/>
+                                <Input readOnly disabled/>
                             </Form.Item>
                         </Col>
                         <Col span={12}>
                             <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="solventVolumeRequired" label="Solvent Volume (mL)">
-                                <Input readOnly/>
+                                <Input readOnly disabled/>
                             </Form.Item>
                         </Col>
                     </Row>
                     <Row>
                         <Col span={12}>
                             <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="laserPowerRequired" label="Laser Power Level (W)">
-                                <Input readOnly/>
+                                <Input readOnly disabled/>
                             </Form.Item>
                         </Col>
                     </Row>
@@ -451,12 +452,12 @@ function TreatmentSessionDetails() {
                     <Row>
                         <Col span={12}>
                             <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="delayBetweenDrugAndLight" label="Delay between Drug Administration and Light Irradiation (seconds)">
-                                <Input readOnly/>
+                                <Input readOnly disabled/>
                             </Form.Item>
                         </Col>
                         <Col span={12}>
                             <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="delayBetweenLightAndSolvent" label="Delay between Light Irradiation and Solvent Administration (seconds)">
-                                <Input readOnly/>
+                                <Input readOnly disabled/>
                             </Form.Item>
                         </Col>
                     </Row>
@@ -470,43 +471,43 @@ function TreatmentSessionDetails() {
                     <Row>
                         <Col span={12}>
                             <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="startTime" label="Session Start Time">
-                                <Input readOnly/>
+                                <Input readOnly disabled/>
                             </Form.Item>
                         </Col>
                         <Col span={12}>
                             <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="endTime" label="Session End Time">
-                                <Input readOnly/>
+                                <Input readOnly disabled/>
                             </Form.Item>
                         </Col>
                     </Row>
                     <Row>
                         <Col span={12}>
                             <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="delayBetweenDrugAndLight" label="Delay between Drug Administration and Light Irradiation (seconds)">
-                                <Input readOnly/>
+                                <Input readOnly disabled/>
                             </Form.Item>
                         </Col>
                         <Col span={12}>
                             <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="delayBetweenLightAndSolvent" label="Delay between Light Irradiation and Solvent Administration (seconds)">
-                                <Input readOnly/>
+                                <Input readOnly disabled/>
                             </Form.Item>
                         </Col>
                     </Row>
                     <Row>
                         <Col span={12}>
                             <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="drugAdministrationDuration" label="Duration of Drug Administration (seconds)">
-                                <Input readOnly/>
+                                <Input readOnly disabled/>
                             </Form.Item>
                         </Col>
                         <Col span={12}>
                             <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="lightAdministrationDuration" label="Duration of Light Administration (seconds)">
-                                <Input readOnly/>
+                                <Input readOnly disabled/>
                             </Form.Item>
                         </Col>
                     </Row>
                     <Row>
                         <Col span={12}>
                             <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="solventAdministrationDuration" label="Duration of Solvent Administration (seconds)">
-                                <Input readOnly/>
+                                <Input readOnly disabled/>
                             </Form.Item>
                         </Col>
                     </Row>
@@ -515,36 +516,36 @@ function TreatmentSessionDetails() {
                     <Row>
                         <Col span={12}>
                             <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="drugVolumeAdministered" label="Drug Volume Administered (mL)">
-                                <Input readOnly/>
+                                <Input readOnly disabled/>
                             </Form.Item>
                         </Col>
                         <Col span={12}>
                             <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="solventVolumeAdministered" label="Solvent Volume Administered (mL)">
-                                <Input readOnly/>
+                                <Input readOnly disabled/>
                             </Form.Item>
                         </Col>
                     </Row>
                     <Row>
                         <Col span={12}>
                             <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="laser1PowerDelivered" label="Power Delivered by Laser 1 (W)">
-                                <Input readOnly/>
+                                <Input readOnly disabled/>
                             </Form.Item>
                         </Col>
                         <Col span={12}>
                             <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="laser2PowerDelivered" label="Power Delivered by Laser 2 (W)">
-                                <Input readOnly/>
+                                <Input readOnly disabled/>
                             </Form.Item>
                         </Col>
                     </Row>
                     <Row>
                         <Col span={12}>
                             <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="laser3PowerDelivered" label="Power Delivered by Laser 3 (W)">
-                                <Input readOnly/>
+                                <Input readOnly disabled/>
                             </Form.Item>
                         </Col>
                         <Col span={12}>
                             <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="laser4PowerDelivered" label="Power Delivered by Laser 4 (W)">
-                                <Input readOnly/>
+                                <Input readOnly disabled/>
                             </Form.Item>
                         </Col>
                     </Row>
@@ -553,19 +554,19 @@ function TreatmentSessionDetails() {
                     <Row>
                         <Col span={12}>
                             <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="notes" label="Clinician Notes">
-                                <Input.TextArea readOnly rows={4} />
+                                <Input.TextArea readOnly disabled rows={4} />
                             </Form.Item>
                         </Col>
                         <Col span={12}>
                             <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="issues" label="Technical Issues">
-                                <Input.TextArea readOnly rows={4} />
+                                <Input.TextArea readOnly disabled rows={4} />
                             </Form.Item>
                         </Col>
                     </Row>
                     <Row>
                         <Col span={12}>
                             <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="painScore" label="Patient Pain Score on Scale of 1-10 (1 being none, 10 being extreme)">
-                                <Input readOnly/>
+                                <Input readOnly disabled/>
                             </Form.Item>
                         </Col>
                     </Row>

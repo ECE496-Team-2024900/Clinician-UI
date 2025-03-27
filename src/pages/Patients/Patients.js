@@ -12,6 +12,31 @@ function Patients() {
     const navigate = useNavigate();
 
     const [searchResults, setSearchResults] = useState("") //Search results
+    const clinicianPatients = JSON.parse(localStorage.getItem("patients"))
+
+    const searchPatients = (query) => {
+        if (!query.trim()) {
+            // nothing to search for
+            setSearchResults(clinicianPatients)
+            return
+        }
+    
+        const searchTerms = query.trim().split(/\s+/);
+        const searchedPatients = clinicianPatients.filter(patient => {
+            const fullName = `${patient.first_name} ${patient.last_name}`.toLowerCase();
+            
+            if (searchTerms.length === 1) {
+                return (
+                    patient.first_name.toLowerCase().includes(searchTerms[0]) || 
+                    patient.last_name.toLowerCase().includes(searchTerms[0])
+                );
+            } else {
+                return searchTerms.every(term => fullName.includes(term));
+            }
+        });
+        setSearchResults(searchedPatients)
+    };
+    
 
     // Function for behaviour on search
     const onSearch = async (val) => {
@@ -19,15 +44,7 @@ function Patients() {
         if (val !== "") {
             try {
                 // Retrieve patient records given the search query
-                const response = await axios.get(`${getUsersAPIUrl()}/users/search_patients`, {
-                    params: { query: val.trim() },
-                });
-                if (response.status === 200) {
-                    // Records successfully returned, set to search results
-                    setSearchResults(response.data.message);
-                } else {
-                    setSearchResults("");
-                }
+                searchPatients(val.trim())
             } catch (error) {
                 console.error("Error fetching search results:", error);
                 setSearchResults("");
@@ -35,11 +52,7 @@ function Patients() {
         //If search bar is empty, search results include all patients
         } else {
             try {
-                // Retrieve all patient records and set to search results 
-                const res = await axios.get(`${getUsersAPIUrl()}/users/find_all_patients`);
-                if (res.status === 200) {
-                    setSearchResults(res.data.message);
-                }
+                setSearchResults(clinicianPatients)
             } catch (error) {
                 console.error("Error fetching all patients:", error);
             }
@@ -48,11 +61,7 @@ function Patients() {
 
     // Default is to retrieve all patients and displaying as search results
     useEffect(() => {
-        axios.get(`${getUsersAPIUrl()}/users/find_all_patients`).then(res => {
-            if (res.status === 200) {
-                setSearchResults(res?.data?.message)
-            }
-        })
+        setSearchResults(clinicianPatients)
     }, []);
 
     return <div className={styles.container}>

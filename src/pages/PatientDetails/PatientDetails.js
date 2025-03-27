@@ -49,7 +49,7 @@ function PatientDetails() {
             dateOfBirth: patientData.date_of_birth,
             MRN: patientData.medical_ref_number,
             email: patientData.email,
-            phoneNumber: patientData.phone_num
+            phoneNumber: patientData.phone_number
         }}>
             <div className={styles.row}>
                 <div className={styles.inputField}>
@@ -80,7 +80,7 @@ function PatientDetails() {
                 </div>
                 <div className={styles.inputField}>
                     <label>Phone Number</label>
-                    <Input value={patientData.phone_num} disabled />
+                    <Input value={patientData.phone_number} disabled />
                 </div>
             </div>
         </Form> : <div></div>}
@@ -115,7 +115,7 @@ function PatientDetails() {
             renderItem={(item) => ( 
                 //Wounds in the list are sorted such that all treated wounds are at the end of the list and ongoing wounds are at the beginning
                 //Colour-coded with treated wounds being grey and ongoing being blue
-                <List.Item className={`${styles.listItem} ${item.treated ? styles.treated : styles.notTreated}`} onClick={() => navigate(`/wound_details/${item.id}`)}>
+                <List.Item className={`${styles.listItem} ${item.treated ? styles.treated : styles.notTreated}`} onClick={() => navigate(`/wound_details/${item.id}`, { state: {patientId: location.pathname.split("/")[2]} })}>
                     <span>{item.infection_location}</span>
                     <span className={styles.treatedStatus}>
                         {item.treated ? "Yes" : "No"}

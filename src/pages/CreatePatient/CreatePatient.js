@@ -35,7 +35,7 @@ function CreatePatient() {
             "date_of_birth": fields.dateOfBirth,
             "medical_ref_number": Number(fields.MRN),
             "email": fields.email,
-            "phone_num": Number(fields.phoneNumber)
+            "phone_number": Number(fields.phoneNumber)
         };
 
         const url = `${getUsersAPIUrl()}/users/create_patient`;
@@ -203,7 +203,7 @@ function CreatePatient() {
                                 validator: (_, value) => inputNumberValidation(_, value)
                             }
                         ]}>
-                        <Input placeholder='Please enter the MRN' />
+                        <Input placeholder='Please enter the MRN' type={"number"} />
                     </Form.Item>
                 </Col>
             </Row>
@@ -235,7 +235,7 @@ function CreatePatient() {
                                 validator: (_, value) => inputNumberValidation(_, value)
                             }
                         ]}>
-                        <Input placeholder='Please enter the phone number (eg. 1234567890)' />
+                        <Input placeholder='Please enter the phone number (eg. 1234567890)' minLength={10} maxLength={10} type={"number"} />
                     </Form.Item>
                 </Col>
             </Row>

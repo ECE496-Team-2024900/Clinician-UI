@@ -1,17 +1,19 @@
 import { useState, useEffect } from 'react'
 import { getTreatmentAPIUrl } from '../../getAPIUrls/getTreatmentAPIUrl'
 import axios from 'axios'
-import {Button, DatePicker, Form, Input, message, Popover, TimePicker, Image, Checkbox} from 'antd';
+import {Button, DatePicker, Form, Input, message, Popover, TimePicker, Image, Checkbox, Tooltip} from 'antd';
 import styles from "../../css/WoundDetails.module.css";
 import {
     CloseOutlined,
     EditOutlined,
-    FlagFilled,
+    FlagFilled, InfoCircleOutlined,
     PlusOutlined
 } from "@ant-design/icons";
 import {getUsersAPIUrl} from "../../getAPIUrls/getUsersAPIUrl";
 import {ArrowLeftOutlined, ArrowRightOutlined} from "@ant-design/icons";
-import {useLocation} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
+import Icon from "antd/es/icon";
+import dayjs from "dayjs";
 
 function WoundDetails() {
     const [treatments, setTreatments] = useState([]); // keeping track of past treatments for this wound and patient
@@ -23,10 +25,11 @@ function WoundDetails() {
     const [vals, setVals] = useState(new Map());
     const [updated, setUpdated] = useState(Date.now());
     const location = useLocation();
+    const navigate = useNavigate();
 
-        // Temporary variables - replace once logic implemented for it
     const woundId = location.pathname.split("/")[2]
-    const patientId = 1
+    const data = location.state;
+    const patientId = data.patientId
 
     const url = `${getTreatmentAPIUrl()}/treatment/get_all_images_for_wound?wound=${woundId}`;
     const woundUrl = `${getTreatmentAPIUrl()}/treatment/get_wound?id=${woundId}`;
@@ -68,8 +71,8 @@ function WoundDetails() {
         // fetching past treatments
         const fetchTreatments = async () => {
             setLatestTreatment("")
-            const url = `${getTreatmentAPIUrl()}/treatment/get_treatments?patient_id=${patientId}&wound_id=${woundId}`;
-            axios.get(url)
+            const url = `${getTreatmentAPIUrl()}/treatment/get_treatments`;
+            axios.post(url, { patient_id: patientId, wound_id: woundId })
             .then((response) => {
                 // if there are no errors and past treatmentts are available, storing them in use state
                 if(response.status === 200) {
@@ -128,7 +131,7 @@ function WoundDetails() {
                "wound_id": woundId,
                "session_number": treatments.length,
                "date_scheduled": new Date(values.date_scheduled).toISOString().substring(0, 10),
-               "start_time_scheduled": values.start_time_scheduled.format("HH:mm"),
+               "start_time_scheduled": new Date(values.start_time_scheduled).toISOString(),
                "started": false,
                "paused": false,
                "completed": false,
@@ -193,27 +196,33 @@ function WoundDetails() {
                 <div className={styles.fieldsContainer}>
                     <div className={styles.fieldContainer}>
                         <h3>Wound ID</h3>
-                        {wound !== undefined && <Input readOnly defaultValue={wound?.id}/>}
+                        {wound !== undefined && <Input readOnly defaultValue={wound?.id} disabled/>}
                         <h3>Date Added</h3>
-                        {wound !== undefined && <Input readOnly defaultValue={wound?.date_added}/>}
+                        {wound !== undefined && <Input readOnly defaultValue={wound?.date_added} disabled/>}
                         <h3>Device ID</h3>
-                        {wound !== undefined && <Input readOnly defaultValue={wound?.device_id}/>}
+                        {wound !== undefined && <Input readOnly defaultValue={wound?.device_id} disabled/>}
                     </div>
                     <div className={styles.fieldContainer}>
                         <h3>Infection Type</h3>
-                        {wound !== undefined && <Input readOnly defaultValue={wound?.infection_type}/>}
+                        {wound !== undefined && <Input readOnly defaultValue={wound?.infection_type} disabled/>}
                         <h3>Infection Location</h3>
-                        {wound !== undefined && <Input readOnly defaultValue={wound?.infection_location}/>}
-                        <h3>Wound Completely Treated</h3>
+                        {wound !== undefined && <Input readOnly defaultValue={wound?.infection_location} disabled/>}
+                        <h3>
+                            {"Wound Completely Treated  "}
+                            <Tooltip title="Toggling this checkbox automatically updates the database.">
+                                <InfoCircleOutlined />
+                            </Tooltip>
+                        </h3>
                         {wound !== undefined && (
+                            <>
                             <Checkbox
                                 checked={wound?.treated}
                                 onChange={handleTreatedChange}
                             >
                                 {wound.treated ? "Yes" : "No"}
                             </Checkbox>
+                            </>
                         )}
-
                     </div>
                 </div>
                 <div className={styles.container3}>
@@ -253,8 +262,8 @@ function WoundDetails() {
                             <Button icon={<CloseOutlined style={{color: "#004AAD"}}/>} style={{borderColor: "white"}} onClick={() => setOverlay("")}/>
                         </div>
                         <Form onFinish={onFinish}>
-                            <Form.Item name="date_scheduled"><DatePicker value={new Date(date)} onChange={date => setDate(date)} style={{width: "250px"}}/></Form.Item>
-                            <Form.Item name="start_time_scheduled"><TimePicker value={new Date(date).getTime()} onChange={time => {
+                            <Form.Item name="date_scheduled"><DatePicker allowClear={false} minDate={dayjs(new Date().setDate(new Date().getDate()+1))} value={new Date(date)} onChange={date => setDate(date)} style={{width: "250px"}}/></Form.Item>
+                            <Form.Item name="start_time_scheduled"><TimePicker allowClear={false} value={new Date(date).getTime()} onChange={time => {
                                 setDate(new Date(date).setHours(time.hours, time.minutes, time.seconds))
                             }} style={{width: "250px"}}/></Form.Item>
                             <Form.Item><Button type="primary" style={{background: "#004aad"}} htmlType={"submit"}>Submit</Button></Form.Item>
@@ -274,7 +283,7 @@ function WoundDetails() {
             </thead>
             <tbody>
               {treatments.map((treatment, index) => (
-                  <tr key={treatment.session_number}>
+                  <tr key={treatment.session_number} onClick={() => navigate(`/treatment_session_details/${treatment.id}`)}>
                       <td>{treatment.reschedule_requested ? <FlagFilled/> : <></>}</td>
                       <td>{treatment.session_number}</td>
                       <td>{formatDate(treatment.date_scheduled)}</td>

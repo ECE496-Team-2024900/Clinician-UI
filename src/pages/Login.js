@@ -1,4 +1,4 @@
-import { Button, Input, Form, message } from 'antd';
+import {Button, Input, Form, message, Col} from 'antd';
 import logo from "../assets/logo.png";
 import styles from "../css/Login.module.css";
 import {useNavigate} from "react-router-dom";
@@ -55,7 +55,9 @@ function Login() {
 
     // ensuring email domain is UHN
     const emailDomainValidation = (_, value) => {
-        if(value.endsWith('@uhn.ca')) {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        const validEmail = window.location.hostname === "localhost" ? emailRegex.test(value) : value.endsWith('@uhn.ca')
+        if(validEmail) {
             setErrors(errors => ({
                 ...errors,
                 emailDomain: false,
@@ -89,8 +91,9 @@ function Login() {
         const email = currForm.getFieldValue("emailInput")
         const isRegistered = await emailRegistered(email)
         if (isRegistered) {
+            localStorage.setItem("email", email);
             if (window.location.hostname === "localhost") {
-                auth.currentUser = { uid: "testUser123", email: "test@example.com" }; // Fake user
+                auth.currentUser = { uid: "testUser123", email: email }; // Fake user
                 navigate("/home")
             } else {
                 // redirect to Microsoft login
@@ -118,22 +121,23 @@ function Login() {
         <div className={styles.page}>
             {/*Display product logo on left half of screen*/}
             <img src={logo} alt={"logo"} width={"50%"} height={"100%"} />
-            <div className={styles.form}>
-                <h1 className={styles.title}>
-                    Welcome back
-                </h1>
-                {/*Prompt user for their email in order to log in*/}
-                <h2 className={styles.subtitle}>
-                    Please enter your email
-                </h2>
-                <Form form={currForm}>
+                <Form form={currForm} className={styles.form}>
+                    <h1 className={styles.title}>
+                        Welcome back
+                    </h1>
+                    {/*Prompt user for their email in order to log in*/}
+                    <h2 className={styles.subtitle}>
+                        Please enter your email
+                    </h2>
                     <Form.Item name="emailInput" rules={[
                         {
                             message: 'Email is required.',
                             validator: (_, value) => emailRequiredValidation(_, value)
                         },
                         {
-                            message: 'Email must be part of the UHN domain.',
+                            message: window.location.hostname === "localhost" 
+                            ? 'Email must be a valid address.' 
+                            : 'Email must be part of the UHN domain.',
                             validator: (_, value) => emailDomainValidation(_, value)
                         }
                     ]}>
@@ -143,11 +147,22 @@ function Login() {
                             allowClear
                         />
                     </Form.Item>
-                    <Button type="primary" className={styles.enter_button} onClick={submitEmail} disabled={submitDisabled}>
+                    <h2 className={styles.subtitle}>
+                        Please enter your password
+                    </h2>
+                    <Form.Item>
+                        <Input
+                            placeholder="Your password"
+                            className={styles.email_input}
+                            allowClear
+                            type={"password"}
+                        />
+                    </Form.Item>
+                    <Button type="primary" className={styles.enter_button} onClick={submitEmail}
+                            disabled={submitDisabled}>
                         Enter
                     </Button>
                 </Form>
-            </div>
         </div>
     );
 }
