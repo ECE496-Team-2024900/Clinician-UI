@@ -164,8 +164,6 @@ function TreatmentParameters() {
                             .then((response) => {
                                 if(response.status === 200) {
                                     message.success("Treatment approval sent successfully.")
-                                    navigate(`/treatment_session_details/${treatment?.id}`);
-                                    window.location.reload()
                                 } else {
                                     message.error("There was an error is sending your treatment approval.")
                                 }
