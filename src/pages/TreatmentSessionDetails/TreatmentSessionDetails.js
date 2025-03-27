@@ -223,7 +223,7 @@ function TreatmentSessionDetails() {
         const interval = setInterval(async () => {
             let apiRes = null
             try {
-                //apiRes = await axios.get(`${getTreatmentAPIUrl()}/treatment/get_video_call_id?id=${treatmentId}`)
+                apiRes = await axios.get(`${getTreatmentAPIUrl()}/treatment/get_video_call_id?id=${treatmentId}`)
             } catch (err) {
                 console.error(err);
             } finally {
