@@ -13,6 +13,7 @@ import {getUsersAPIUrl} from "../../getAPIUrls/getUsersAPIUrl";
 import {ArrowLeftOutlined, ArrowRightOutlined} from "@ant-design/icons";
 import {useLocation} from "react-router-dom";
 import Icon from "antd/es/icon";
+import dayjs from "dayjs";
 
 function WoundDetails() {
     const [treatments, setTreatments] = useState([]); // keeping track of past treatments for this wound and patient
@@ -260,8 +261,8 @@ function WoundDetails() {
                             <Button icon={<CloseOutlined style={{color: "#004AAD"}}/>} style={{borderColor: "white"}} onClick={() => setOverlay("")}/>
                         </div>
                         <Form onFinish={onFinish}>
-                            <Form.Item name="date_scheduled"><DatePicker value={new Date(date)} onChange={date => setDate(date)} style={{width: "250px"}}/></Form.Item>
-                            <Form.Item name="start_time_scheduled"><TimePicker value={new Date(date).getTime()} onChange={time => {
+                            <Form.Item name="date_scheduled"><DatePicker allowClear={false} minDate={dayjs(new Date())} value={new Date(date)} onChange={date => setDate(date)} style={{width: "250px"}}/></Form.Item>
+                            <Form.Item name="start_time_scheduled"><TimePicker allowClear={false} value={new Date(date).getTime()} onChange={time => {
                                 setDate(new Date(date).setHours(time.hours, time.minutes, time.seconds))
                             }} style={{width: "250px"}}/></Form.Item>
                             <Form.Item><Button type="primary" style={{background: "#004aad"}} htmlType={"submit"}>Submit</Button></Form.Item>
