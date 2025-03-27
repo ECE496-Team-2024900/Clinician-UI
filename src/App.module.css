@@ -1,11 +1,9 @@
-
-
 .homePage {
     width: 100vw;
     height: 100vh;
     background-color: #DEEBF9;
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: hidden;
 
     .container {
         display: flex;
@@ -54,6 +52,6 @@
     background-color: #004AAD;
     color: white;
     text-align: center;
-    height: fit-content;
+    height: 5vh;
     padding: 10px;
 }

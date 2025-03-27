@@ -67,14 +67,14 @@ function Home() {
         <h2 style={{color: "#004AAD"}}>Patients</h2>
         <div className={styles.patientContainer}>
             {patients.length !== 0 && patients.map(patient => {
-                return <div className={styles.patientAvatar} onClick={() => navigate(`/patient_details/${patient.medical_ref_number}`)}>
+                return <Button className={styles.patientAvatar} onClick={() => navigate(`/patient_details/${patient.medical_ref_number}`)}>
                     <Avatar
                         style={{background: "#DEEBF9"}}
                         size={64}
                         icon={<UserOutlined style={{color: "#004AAD"}}/>}
                     />
                     <span style={{color: "#004AAD"}}>{patient?.['first_name'] + " " + patient?.['last_name']}</span>
-                </div>
+                </Button>
             })}
         </div>
         <h2 style={{color: "#004AAD"}}>Schedule</h2>
