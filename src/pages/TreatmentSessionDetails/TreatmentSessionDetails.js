@@ -1,6 +1,7 @@
 import styles from '../../css/TreatmentSessionDetails.module.css'
 import {Form, Input, Row, Col, message, Image, Button, Spin, Modal} from 'antd'
 import React, {useState, useEffect, useRef, useMemo} from 'react'
+import { getHardwareAPIUrl } from '../../getAPIUrls/getHardwareAPIUrl'
 import { getTreatmentAPIUrl } from '../../getAPIUrls/getTreatmentAPIUrl'
 import axios from 'axios'
 import {useLocation, useNavigate} from "react-router-dom";
@@ -207,6 +208,10 @@ function TreatmentSessionDetails() {
 
     const treatmentId = location.pathname.split("/")[2]
 
+    // Treatment progress and sensor data strings
+    const [treatmentProgress, setTreatmentProgress] = useState("")
+    const [sensorData, setSensorData] = useState("")
+
     const [meetingId, setMeetingId] = useState(null);
 
     useEffect(() => {
@@ -217,7 +222,7 @@ function TreatmentSessionDetails() {
         const interval = setInterval(async () => {
             let apiRes = null
             try {
-                apiRes = await axios.get(`${getTreatmentAPIUrl()}/treatment/get_video_call_id?id=${treatmentId}`)
+                //apiRes = await axios.get(`${getTreatmentAPIUrl()}/treatment/get_video_call_id?id=${treatmentId}`)
             } catch (err) {
                 console.error(err);
             } finally {
@@ -305,6 +310,88 @@ function TreatmentSessionDetails() {
             hour12: true //for displaying am/pm instead of 24-hour time
         };
         return date.toLocaleDateString('en-US', options);
+    };
+
+    // Retrieve and set treatment progress and sensor data from device (poll every 5 seconds)
+    useEffect(() => {
+        // function fetches current treatment progress 
+        const getTreatmentProgress = async () => {
+            const url = `${getHardwareAPIUrl()}/hardware/get_treatment_progress?id=${treatmentId}`;
+
+            axios.get(url)
+            .then((response) => {
+                //no error, set treatment progress string
+                if(response.status === 200) {
+                    if (response.data.message != "No data") {
+                        setTreatmentProgress(`${response.data.message} complete`)
+                    } else {
+                        setTreatmentProgress(response.data.message)
+                    }
+                } else { //error
+                    setTreatmentProgress(`Unable to retrieve treatment progress: ${response.data.message}`)
+                }
+            })
+            .catch(() => {
+                message.error("There was an error in retrieving treatment progress.");
+            });
+        };
+
+        // function fetches current sensor data
+        const getSensorData = async () => {
+            const url = `${getHardwareAPIUrl()}/hardware/get_sensor_data_updates?id=${treatmentId}`;
+
+            axios.get(url)
+            .then((response) => {
+                //no error, set sensor data string
+                if(response.status === 200) {
+                    console.log("Backend Response:", response.data.message);
+                    setSensorData(response.data.message)
+                } else { //error
+                    setSensorData(`Unable to retrieve sensor data: ${response.data.message}`)
+                }
+            })
+            .catch(() => {
+                message.error("There was an error in retrieving sensor data.");
+            });
+        };
+
+        // Poll every 5 seconds
+        const interval = setInterval(() => {
+            getTreatmentProgress();
+            getSensorData();
+        }, 5000);
+
+        // Run the functions once immediately
+        getTreatmentProgress();
+        getSensorData();
+
+        return () => clearInterval(interval); // Cleanup interval
+
+    }, [treatmentId]);
+
+    // Function to format \n characters so they actually show up in separate lines when displayed
+    const formatNewLinesInText = (text) => {
+        return text.split('\n').map((str, index) => (
+          <span key={index}>
+            {str}
+            <br />
+          </span>
+        ));
+    };
+
+    // Function to extract phase name and progress percentage from treatment progress string
+    // Input: string of the format phase name-percentage% (eg. "Photosensitizer-20%")
+    const parseTreatmentProgress = (progressString) => {
+        if (!progressString || typeof progressString !== "string") {
+            return { phase: "No data", percentage: "No data" };
+        }
+    
+        const parts = progressString.split("-");
+        if (parts.length !== 2) {
+            return { phase: "No data", percentage: "No data" };
+        }
+    
+        return { phase: parts[0].trim(), percentage: parts[1].trim() };
     };
 
     return (
@@ -498,6 +585,18 @@ function TreatmentSessionDetails() {
                 </div>
             )}
             </Form>
+            <div className={styles.progressAndSensorContainer}>
+                <div className={styles["treatment-box"]}>
+                    <h2>Current Treatment Phase</h2>
+                    <p>{parseTreatmentProgress(treatmentProgress).phase}</p>
+                    <h2>Phase Progress</h2>
+                    <p>{parseTreatmentProgress(treatmentProgress).percentage}</p>
+                </div>
+                <div className={styles["sensor-box"]}>
+                    <h2>Sensor Data</h2>
+                    <p>{formatNewLinesInText(sensorData)}</p>
+                </div>
+            </div>
         </div>}
         </div>
     )
