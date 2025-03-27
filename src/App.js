@@ -135,7 +135,6 @@ function SideMenu() {
             <br/>
             <br/>
             <br/>
-            <br/>
             <div className={styles.buttonContainer2}>
                 <Button shape={"circle"} className={styles.button} icon={<LogoutOutlined style={{color: "#004AAD"}}/>}
                         onClick={handleLogout}/>
