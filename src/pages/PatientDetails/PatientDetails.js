@@ -49,7 +49,7 @@ function PatientDetails() {
             dateOfBirth: patientData.date_of_birth,
             MRN: patientData.medical_ref_number,
             email: patientData.email,
-            phoneNumber: patientData.phone_num
+            phoneNumber: patientData.phone_number
         }}>
             <div className={styles.row}>
                 <div className={styles.inputField}>
@@ -80,7 +80,7 @@ function PatientDetails() {
                 </div>
                 <div className={styles.inputField}>
                     <label>Phone Number</label>
-                    <Input value={patientData.phone_num} disabled />
+                    <Input value={patientData.phone_number} disabled />
                 </div>
             </div>
         </Form> : <div></div>}
