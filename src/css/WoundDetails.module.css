@@ -3,14 +3,6 @@
     width: 90vw;
     height: 95vh;
     overflow-y: auto;
-
-    .header {
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 20px;
-    }
       
       .treatmentTable {
         width: 90vw;
@@ -97,3 +89,11 @@
     }
 
 }
+
+  .header {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 20px;
+  }
