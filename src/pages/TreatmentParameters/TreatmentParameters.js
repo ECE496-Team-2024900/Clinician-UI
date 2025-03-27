@@ -248,19 +248,19 @@ function TreatmentParameters() {
             <Row>
                 <Col span={12}>
                     <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="drugVolume" label="Drug Volume (mL)">
-                        <Input readOnly/>
+                        <Input readOnly disabled/>
                     </Form.Item>
                 </Col>
                 <Col span={12}>
                     <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="solventVolume" label="Solvent Volume (mL)">
-                        <Input readOnly/>
+                        <Input readOnly disabled/>
                     </Form.Item>
                 </Col>
             </Row>
             <Row>
                 <Col span={12}>
                     <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="laserPowerLevel" label="Laser Power Level (W)">
-                        <Input readOnly/>
+                        <Input readOnly disabled/>
                     </Form.Item>
                 </Col>
             </Row>
@@ -268,12 +268,12 @@ function TreatmentParameters() {
             <Row>
                 <Col span={12}>
                     <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="delayBetweenDrugAndLight" label="Delay between Drug Administration and Light Irradiation (s)">
-                        <Input readOnly/>
+                        <Input readOnly disabled/>
                     </Form.Item>
                 </Col>
                 <Col span={12}>
                     <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="delayBetweenLightAndSolvent" label="Delay between Light Irradiation and Solvent Administration (s)">
-                        <Input readOnly/>
+                        <Input readOnly disabled/>
                     </Form.Item>
                 </Col>
             </Row>
@@ -285,7 +285,7 @@ function TreatmentParameters() {
                 name="notes"
                 label="Clinician Notes during Treatment"
             >
-                <Input.TextArea readOnly
+                <Input.TextArea readOnly disabled
                     rows={4}
                     placeholder=""
                     onChange={(e) =>
@@ -323,19 +323,19 @@ function TreatmentParameters() {
             <Row>
                 <Col span={12}>
                     <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="drugVolume" label="Drug Volume (mL)">
-                        <Input readOnly/>
+                        <Input readOnly disabled/>
                     </Form.Item>
                 </Col>
                 <Col span={12}>
                     <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="solventVolume" label="Solvent Volume (mL)">
-                        <Input readOnly/>
+                        <Input readOnly disabled/>
                     </Form.Item>
                 </Col>
             </Row>
             <Row>
                 <Col span={12}>
                     <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="laserPowerLevel" label="Laser Power Level (W)">
-                        <Input readOnly/>
+                        <Input readOnly disabled/>
                     </Form.Item>
                 </Col>
             </Row>
@@ -343,12 +343,12 @@ function TreatmentParameters() {
             <Row>
                 <Col span={12}>
                     <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="delayBetweenDrugAndLight" label="Delay between Drug Administration and Light Irradiation (s)">
-                        <Input readOnly/>
+                        <Input readOnly disabled/>
                     </Form.Item>
                 </Col>
                 <Col span={12}>
                     <Form.Item className={styles.inputField} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name="delayBetweenLightAndSolvent" label="Delay between Light Irradiation and Solvent Administration (s)">
-                        <Input readOnly/>
+                        <Input readOnly disabled/>
                     </Form.Item>
                 </Col>
             </Row>
@@ -360,7 +360,7 @@ function TreatmentParameters() {
                 name="notes"
                 label="Clinician Notes during Treatment"
             >
-                <Input.TextArea readOnly
+                <Input.TextArea readOnly disabled
                     rows={4}
                     placeholder=""
                     onChange={(e) =>

@@ -55,4 +55,7 @@
     height: 5vh;
     padding: 10px;
     border-top: 1px solid #004aad;
+    opacity: 100%;
+    position: fixed;
+    width: 100%;
 }
