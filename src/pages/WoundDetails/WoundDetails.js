@@ -193,17 +193,17 @@ function WoundDetails() {
                 <div className={styles.fieldsContainer}>
                     <div className={styles.fieldContainer}>
                         <h3>Wound ID</h3>
-                        {wound !== undefined && <Input readOnly defaultValue={wound?.id}/>}
+                        {wound !== undefined && <Input readOnly defaultValue={wound?.id} disabled/>}
                         <h3>Date Added</h3>
-                        {wound !== undefined && <Input readOnly defaultValue={wound?.date_added}/>}
+                        {wound !== undefined && <Input readOnly defaultValue={wound?.date_added} disabled/>}
                         <h3>Device ID</h3>
-                        {wound !== undefined && <Input readOnly defaultValue={wound?.device_id}/>}
+                        {wound !== undefined && <Input readOnly defaultValue={wound?.device_id} disabled/>}
                     </div>
                     <div className={styles.fieldContainer}>
                         <h3>Infection Type</h3>
-                        {wound !== undefined && <Input readOnly defaultValue={wound?.infection_type}/>}
+                        {wound !== undefined && <Input readOnly defaultValue={wound?.infection_type} disabled/>}
                         <h3>Infection Location</h3>
-                        {wound !== undefined && <Input readOnly defaultValue={wound?.infection_location}/>}
+                        {wound !== undefined && <Input readOnly defaultValue={wound?.infection_location} disabled/>}
                         <h3>Wound Completely Treated</h3>
                         {wound !== undefined && (
                             <Checkbox
