@@ -61,7 +61,7 @@ function TreatmentParameters() {
         // function fetches treatmennt parameters for the most recent previous treatment for this patient
         const getPrevTreatmentParameters = async () => {
             const today = new Date().toISOString().split('T')[0];
-            const url = `${getTreatmentAPIUrl()}/treatment/parameters/prev?id=${treatment?.id}&date=${today}`;
+            const url = `${getTreatmentAPIUrl()}/treatment/parameters/prev?id=${data.treatmentId}&date=${today}`;
 
             axios.get(url)
             .then((response) => {
@@ -95,7 +95,7 @@ function TreatmentParameters() {
         }
 
         const getCurrTreatmentStatus = async () => {
-            const url = `${getTreatmentAPIUrl()}/treatment/parameters/get?id=${treatment?.id}`;
+            const url = `${getTreatmentAPIUrl()}/treatment/parameters/get?id=${data.treatmentId}`;
             axios.get(url)
             .then((response) => {
                 if(response.status == 200) {
@@ -117,7 +117,7 @@ function TreatmentParameters() {
             })
         }
         // fetching previous treatment parameters only if the treatment id is defined, as it is needed in the API call
-        if(treatment?.id) {
+        if(data.treatmentId) {
             getPrevTreatmentParameters();
             getCurrTreatmentStatus();
         }
@@ -154,13 +154,13 @@ function TreatmentParameters() {
         };
 
         // setting treatment parameters for this treatment upon form submission
-        const url = `${getTreatmentAPIUrl()}/treatment/parameters/set?id=${treatment?.id}`;
+        const url = `${getTreatmentAPIUrl()}/treatment/parameters/set?id=${data.treatmentId}`;
         await axios.put(url, fieldsToUpdate)
                 .then((response) => {
                     if(response.status === 200) {
                         // if HTTP status is 200 (i.e. no errors), can inform hardware to start treatment
                         message.success("Treatment parameters set successfully. Now sending treatment approval to start treatment...");
-                        axios.get(`${getHardwareAPIUrl()}/hardware/approval?id=${treatment?.id}`)
+                        axios.get(`${getHardwareAPIUrl()}/hardware/approval?id=${data.treatmentId}`)
                             .then((response) => {
                                 if(response.status === 200) {
                                     message.success("Treatment approval sent successfully.")
@@ -172,7 +172,7 @@ function TreatmentParameters() {
                         message.error("There was an error in updating the parameters. Treatment approval not sent.");
                     }
                     setDisableSubmit(false);
-                    navigate(`/treatment_session_details/${treatment.id}`)
+                    navigate(`/treatment_session_details/${data.treatmentId}`, { state: {woundId: data.woundId} })
                 })
                 .catch(() => {
                     message.error("There was an error in updating the parameters. Treatment approval not sent.");

@@ -1,5 +1,5 @@
 import styles from "../../css/Home.module.css";
-import {Avatar, Button} from "antd";
+import {Avatar, Button, message} from "antd";
 import {ArrowRightOutlined, UserOutlined} from "@ant-design/icons";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
@@ -17,34 +17,83 @@ function Home() {
     const [vals, setVals] = useState(new Map());
     const navigate = useNavigate();
 
+    const clinicianEmail = localStorage.getItem("email")
+    const [patientMRNs, setPatientMRNs] = useState([])
+
     useEffect(() => {
         if (auth.currentUser == null) {
             navigate("/")
         }
+        try {
+            // Fetching all wounds under this clinician
+            axios.post(`${getTreatmentAPIUrl()}/treatment/get_wounds`, {clinician_id: clinicianEmail}).then(res => {
+                if (res.status === 200) {
+                    const woundData = res.data
+                    if(woundData) {
+                        setWounds(woundData)
+                        // Convering to set to find unique patient MRNs
+                        const uniquePatients = [...new Set(woundData.map(wound => wound.patient_id))]
+                        setPatientMRNs(uniquePatients)
+                    }
+                }
+            })
+            // Fetching clinician data
+            axios.get(`${getUsersAPIUrl()}/users/get_clinician_info`, {params: {"email": clinicianEmail}} ).then(res => {
+                if (res.status === 200) {
+                    setClinician(res?.data?.message)
+                }
+            })
+        } catch (error) {
+            message.error("There was an error in retrieving data.")
+        }
     }, []);
 
     useEffect(() => {
-        axios.get(`${getUsersAPIUrl()}/users/get_all_patients`).then(res => {
-            if (res.status === 200) {
-                setPatients(res?.data?.message)
+        // Getting patient data (depends on having patient MRNs)
+        const fetchPatientDependentData = async () => {
+            if(patientMRNs) {
+                try {
+                    // Creating promises to allow parallel execution
+                    const patientPromises = patientMRNs.map(async (MRN) => {
+                        const res = await axios.post(`${getUsersAPIUrl()}/users/get_patients`, { medical_ref_number: MRN });
+                        return res.status === 200 ? res.data[0] : null;
+                    });
+
+                    // Running promises in parallel
+                    const patientsArray = await Promise.all(patientPromises);
+
+                    setPatients(patientsArray);
+                } catch (error) {
+                    message.error("There was an error in retrieving data.")
+                }
             }
-        })
-        axios.get(`${getUsersAPIUrl()}/users/get_clinician_info`, {params: {"email": "walt.disney@disney.org"}} ).then(res => {
-            if (res.status === 200) {
-                setClinician(res?.data?.message)
-            }
-        })
-        axios.get(`${getTreatmentAPIUrl()}/treatment/get_all_treatments` ).then(res => {
-            if (res.status === 200) {
-                setTreatments(res?.data?.message)
-            }
-        })
-        axios.get(`${getTreatmentAPIUrl()}/treatment/get_all_wounds` ).then(res => {
-            if (res.status === 200) {
-                setWounds(res?.data?.message)
-            }
-        })
-    }, []);
+        };
+        fetchPatientDependentData();
+    }, [patientMRNs]);
+
+    useEffect(() => {
+        // Getting treatment data (depends on having wound information)
+        const fetchWoundDependentData = async () => {
+            if(wounds) {
+                try {
+                    // Creating promises to allow parallel execution
+                    const treatmentPromises = wounds.map(async (wound) => {
+                        const res = await axios.post(`${getTreatmentAPIUrl()}/treatment/get_treatments`, { wound_id: wound.id });
+                        return res.status === 200 ? res.data || [] : [];
+                    });
+
+                    // Running promises in parallel
+                    const treatmentsArray = await Promise.all(treatmentPromises);
+                    const treatmentsFlattenedArray = treatmentsArray.flat();
+
+                    setTreatments(treatmentsFlattenedArray);
+                } catch (error) {
+                    message.error("There was an error in retrieving data.")
+                }
+            };
+        }
+        fetchWoundDependentData();
+    }, [wounds]);
 
     useEffect(() => {
         const newVals = new Map(vals)
@@ -83,7 +132,7 @@ function Home() {
                 return <div className={styles.treatmentWrapper}>
                     <Avatar style={{background: "white", color: "#004AAD"}}>{treatment?.["session_number"]}</Avatar>
                     <span>{`Treatment session at ${new Date(treatment?.['start_time_scheduled'])} for ${vals.get(treatment?.['id'])}`}</span>
-                    <Button shape={"circle"} style={{background: "#004AAD"}} onClick={() => navigate(`/treatment_session_details/${treatment?.['id']}`)} icon={<ArrowRightOutlined style={{color: "white"}}/>}/>
+                    <Button shape={"circle"} style={{background: "#004AAD"}} onClick={() => navigate(`/treatment_session_details/${treatment?.['id']}`, { state: {woundId: treatment?.['wound_id']} })} icon={<ArrowRightOutlined style={{color: "white"}}/>}/>
                 </div>
             })}
         </div>

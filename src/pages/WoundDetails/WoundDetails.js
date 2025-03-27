@@ -27,9 +27,9 @@ function WoundDetails() {
     const location = useLocation();
     const navigate = useNavigate();
 
-        // Temporary variables - replace once logic implemented for it
     const woundId = location.pathname.split("/")[2]
-    const patientId = 1
+    const data = location.state;
+    const patientId = data.patientId
 
     const url = `${getTreatmentAPIUrl()}/treatment/get_all_images_for_wound?wound=${woundId}`;
     const woundUrl = `${getTreatmentAPIUrl()}/treatment/get_wound?id=${woundId}`;
@@ -71,8 +71,8 @@ function WoundDetails() {
         // fetching past treatments
         const fetchTreatments = async () => {
             setLatestTreatment("")
-            const url = `${getTreatmentAPIUrl()}/treatment/get_treatments?patient_id=${patientId}&wound_id=${woundId}`;
-            axios.get(url)
+            const url = `${getTreatmentAPIUrl()}/treatment/get_treatments`;
+            axios.post(url, { patient_id: patientId, wound_id: woundId })
             .then((response) => {
                 // if there are no errors and past treatmentts are available, storing them in use state
                 if(response.status === 200) {

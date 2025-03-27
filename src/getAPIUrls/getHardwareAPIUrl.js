@@ -1,11 +1,11 @@
-import clientHost from "./clientHost" 
+import { clientHost } from "./clientHost.js";
 
 const hostOptions = {
     local: "http://127.0.0.1:8001",
     production: "https://hardware-comm.onrender.com"
 } 
 export function getHardwareAPIUrl() {   
-    if(clientHost !== "localhost") {
+    if(clientHost !== "production") {
         return hostOptions.local
     }
     return hostOptions.production

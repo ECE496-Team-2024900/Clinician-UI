@@ -12,6 +12,7 @@ function Patients() {
     const navigate = useNavigate();
 
     const [searchResults, setSearchResults] = useState("") //Search results
+    const clinicianEmail = localStorage.getItem("email")
 
     // Function for behaviour on search
     const onSearch = async (val) => {
@@ -36,7 +37,7 @@ function Patients() {
         } else {
             try {
                 // Retrieve all patient records and set to search results 
-                const res = await axios.get(`${getUsersAPIUrl()}/users/get_all_patients`);
+                const res = await axios.post(`${getUsersAPIUrl()}/users/get_patients`, { clinician_id: clinicianEmail });
                 if (res.status === 200) {
                     setSearchResults(res.data.message);
                 }
@@ -48,7 +49,7 @@ function Patients() {
 
     // Default is to retrieve all patients and displaying as search results
     useEffect(() => {
-        axios.get(`${getUsersAPIUrl()}/users/get_all_patients`).then(res => {
+        axios.post(`${getUsersAPIUrl()}/users/get_patients`, { clinician_id: clinicianEmail }).then(res => {
             if (res.status === 200) {
                 setSearchResults(res?.data?.message)
             }
