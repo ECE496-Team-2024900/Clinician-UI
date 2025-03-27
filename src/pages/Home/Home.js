@@ -81,7 +81,6 @@ function Home() {
         <div className={styles.scheduleContainer}>
             {treatments.length !== 0 && treatments.map(treatment => {
                 return <div className={styles.treatmentWrapper}>
-                    <Avatar style={{background: "white", color: "#004AAD"}}>{treatment?.["id"]}</Avatar>
                     <span>{`Treatment session at ${new Date(treatment?.['start_time_scheduled'])} for ${vals.get(treatment?.['id'])}`}</span>
                     <Button shape={"circle"} style={{background: "#004AAD"}} onClick={() => navigate(`/treatment_session_details/${treatment?.['id']}`)} icon={<ArrowRightOutlined style={{color: "white"}}/>}/>
                 </div>
