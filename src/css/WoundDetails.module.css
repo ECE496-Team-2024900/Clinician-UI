@@ -34,6 +34,10 @@
         background-color: #B1EDFF;
         text-align: center;
       }
+
+      .treatmentTable tbody tr:hover {
+          color: #004AAD;
+      }
       
       .treatmentTable th,
       .treatmentTable td {
