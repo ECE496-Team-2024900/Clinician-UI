@@ -13,6 +13,7 @@ function Patients() {
 
     const [searchResults, setSearchResults] = useState("") //Search results
     const clinicianEmail = localStorage.getItem("email")
+    const clinicianPatients = JSON.parse(localStorage.getItem("patients"))
 
     // Function for behaviour on search
     const onSearch = async (val) => {
@@ -36,11 +37,7 @@ function Patients() {
         //If search bar is empty, search results include all patients
         } else {
             try {
-                // Retrieve all patient records and set to search results 
-                const res = await axios.post(`${getUsersAPIUrl()}/users/get_patients`, { clinician_id: clinicianEmail });
-                if (res.status === 200) {
-                    setSearchResults(res.data.message);
-                }
+                setSearchResults(clinicianPatients)
             } catch (error) {
                 console.error("Error fetching all patients:", error);
             }
@@ -49,11 +46,7 @@ function Patients() {
 
     // Default is to retrieve all patients and displaying as search results
     useEffect(() => {
-        axios.post(`${getUsersAPIUrl()}/users/get_patients`, { clinician_id: clinicianEmail }).then(res => {
-            if (res.status === 200) {
-                setSearchResults(res?.data?.message)
-            }
-        })
+        setSearchResults(clinicianPatients)
     }, []);
 
     return <div className={styles.container}>

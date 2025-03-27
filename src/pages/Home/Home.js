@@ -96,6 +96,9 @@ function Home() {
     }, [wounds]);
 
     useEffect(() => {
+        // Storing this clinician's patients
+        localStorage.setItem("patients", JSON.stringify(patients))
+
         const newVals = new Map(vals)
         treatments.forEach(treatment => {
             const woundIndex = wounds.findIndex(wd => wd?.['id'] === treatment?.["wound_id"])
