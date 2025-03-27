@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react'
 import { getTreatmentAPIUrl } from '../../getAPIUrls/getTreatmentAPIUrl'
 import axios from 'axios'
-import {Button, DatePicker, Form, Input, message, Popover, TimePicker, Image, Checkbox} from 'antd';
+import {Button, DatePicker, Form, Input, message, Popover, TimePicker, Image, Checkbox, Tooltip} from 'antd';
 import styles from "../../css/WoundDetails.module.css";
 import {
     CloseOutlined,
     EditOutlined,
-    FlagFilled,
+    FlagFilled, InfoCircleOutlined,
     PlusOutlined
 } from "@ant-design/icons";
 import {getUsersAPIUrl} from "../../getAPIUrls/getUsersAPIUrl";
 import {ArrowLeftOutlined, ArrowRightOutlined} from "@ant-design/icons";
 import {useLocation} from "react-router-dom";
+import Icon from "antd/es/icon";
 
 function WoundDetails() {
     const [treatments, setTreatments] = useState([]); // keeping track of past treatments for this wound and patient
@@ -204,16 +205,22 @@ function WoundDetails() {
                         {wound !== undefined && <Input readOnly defaultValue={wound?.infection_type} disabled/>}
                         <h3>Infection Location</h3>
                         {wound !== undefined && <Input readOnly defaultValue={wound?.infection_location} disabled/>}
-                        <h3>Wound Completely Treated</h3>
+                        <h3>
+                            {"Wound Completely Treated  "}
+                            <Tooltip title="Toggling this checkbox automatically updates the database.">
+                                <InfoCircleOutlined />
+                            </Tooltip>
+                        </h3>
                         {wound !== undefined && (
+                            <>
                             <Checkbox
                                 checked={wound?.treated}
                                 onChange={handleTreatedChange}
                             >
                                 {wound.treated ? "Yes" : "No"}
                             </Checkbox>
+                            </>
                         )}
-
                     </div>
                 </div>
                 <div className={styles.container3}>
