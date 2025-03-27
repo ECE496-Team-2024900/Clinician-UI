@@ -55,7 +55,9 @@ function Login() {
 
     // ensuring email domain is UHN
     const emailDomainValidation = (_, value) => {
-        if(value.endsWith('@uhn.ca')) {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        const validEmail = window.location.hostname === "localhost" ? emailRegex.test(value) : value.endsWith('@uhn.ca')
+        if(validEmail) {
             setErrors(errors => ({
                 ...errors,
                 emailDomain: false,
@@ -133,7 +135,9 @@ function Login() {
                             validator: (_, value) => emailRequiredValidation(_, value)
                         },
                         {
-                            message: 'Email must be part of the UHN domain.',
+                            message: window.location.hostname === "localhost" 
+                            ? 'Email must be a valid address.' 
+                            : 'Email must be part of the UHN domain.',
                             validator: (_, value) => emailDomainValidation(_, value)
                         }
                     ]}>
