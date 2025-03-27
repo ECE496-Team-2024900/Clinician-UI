@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 function CreateWound() {
     const [searchParams, setSearchParams] = useSearchParams();
 
-    const clinicianEmail = "walt.disney@disney.org"; // to use later as clinician id when creating wound
+    const clinicianEmail = localStorage.get("email")
     const patient_id = searchParams.get("patient_id"); // to use later for patient id when creating wound
 
     const [disableSubmit, setDisableSubmit] = useState(true) // boolean value for whether form submit button should be disabled

@@ -49,6 +49,7 @@ function SignUp() {
                 .catch(() => {
                     message.error("There was an error in creating user.");
                 });
+            localStorage.setItem("email", email);
             if (window.location.hostname === "localhost") {
                 auth.currentUser = { uid: "testUser123", email: "test@example.com" }; // Fake user
                 navigate("/home")

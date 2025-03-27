@@ -6,14 +6,18 @@ import axios from 'axios';
 import ReportGeneration from '../../utilities/ReportGeneration/ReportGeneration';
 import styles from '../../css/PostTreatment.module.css'
 import { SaveOutlined } from '@ant-design/icons';
+import {useLocation} from "react-router-dom";
 
 function PostTreatment() {
 
+    const location = useLocation()
+    const data = location.state;
+
     // Assuming that the following 4 fields are provided by the previous page
-    const patientEmail = "mickey.mouse@disney.org";
-    const treatmentId = 1;
-    const clinicianEmail = "walt.disney@disney.org";
-    const woundId = 1;
+    const patientEmail = data.patientEmail
+    const treatmentId = data.treatmentId;
+    const clinicianEmail = localStorage.getItem("email")
+    const woundId = data.woundId;
 
     const [patientData, setPatientData] = useState(null);
     const [treatmentData, setTreatmentData] = useState(null);
