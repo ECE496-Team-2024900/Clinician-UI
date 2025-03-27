@@ -1,5 +1,5 @@
 import styles from "../../css/Home.module.css";
-import {Avatar, Button} from "antd";
+import {Avatar, Button, message} from "antd";
 import {ArrowRightOutlined, UserOutlined} from "@ant-design/icons";
 import React, {useEffect, useState} from "react";
 import axios from "axios";

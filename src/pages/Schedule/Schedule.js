@@ -2,7 +2,7 @@ import styles from "../../css/Schedule.module.css";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {getTreatmentAPIUrl} from "../../getAPIUrls/getTreatmentAPIUrl";
-import { Calendar } from "antd";
+import { Calendar, message } from "antd";
 import {getUsersAPIUrl} from "../../getAPIUrls/getUsersAPIUrl";
 import {useNavigate} from "react-router-dom";
 
@@ -36,9 +36,6 @@ function Schedule() {
     // }, []);
 
     useEffect(() => {
-        if (auth.currentUser == null) {
-            navigate("/")
-        }
         try {
             // Fetching all wounds under this clinician
             axios.post(`${getTreatmentAPIUrl()}/treatment/get_wounds`, {clinician_id: clinicianEmail}).then(res => {
@@ -50,12 +47,6 @@ function Schedule() {
                         const uniquePatients = [...new Set(woundData.map(wound => wound.patient_id))]
                         setPatientMRNs(uniquePatients)
                     }
-                }
-            })
-            // Fetching clinician data
-            axios.get(`${getUsersAPIUrl()}/users/get_clinician_info`, {params: {"email": clinicianEmail}} ).then(res => {
-                if (res.status === 200) {
-                    setClinician(res?.data?.message)
                 }
             })
         } catch (error) {

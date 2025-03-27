@@ -6,9 +6,11 @@ import axios from 'axios';
 import ReportGeneration from '../../utilities/ReportGeneration/ReportGeneration';
 import styles from '../../css/PostTreatment.module.css'
 import { SaveOutlined } from '@ant-design/icons';
+import {useLocation} from "react-router-dom";
 
 function PostTreatment() {
 
+    const location = useLocation()
     const data = location.state;
 
     // Assuming that the following 4 fields are provided by the previous page

@@ -68,8 +68,8 @@ function WoundDetails() {
         // fetching past treatments
         const fetchTreatments = async () => {
             setLatestTreatment("")
-            const url = `${getTreatmentAPIUrl()}/treatment/get_treatments?patient_id=${patientId}&wound_id=${woundId}`;
-            axios.get(url)
+            const url = `${getTreatmentAPIUrl()}/treatment/get_treatments`;
+            axios.post(url, { patient_id: patientId, wound_id: woundId })
             .then((response) => {
                 // if there are no errors and past treatmentts are available, storing them in use state
                 if(response.status === 200) {
