@@ -58,7 +58,7 @@ function PostTreatment() {
                     setPatientData({
                         firstName: data.first_name,
                         lastName: data.last_name,
-                        phoneNumber: data.phone_num.toString(),
+                        phoneNumber: data.phone_number.toString(),
                         mrn: data.medical_ref_number.toString(),
                         deviceUsed: data.medical_device_id,
                         dateOfBirth: data.date_of_birth.toString()

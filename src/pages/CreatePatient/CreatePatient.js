@@ -35,7 +35,7 @@ function CreatePatient() {
             "date_of_birth": fields.dateOfBirth,
             "medical_ref_number": Number(fields.MRN),
             "email": fields.email,
-            "phone_num": Number(fields.phoneNumber)
+            "phone_number": Number(fields.phoneNumber)
         };
 
         const url = `${getUsersAPIUrl()}/users/create_patient`;
