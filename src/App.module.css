@@ -1,11 +1,9 @@
-
-
 .homePage {
     width: 100vw;
     height: 100vh;
     background-color: #DEEBF9;
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: hidden;
 
     .container {
         display: flex;
@@ -22,6 +20,7 @@
             justify-content: flex-start;
             align-items: center;
             padding-top: 2vh;
+            border-right: 1px solid #004AAD;
 
             .buttonContainer2 {
                 display: flex;
@@ -32,7 +31,6 @@
                 padding-top: 2vh;
 
                 .button {
-                    width: 6vw;
                     background-color: #DEEBF9;
                 }
             }
@@ -54,6 +52,10 @@
     background-color: #004AAD;
     color: white;
     text-align: center;
-    height: fit-content;
+    height: 5vh;
     padding: 10px;
+    border-top: 1px solid #004aad;
+    opacity: 100%;
+    position: fixed;
+    width: 100%;
 }

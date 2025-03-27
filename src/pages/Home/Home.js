@@ -69,7 +69,7 @@ function Home() {
             }
         };
         fetchPatientDependentData();
-    }, [patientMRNs]); 
+    }, [patientMRNs]);
 
     useEffect(() => {
         // Getting treatment data (depends on having wound information)
@@ -116,21 +116,21 @@ function Home() {
         <h2 style={{color: "#004AAD"}}>Patients</h2>
         <div className={styles.patientContainer}>
             {patients.length !== 0 && patients.map(patient => {
-                return <div className={styles.patientAvatar} onClick={() => navigate(`/patient_details/${patient.medical_ref_number}`)}>
+                return <Button className={styles.patientAvatar} onClick={() => navigate(`/patient_details/${patient.medical_ref_number}`)}>
                     <Avatar
                         style={{background: "#DEEBF9"}}
                         size={64}
                         icon={<UserOutlined style={{color: "#004AAD"}}/>}
                     />
                     <span style={{color: "#004AAD"}}>{patient?.['first_name'] + " " + patient?.['last_name']}</span>
-                </div>
+                </Button>
             })}
         </div>
         <h2 style={{color: "#004AAD"}}>Schedule</h2>
         <div className={styles.scheduleContainer}>
             {treatments.length !== 0 && treatments.map(treatment => {
                 return <div className={styles.treatmentWrapper}>
-                    <Avatar style={{background: "white", color: "#004AAD"}}>{treatment?.["id"]}</Avatar>
+                    <Avatar style={{background: "white", color: "#004AAD"}}>{treatment?.["session_number"]}</Avatar>
                     <span>{`Treatment session at ${new Date(treatment?.['start_time_scheduled'])} for ${vals.get(treatment?.['id'])}`}</span>
                     <Button shape={"circle"} style={{background: "#004AAD"}} onClick={() => navigate(`/treatment_session_details/${treatment?.['id']}`, { state: {woundId: treatment?.['wound_id']} })} icon={<ArrowRightOutlined style={{color: "white"}}/>}/>
                 </div>

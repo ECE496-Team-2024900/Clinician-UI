@@ -16,25 +16,6 @@ function Schedule() {
     const clinicianEmail = localStorage.getItem("email")
     const [patientMRNs, setPatientMRNs] = useState([])
 
-
-    // useEffect(() => {
-    //     axios.get(`${getUsersAPIUrl()}/users/find_all_patients`).then(res => {
-    //         if (res.status === 200) {
-    //             setPatients(res?.data?.message)
-    //         }
-    //     })
-    //     axios.get(`${getTreatmentAPIUrl()}/treatment/get_all_treatments` ).then(res => {
-    //         if (res.status === 200) {
-    //             setTreatments(res?.data?.message)
-    //         }
-    //     })
-    //     axios.get(`${getTreatmentAPIUrl()}/treatment/get_all_wounds` ).then(res => {
-    //         if (res.status === 200) {
-    //             setWounds(res?.data?.message)
-    //         }
-    //     })
-    // }, []);
-
     useEffect(() => {
         try {
             // Fetching all wounds under this clinician
@@ -75,7 +56,7 @@ function Schedule() {
             }
         };
         fetchPatientDependentData();
-    }, [patientMRNs]); 
+    }, [patientMRNs]);
 
     useEffect(() => {
         // Getting treatment data (depends on having wound information)

@@ -1,4 +1,4 @@
-import { Button, Input, Form, message } from 'antd';
+import {Button, Input, Form, message, Col} from 'antd';
 import logo from "../assets/logo.png";
 import styles from "../css/Login.module.css";
 import {useNavigate} from "react-router-dom";
@@ -119,15 +119,14 @@ function Login() {
         <div className={styles.page}>
             {/*Display product logo on left half of screen*/}
             <img src={logo} alt={"logo"} width={"50%"} height={"100%"} />
-            <div className={styles.form}>
-                <h1 className={styles.title}>
-                    Welcome back
-                </h1>
-                {/*Prompt user for their email in order to log in*/}
-                <h2 className={styles.subtitle}>
-                    Please enter your email
-                </h2>
-                <Form form={currForm}>
+                <Form form={currForm} className={styles.form}>
+                    <h1 className={styles.title}>
+                        Welcome back
+                    </h1>
+                    {/*Prompt user for their email in order to log in*/}
+                    <h2 className={styles.subtitle}>
+                        Please enter your email
+                    </h2>
                     <Form.Item name="emailInput" rules={[
                         {
                             message: 'Email is required.',
@@ -144,11 +143,22 @@ function Login() {
                             allowClear
                         />
                     </Form.Item>
-                    <Button type="primary" className={styles.enter_button} onClick={submitEmail} disabled={submitDisabled}>
+                    <h2 className={styles.subtitle}>
+                        Please enter your password
+                    </h2>
+                    <Form.Item>
+                        <Input
+                            placeholder="Your password"
+                            className={styles.email_input}
+                            allowClear
+                            type={"password"}
+                        />
+                    </Form.Item>
+                    <Button type="primary" className={styles.enter_button} onClick={submitEmail}
+                            disabled={submitDisabled}>
                         Enter
                     </Button>
                 </Form>
-            </div>
         </div>
     );
 }

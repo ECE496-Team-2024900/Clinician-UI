@@ -76,7 +76,7 @@ function MyInfo() {
                 <div className={styles.inputField}>
                     <label>Phone Number</label>
                     <Form.Item name="phone_num">
-                        <Input type="number"/>
+                        <Input type="number" minLength={10} maxLength={10}/>
                     </Form.Item>
                 </div>
             </div>
