@@ -261,7 +261,7 @@ function WoundDetails() {
                             <Button icon={<CloseOutlined style={{color: "#004AAD"}}/>} style={{borderColor: "white"}} onClick={() => setOverlay("")}/>
                         </div>
                         <Form onFinish={onFinish}>
-                            <Form.Item name="date_scheduled"><DatePicker allowClear={false} minDate={dayjs(new Date())} value={new Date(date)} onChange={date => setDate(date)} style={{width: "250px"}}/></Form.Item>
+                            <Form.Item name="date_scheduled"><DatePicker allowClear={false} minDate={dayjs(new Date().setDate(new Date().getDate()+1))} value={new Date(date)} onChange={date => setDate(date)} style={{width: "250px"}}/></Form.Item>
                             <Form.Item name="start_time_scheduled"><TimePicker allowClear={false} value={new Date(date).getTime()} onChange={time => {
                                 setDate(new Date(date).setHours(time.hours, time.minutes, time.seconds))
                             }} style={{width: "250px"}}/></Form.Item>
