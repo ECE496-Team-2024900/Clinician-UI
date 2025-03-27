@@ -12,8 +12,31 @@ function Patients() {
     const navigate = useNavigate();
 
     const [searchResults, setSearchResults] = useState("") //Search results
-    const clinicianEmail = localStorage.getItem("email")
     const clinicianPatients = JSON.parse(localStorage.getItem("patients"))
+
+    const searchPatients = (query) => {
+        if (!query.trim()) {
+            // nothing to search for
+            setSearchResults(clinicianPatients)
+            return
+        }
+    
+        const searchTerms = query.trim().split(/\s+/);
+        const searchedPatients = clinicianPatients.filter(patient => {
+            const fullName = `${patient.first_name} ${patient.last_name}`.toLowerCase();
+            
+            if (searchTerms.length === 1) {
+                return (
+                    patient.first_name.toLowerCase().includes(searchTerms[0]) || 
+                    patient.last_name.toLowerCase().includes(searchTerms[0])
+                );
+            } else {
+                return searchTerms.every(term => fullName.includes(term));
+            }
+        });
+        setSearchResults(searchedPatients)
+    };
+    
 
     // Function for behaviour on search
     const onSearch = async (val) => {
@@ -21,15 +44,7 @@ function Patients() {
         if (val !== "") {
             try {
                 // Retrieve patient records given the search query
-                const response = await axios.get(`${getUsersAPIUrl()}/users/search_patients`, {
-                    params: { query: val.trim() },
-                });
-                if (response.status === 200) {
-                    // Records successfully returned, set to search results
-                    setSearchResults(response.data.message);
-                } else {
-                    setSearchResults("");
-                }
+                searchPatients(val.trim())
             } catch (error) {
                 console.error("Error fetching search results:", error);
                 setSearchResults("");
